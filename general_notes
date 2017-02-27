@@ -1,0 +1,708 @@
+Windows:
+
+aimadd
+aimview
+schedule
+friends
+groups
+lists
+chats
+
+categoryEdit - for tree view editable categories
+(can still from work) //first just make combo box with . and new input with . can create at one time few categories (and avoid arrows)
+
+C++ and other code:
+
+Notifications : alarms + popups - different on android and windows - so should have notification
+(also can stole visual part)
+
+
+========================
+missing types
+
+recipe (3 list made from strings first)
+idea (with questions and connections)
+
+book!
+:chapter
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+========================php base code================================
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+<?php
+session_start();
+
+$aimUser = $_SESSION["login"];
+$aimUserId = $_SESSION["id"];
+
+$aimUserLoggedIn = true;
+
+if (empty($_SESSION["login"]))
+{
+    $aimUserLoggedIn = false;
+    //guest mode - can do special actions?
+    //$aimUser = "guest";
+}
+//this part must be included in the start of every file
+
+function noRefreshHead()
+{
+   echo "<meta http-equiv=\"cache-control\" content=\"max-age=0\" />";
+   echo "<meta http-equiv=\"cache-control\" content=\"no-cache\" />";
+   echo "<meta http-equiv=\"expires\" content=\"0\" />";
+   echo "<meta http-equiv=\"expires\" content=\"Tue, 01 Jan 1980 1:00:00 GMT\" />";
+    echo "<meta http-equiv=\"pragma\" content=\"no-cache\" />";
+}
+
+function topHtmlBody($title,$authId=0, $redirSeconds=0, $redirUrl=0)
+{
+    echo "<!DOCTYPE html><html><head>";
+    if ($authId!=0)
+    {
+        $storage = new Storage();
+        $setsResp = $storage->findSettings($authId);
+        $setsLine = mysql_fetch_array($setsResp, MYSQL_ASSOC);
+
+        $background = $setsLine["background"];
+        $textcolor = $setsLine["textcolor"];
+        $linkcolor = $setsLine["linkcolor"];
+        $visitcolor = $setsLine["visitcolor"];
+        $fieldcolor = $setsLine["fieldcolor"];
+
+        $ref = $setsLine["autoRefresh"];
+
+        echo "<style>.colortext{background-color: $fieldcolor; color: $textcolor;}</style>";
+    }
+
+    noRefreshHead(); //not sure but must not let cachable
+
+if ($redirSeconds != 0)
+{
+    if ($ref==1)
+    echo "<meta http-equiv='refresh' content='$redirSeconds;$redirUrl'>";
+}
+
+echo "<title>$title</title></head>";
+
+    echo "<body";
+
+    if ($authId!=0)
+        echo " bgcolor=$background text=$textcolor link=$linkcolor vlink=$visitcolor";
+
+    echo ">";
+}
+
+function bottomHtmlBody()
+{
+    echo "</body></html>";
+}
+
+function form($action,$hiddenId,$hiddenValue)
+{
+echo "<form action=$action>";
+echo "<input type=hidden name=$hiddenId value=$hiddenValue>";
+}
+
+function form_end()
+{
+    //echo ""; //submit text
+    echo "<br><input type=submit>";
+    echo "</form>";
+}
+
+function add_input($name,$type,$value="notset")
+{
+    if ($value == "notset")
+        echo "<br><input type=$type name=$name class='colortext'> : $name";
+    else
+    {
+        if ($type=="checkbox")
+        {
+            if ($value=="1" or $value=="on")
+                echo "<br><input type='$type' name='$name' checked='checked' > : $name";
+            else
+                echo "<br><input type=$type name=$name class='colortext'> : $name";
+        }
+        else if ($type == "radio")
+        {
+            echo "<input type='$type' name='$name' value='$value'> :$value";
+        }
+        else
+        {
+            if ($type != "hidden")
+                echo "<br><input type='$type' name='$name' value='$value' class='colortext'> : $name";
+            else
+                echo "<br><input type='$type' name='$name' value='$value'>";
+        }
+    }
+}
+
+class Storage
+{
+    //TODO: deprecated function on SQL, look on possible injections
+
+    //MAYBE: make string list, to output messages one by one
+
+    function findUser($login)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, password FROM users WHERE login='$login'",$db);
+        return $result;
+    }
+
+    function findUserById($id)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, login, tel FROM users WHERE id='$id'",$db);
+        return $result;
+    }
+
+    function getSchedule($day, $authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, title, assignTo, catagId, authId, description, doneState, timeValue, dateValue, repeatValue FROM aims WHERE authId='$authId' and dateValue='$day' ORDER BY timeValue;",$db);
+        return $sqlResp;
+    }
+
+    function findAim($id)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT title, assignTo, catagId, authId, description, doneState, timeValue, dateValue, repeatValue FROM aims WHERE id='$id'",$db);
+        return $sqlResp;
+    }
+
+    function findAimByAuthor($authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, title, assignTo, catagId, description, doneState, timeValue, dateValue, repeatValue FROM aims WHERE authId='$authId'",$db);
+        return $sqlResp;
+    }
+
+    function findAimAssigned($assignId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, title, assignTo, catagId, description, doneState, timeValue, dateValue, repeatValue FROM aims WHERE assignTo='$assignId'",$db);
+        return $sqlResp;
+    }
+
+    function findFriends($authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, friend FROM friends WHERE listId='$authId';",$db);
+        return $sqlResp;
+    }
+
+    function findCatag($authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, title, parent FROM catag WHERE authId='$authId'",$db);
+        return $sqlResp;
+    }
+
+    function getCatag($catagId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("SELECT id, title, parent FROM catag WHERE id='$catagId'",$db);
+        return $sqlResp;
+    }
+
+    function addCatag($title,$parent,$authId)
+    {
+        //also can make some check
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $preRequest = mysql_query("SELECT id,title FROM catag WHERE authId='$authId' AND title='$title'",$db);
+
+        $myrow = mysql_fetch_array($preRequest);
+        if (!empty($myrow['id']))
+        {
+            echo "You already have this tag<br>";
+            return;
+        }
+        else{
+            $sqlResp = mysql_query ("INSERT INTO catag (title,parent,authId) VALUE('$title','$parent','$authId')");
+
+            if ($sqlResp=='TRUE')
+            {
+                echo "You have added the tag $title <br>";
+            }
+            else
+                echo "Error! Tag not added $sqlResp <br>";
+        }
+
+    }
+
+    function editCatag($catagId,$title,$parent,$authId)
+    {
+        //also can make some check
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        //isn't this check exceed?
+        $preRequest = mysql_query("SELECT id,title FROM catag WHERE authId='$authId' AND title='$title'",$db);
+
+        $myrow = mysql_fetch_array($preRequest);
+        if (!empty($myrow['id']))
+        {
+            echo "You already have this tag<br>";
+            return;
+        }
+        else{
+            //not enough safe but it may be fine
+            $sqlResp = mysql_query ("UPDATE catag SET title='$title',parent='$parent' WHERE id=$catagId;");
+
+            if ($sqlResp=='TRUE')
+            {
+                echo "You have edited the tag $title <br>";
+            }
+            else
+                echo "Error! Tag not edited $sqlResp <br>";
+        }
+    }
+
+    function removeCatag($id,$authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+
+        $preRequest = mysql_query("SELECT id,title FROM catag WHERE authId='$authId' AND id='$id'",$db);
+        $myrow = mysql_fetch_array($preRequest);
+        if (empty($myrow['id']))
+        {
+            echo "You don't own this tag<br>";
+        }
+        else
+        {
+            $result = mysql_query("DELETE FROM catag WHERE id=$id;");
+            //or better set special delete flag
+            return $result;
+        }
+    }
+
+    function removeFriend($id,$authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $preRequest = mysql_query("SELECT id,friend FROM friends WHERE listId='$authId' AND id='$id'",$db);
+        $myrow = mysql_fetch_array($preRequest);
+
+        if (empty($myrow['id']))
+        {
+            echo "You don't have this friend<br>";
+        }
+        else
+        {
+            $result = mysql_query("DELETE FROM friends WHERE id=$id;");
+            //or better set special delete flag
+            //maybe debug also
+            return $result;
+        }
+    }
+
+
+
+    function addUser($login,$pass,$mail,$tel)
+    {
+        ///FIRST OF ALL - check isn't it already added
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        //if ($assignTo != "myself(loginId")
+        {
+            $result = mysql_query("SELECT id FROM users WHERE login='$login'",$db);
+            $myrow = mysql_fetch_array($result);
+            if (!empty($myrow['id'])) {
+                exit("Issue: login already registerered<br>");}
+            //CHECK banned flag
+        }
+
+        $sqlResp = mysql_query ("INSERT INTO users (login,password,email,tel) VALUES('$login','$pass','$mail','$tel')");
+
+        if ($sqlResp=='TRUE')
+            echo "You are Have registered, login! <br>";
+        else
+            echo "Error! Failed to register ".$sqlResp." <br>";
+    }
+
+    function addAim($title,$authId,$assignTo,$catagId, $description, $doneState,$time,$date,$repeat)
+    {
+        //what about future fields? : date, repeat, priority, finished state
+        //maybe edit them with any other function?
+
+        if ($doneState == "on")
+            $doneState = 1;
+
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        //if ($assignTo != "myself(loginId")
+
+        {
+            $result = mysql_query("SELECT id FROM users WHERE login='$assignTo'",$db);
+            $myrow = mysql_fetch_array($result);
+            $assignId = $myrow['id'];
+            if (empty($myrow['id'])) {
+                echo "Issue: assign login not found";}
+        }
+
+        //TODO: check there is aim with same params - dont let to create once same
+        $sqlResp = mysql_query ("INSERT INTO aims (title,authId,assignTo,catagId,description,doneState,timeValue,dateValue,repeatValue) VALUES('$title','$authId','$assignTo','$catagId','$description','$doneState','$time','$date','$repeat')");
+
+        echo "Debug sql '$repeat'<br>";
+
+        if ($sqlResp=='TRUE')
+            echo "You are Have added the aim $title <br>";
+        else
+            echo "Error! Aim not added $sqlResp <br>";
+
+    }
+
+    function editAim($id, $title, $assignTo, $catagId, $description, $doneState,$time,$date,$repeat)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        if ($doneState == "on")
+            $doneState = 1;
+
+        $result = mysql_query("UPDATE aims SET title='$title',assignTo='$assignTo',catagId='$catagId',description='$description',doneState='$doneState',timeValue='$time',dateValue='$date', repeatValue='$repeat' WHERE id=$id");
+
+        if ($result=='TRUE')
+            echo "You are Have changed aim $title <br>";
+        else
+            echo "Error! Record wasn't edited ".$result." <br>";
+    }
+
+    function removeAim($id)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+        $result = mysql_query("DELETE FROM aims WHERE id=$id;");
+        //or better set special delete flag
+        return $result;
+    }
+
+    function addMsg($senderId, $receiverId, $subject, $msg, $aimId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query ("INSERT INTO msgs (senderId,receiverId,title,info,taskId) VALUES('$senderId','$receiverId','$subject','$msg','$aimId')");
+
+        if ($sqlResp=='TRUE')
+            echo "Message sent <br>";
+        else
+            echo "Error! Message not sent $sqlResp <br>";
+
+    }
+
+    function searchMail($authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, title, info, senderId, taskId FROM msgs WHERE receiverId='$authId'",$db);
+        return $result;
+    }
+
+    function findMsg($msgId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, title, info, senderId, taskId, receiverId FROM msgs WHERE id='$msgId'",$db);
+        return $result;
+    }
+
+    //refact to remove? - later when this file would be reviewed
+    function deleteMsg($msgId, $authId)
+    {
+        $msgResp = $this->findMsg($msgId);
+        $msgLine = mysql_fetch_array($msgResp, MYSQL_ASSOC);
+
+        $author = $msgLine["senderId"];
+        $receiverId = $msgLine["receiverId"]; //isnt there a mistake?
+
+        if (($authId == $author) or ($authId == $receiverId))
+        {
+            $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+            mysql_select_db ("u0209947_aim_users",$db);
+
+             $result = mysql_query("DELETE FROM msgs WHERE id=$msgId;"); //YES IN REAL VERSION WE WOULD NOT REALLY DELETE THINGS
+            //AND ALSO HAD TO MAKE REQUESTS before it
+            return $result;
+        }
+        else
+        {
+            echo "<br><br>You cannot delete msg, that you did not sent, niether  recieved<br>";
+        }
+    }
+
+    function checkAimCopyable($authId, $aimId)
+    {
+        $mails = $this->searchMail($authId);
+        while ($line = mysql_fetch_array($mails, MYSQL_ASSOC)) {
+            $taskId = $line["taskId"];
+            if ($taskId == $aimId)
+                return true;
+        }
+        return false;
+    }
+
+
+    function findSettings($authId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, title, textcolor, background, autoRefresh, linkcolor, visitcolor, fieldcolor FROM settings WHERE authId='$authId'",$db);
+        return $result;
+    }
+
+    function setSettings($authId,$title,$textcolor,$background,$autorefresh,$linkcolor,$visitcolor, $fieldcolor)
+    {
+
+        $setResp = $this->findSettings($authId);
+        $settingsLine = mysql_fetch_array($setResp, MYSQL_ASSOC);
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        if ($autorefresh=="on")
+            $autorefresh=1;
+
+
+        if (!isset($settingsLine["id"]))
+        {
+            $result = mysql_query("INSERT INTO settings (title, textcolor, background, autoRefresh, authId, linkcolor, visitcolor, fieldcolor) VALUES('$title','$textcolor','$background','$autorefresh', '$authId','$linkcolor','$visitcolor','$fieldcolor')",$db);
+            return $result;
+        }
+        else
+        {
+            $result = mysql_query("UPDATE  settings SET title='$title', textcolor='$textcolor', background='$background', autoRefresh='$autorefresh', linkcolor='$linkcolor', visitcolor='$visitcolor',fieldcolor='$fieldcolor' WHERE authId=$authId;");
+            return $result;
+        }
+    }
+
+    function findLinks($aimId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, link, title FROM links WHERE aimId='$aimId'",$db);
+        return $result;
+    }
+
+    function findSingleLink($linkId)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $result = mysql_query("SELECT id, link, title FROM links WHERE id='$linkId'",$db);
+        return $result;
+    }
+
+    function addLink($aimId,$title,$link)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+        //CHECK THERE IS NO SUCH LINK
+        $result = mysql_query("INSERT INTO links (title,link,aimId) VALUES('$title','$link','$aimId')",$db);
+        return $result;
+    }
+
+    function editLink($linkId,$title,$link)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+        //good to check its not changing into copy? or not..
+        //NEED TO CHECK OWNER
+        $result = mysql_query("UPDATE links SET title='$title', link='$link' WHERE id=$linkId;");
+
+        return $result;
+    }
+
+    function removeLink($linkId) //refact other places, id without name should appear only in sql request!! TODO: refact notes
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+        //NEED TO CHECK OWNER
+        $result = mysql_query("DELETE FROM links WHERE id=$linkId;");
+        return $result;
+    }
+
+
+
+    //SELECTORS:
+    //TODO: refact selectors, they are so raw, and make possible use other fields and tables
+
+    function selectRepeatable($index)
+    {
+        echo  "<select name='repeat' class='colortext'>";
+
+        echo "<option value='0'>none</option>";
+
+        echo "<option value='1'";
+        if ($index == 1) echo " selected ";
+        echo ">day</option>";
+        echo "<option value='2'";
+        if ($index == 2) echo " selected ";
+        echo ">week</option>";
+        echo "<option value='3'";
+        if ($index == 3) echo " selected ";
+        echo ">month</option>";
+        echo "<option value='4'";
+        if ($index == 4) echo " selected ";
+        echo ">year</option>";
+
+        echo "</select>";
+    }
+
+    function selectFriends($selectSpecial=":none")
+    {
+        if (!isset($selectSpecial))
+            $selectSpecial = "!not set!";
+
+        if (!isset($_SESSION["id"]))
+            exit("Not logged in<br>");
+
+        $login = $_SESSION["login"];
+
+        $loginId = $_SESSION["id"];
+
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query("SELECT id,friend FROM friends WHERE listId='$loginId'", $db);
+
+        echo "<select name='assignTo' class='colortext'>";
+        echo "<option value='0'>$login</option>";
+
+        $count = 0;
+
+        while ($line = mysql_fetch_array($sqlResp, MYSQL_ASSOC))
+        {
+            ++$count;
+            $friendName = $line["friend"];
+
+            $sqlAnother =  mysql_query("SELECT id,tel FROM users WHERE login='$friendName'", $db);
+            $anotherReq = mysql_fetch_array($sqlAnother, MYSQL_ASSOC);
+
+            $friendUserId = "notset";
+
+            if (empty($anotherReq["id"]))
+            {
+            }
+            else
+                $friendUserId=$anotherReq["id"];
+
+            $selected = false;
+            if ($selectSpecial == $friendName)
+                $selected = true;
+
+            echo "<option value='$friendUserId'";
+            if ($selected)
+                echo "selected";
+
+            echo ">$friendName</option>";
+        }
+        echo "</select>";
+    }
+
+    function selectCatags($chosenId=-1)
+    {
+        if (!isset($_SESSION["id"]))
+            exit("Not logged in<br>");
+
+        //$login = $_SESSION["login"];
+        $loginId = $_SESSION["id"];
+
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query("SELECT id,title FROM catag WHERE authId='$loginId'", $db);
+
+        echo "<select name='catagId' class='colortext'>";
+        echo "<option value='0'> notag </option>";
+
+        $count = 0;
+        while ($line = mysql_fetch_array($sqlResp, MYSQL_ASSOC))
+        {
+            ++$count;
+            $titleName = $line["title"];
+            $catagId = $line["id"];
+
+            $selectedCatag = false;
+
+            if ($catagId == $chosenId)
+                $selectedCatag = true;
+
+            echo "<option value='$catagId'";
+
+            if ($selectedCatag)
+                echo " selected ";
+
+            echo ">$count) $titleName</option>";
+        }
+        echo "</select>";
+    }
+
+    function selectAims($authId, $chosenId=-1)
+    {
+        $db = mysql_connect ("localhost","u0209947_aimbase","mainAimWeAre11");
+        mysql_select_db ("u0209947_aim_users",$db);
+
+        $sqlResp = mysql_query("SELECT id,title FROM aims WHERE authId='$authId'", $db);
+
+        echo "<select name='aimId' class='colortext'>";
+        echo "<option value='0'> notag </option>";
+
+        $count = 0;
+
+        while ($line = mysql_fetch_array($sqlResp, MYSQL_ASSOC))
+        {
+            ++$count;
+            $titleName = $line["title"];
+            $aimId = $line["id"];
+
+            $selectedAim = false;
+            if ($aimId == $chosenId)
+                $selectedAim = true;
+
+            echo "<option value='$aimId'";
+
+            if ($selectedAim)
+                echo " selected ";
+
+            echo ">$count) $titleName</option>";
+        }
+        echo "</select>";
+    }
+}
+
+class Aim
+{
+  //  var
+}
+
+//JUST LAST LOOK:

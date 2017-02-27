@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>aimAdd.qml</file>
+        <file>aimView.qml</file>
+    </qresource>
+</RCC>
