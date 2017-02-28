@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>aimAdd.qml</file>
         <file>aimView.qml</file>
+        <file>aims.qml</file>
     </qresource>
 </RCC>

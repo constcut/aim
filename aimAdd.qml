@@ -15,7 +15,7 @@ Item {
     property int elementHeight: 45
     property int widthOffset: 70
 
-    property int yOffset: 20
+    property int yOffset: 50 //be aware of low screens try everywhere
 
     TextField
     {
@@ -83,7 +83,7 @@ Item {
 
         property int tumblerColShift: 10
 
-        TumblerColumn {
+        TumblerColumn { //looks like better to replace with: http://doc.qt.io/qt-5/qml-qtquick-controls2-tumbler.html
             id: monthRepeat
             model: 13 //take attention o code below
             width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
@@ -219,6 +219,35 @@ Item {
                                                  parentAim.currentText,childAimsList.currentText,progress.currentText);
 
             //missing links here
+
+            afterAddDialog.open()
+        }
+    }
+
+    Dialog {
+        id: afterAddDialog
+        title: "Do you wish to add another aim?"
+        standardButtons: Dialog.Yes | Dialog.No
+
+        onYes:
+        {
+
+            aimName.text=""
+            listName.currentIndex=0
+            timeAndDate.text=""
+            categoryName.currentIndex=0
+            //reset repeatable
+            privacy.currentIndex=0
+            assignTo.currentIndex=0
+            parentAim.currentIndex=0
+            childAimsList.currentIndex=0
+            progress.currentIndex=0
+        }
+        onNo:
+        {
+            //must jump to the aims view
+
+            //use wellknown connection mechanics
         }
     }
 

@@ -4,19 +4,18 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 
 
-
-
 ApplicationWindow {
+    id: window
     title: qsTr("Aim")
     width: 480
     height: 800
     visible: true
 
     Component.onCompleted: {
-        //datePopup.open()
     }
 
-   footer:  ToolBar { //or header
+   header:  ToolBar { //or header
+            id: toolBar
         RowLayout
         {
            // anchors.fill: parent
@@ -36,12 +35,49 @@ ApplicationWindow {
     }
 
     Loader {
+        y: toolBar.height + 5
         anchors.centerIn: parent
         id: mainLoader
-        source: "aimView.qml" //hello by default
+        source: "aims.qml" //hello by default
     }
 
+    Drawer {
+           id: drawerLeft
+           width: 0.66 * window.width
+           height: window.height
+
+           ColumnLayout
+           {
+           Button
+           {
+               text: "Check button"
+           }
+           TextEdit
+           {
+               text: "Sometext"
+           }
+           }
+       }
 
 
+    Drawer {
+           id: drawerDown
+           width: window.width
+           height: 0.5*window.height
+
+           edge: Qt.BottomEdge
+
+           ColumnLayout
+           {
+           Button
+           {
+               text: "Check button1"
+           }
+           TextEdit
+           {
+               text: "Sometext1"
+           }
+           }
+       }
 
 }

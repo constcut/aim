@@ -1,13 +1,13 @@
-#include <QApplication>
+//#include <QApplication>
+#include <QtGui>
 #include <QQmlApplicationEngine>
-
 #include <QQmlContext>
 
 #include "abstractBase.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     LocalSqlBase localBase(&app);
     localBase.createTablesIfNeeded();

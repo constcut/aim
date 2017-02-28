@@ -1,6 +1,12 @@
-TEMPLATE = app
+#TEMPLATE = app
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
 
 QT += sql qml quick widgets
+
+android {
+    QT += androidextras
+}
 
 SOURCES += main.cpp \
     abstractBase.cpp
@@ -15,9 +21,12 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 DISTFILES += \
-    general_notes
+    general_notes \
+    android-sources/AndroidManifest.xml \
+    android-sources/src/org/qtproject/example/notification/NotificationClient.java
 
 HEADERS += \
     abstractBase.h
 
-#INSTALLS += target
+#dunno what is that
+INSTALLS += target

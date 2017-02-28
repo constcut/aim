@@ -13,7 +13,7 @@ Item {
 
     property int elementHeight: 45
     property int widthOffset: 70
-    property int yOffset: 20
+    property int yOffset: 50 //be aware of low screens try everywhere
 
     property string highlightAimColor : "#98FB98"
 
@@ -124,6 +124,9 @@ Item {
             {
                 viewSettingsPopup.open()
             }
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Open settings")
         }
     }
 
@@ -267,6 +270,8 @@ Item {
 
         highlight: highlightBar//Rectangle { color: "lightsteelblue"; radius: 5 }
         focus:  true
+
+
     }
 
 
