@@ -48,11 +48,13 @@
 **
 ****************************************************************************/
 
-package org.qtproject.example.notification;
+package at.wavespl.apps.aim;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+
+//rename activity on some refactoring
 
 public class NotificationClient extends org.qtproject.qt5.android.bindings.QtActivity
 {

@@ -22,7 +22,7 @@ Item {
         count: view.count
         currentIndex: view.currentIndex
 
-        y: yOffset/2
+        y: yOffset
 
         //anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -31,7 +31,7 @@ Item {
     SwipeView {
         id: view
 
-        y: yOffset
+        y: yOffset + yOffset/2
         x: 0
 
         width: parent.width

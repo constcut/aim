@@ -218,6 +218,8 @@ int LocalSqlBase::addAim(QString aimName,QString aimList, QString timeAndDate, Q
                         timeAndDate + "','" + category + "','" + repeatable + "','" + privacy + "','" + assignTo
                         + "','" + parent + "','" + child + "','" + progress + "');");
 
+    qDebug() << "Test debug output";
+
     QSqlQuery request = executeRequest(requestBody);
 
     if (request.next())

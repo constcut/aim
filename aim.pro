@@ -23,7 +23,7 @@ include(deployment.pri)
 DISTFILES += \
     general_notes \
     android-sources/AndroidManifest.xml \
-    android-sources/src/org/qtproject/example/notification/NotificationClient.java
+    android-sources/src/at/wavespl/apps/aim/NotificationClient.java
 
 HEADERS += \
     abstractBase.h
