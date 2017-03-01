@@ -5,6 +5,8 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
 
+import QtQuick.Controls.Styles.Flat 1.0 as Flat
+
 Item {
 
     id: aimViewWindow
@@ -15,7 +17,7 @@ Item {
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
-    property string highlightAimColor : "#98FB98"
+    property string highlightAimColor : "#98FB98" //to settings please
 
     Item
     {
@@ -29,6 +31,7 @@ Item {
 
       property int fullHeight: elementHeight*2
 
+
        TextField
        {
            id: aimNameSearch
@@ -41,18 +44,18 @@ Item {
                searchTimer.restart()
                if (text.length > 0)
                {
-                   //apply filter
+                   searchModel(text)
                }
                else
                {
-                   //load model
+                   loadModel()
                }
            }
        }
        ComboBox
        {
            id: aimTagSearch
-           model: ["Select tag: ", "tag1","tag2"]
+           model: ["Select tag: ", "tag1","tag2","tag3","tag4"]
            visible: false
            width: parent.width
 
@@ -64,9 +67,14 @@ Item {
                    searchTimer.start()
            }
 
-           onCurrentIndexChanged:
+           onActivated:
            {
             searchTimer.start()
+
+               if (currentIndex==0)
+                   loadModel()
+               else
+                   searchModelTag(currentText)
            }
        }
 
@@ -220,7 +228,7 @@ Item {
                         aimViewWindow.highlightAimColor = colorTester.color
                         viewSettingsPopup.close()
                     }
-                }
+                }//leave here only save button
             }
             }
         }
@@ -236,10 +244,18 @@ Item {
         }
 
     Timer{
-            id: searchTimer; running: false; interval: 7000; repeat: false
+            id: searchTimer; running: false; interval: 10000; repeat: false
             onTriggered: {
-                searchBox.visible = false
-                settingsBox.visible = false
+
+                if (listModel.count == 0)
+                {
+                    running = true
+                }
+                else
+                {
+                    searchBox.visible = false
+                    settingsBox.visible = false
+                }
             }
         }
 
@@ -249,8 +265,8 @@ Item {
         id:aimList
         clip: true
         width: parent.width
-        height: parent.height
         y: searchBox.visible ? searchBox.fullHeight + yOffset : yOffset
+        height: parent.height - yOffset*4 //if put someting down make it *4
 
         model: listModel
 
@@ -264,6 +280,11 @@ Item {
                        settingsBox.visible = true
                        searchTimer.running = true
                    }
+                   if (contentY > 300)
+                   {
+                        searchBox.visible = false
+                        settingsBox.visible = false
+                   }
                }
 
         delegate: anotherDeligate//listDelegate
@@ -272,6 +293,7 @@ Item {
         focus:  true
 
 
+        ScrollBar.vertical: ScrollBar {}
     }
 
 
@@ -336,11 +358,13 @@ Item {
     function loadModel()
     {
         listModel.clear()
-        var aimList = localBase.getAims()
+        var aimList =  localBase.getAims()
 
         for (var i = 0; i < aimList.length; ++i)
         {
             //aimId is 0
+
+
             var aimName = aimList[i][1]
             var aimListName = aimList[i][2]
             var timeAndDate = aimList[i][3]
@@ -360,10 +384,60 @@ Item {
         }
     }
 
-    function searchInModel()
+    function searchModel(searchNames)
     {
-        //first name should appear
+        listModel.clear()
+        var aimList =  localBase.getAims()
+
+        var regExpName = new RegExp(searchNames)
+
+        for (var i = 0; i < aimList.length; ++i)
+        {
+            var aimName = aimList[i][1]
+            var aimListName = aimList[i][2]
+            var timeAndDate = aimList[i][3]
+            var category = aimList[i][4]
+            var repeatable = aimList[i][5]
+            var privacy = aimList[i][6]
+            var assignTo = aimList[i][7]
+            var parentAim = aimList[i][8]
+            var childAim = aimList[i][9]
+            var progress = aimList[i][10]
+
+            //also could run as set of filters making another list - first filter name, then tag etc
+            if (aimName.search(regExpName) !== -1)
+                listModel.append({"name":aimName,"list":aimList,"timeAndDate":timeAndDate,"category":category,
+                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parent":parentAim,
+                                 "child":childAim,"progress":progress})
+        }
     }
+    //unite + extend
+    function searchModelTag(searchTag)
+    {
+        listModel.clear()
+        var aimList =  localBase.getAims()
+
+        for (var i = 0; i < aimList.length; ++i)
+        {
+            var aimName = aimList[i][1]
+            var aimListName = aimList[i][2]
+            var timeAndDate = aimList[i][3]
+            var category = aimList[i][4]
+            var repeatable = aimList[i][5]
+            var privacy = aimList[i][6]
+            var assignTo = aimList[i][7]
+            var parentAim = aimList[i][8]
+            var childAim = aimList[i][9]
+            var progress = aimList[i][10]
+
+            //also could run as set of filters making another list - first filter name, then tag etc
+            if (category == searchTag)
+                listModel.append({"name":aimName,"list":aimList,"timeAndDate":timeAndDate,"category":category,
+                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parent":parentAim,
+                                 "child":childAim,"progress":progress})
+        }
+    }
+
 
     ListModel {
         id: listModel

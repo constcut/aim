@@ -4,5 +4,6 @@
         <file>aimAdd.qml</file>
         <file>aimView.qml</file>
         <file>aims.qml</file>
+        <file>schedule.qml</file>
     </qresource>
 </RCC>

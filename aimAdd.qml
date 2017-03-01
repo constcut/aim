@@ -5,14 +5,19 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
 
-//import QtQuick.Controls 1.4 //calendar
+import QtQuick.Controls 1.4 as QmlOld
+import QtQuick.Controls.Styles.Flat 1.0 as Flat
+
 
 Item {
     id: aimAddWindow
     width: 480
     height: 800
 
-    property int elementHeight: 45
+    signal requestOpenViewAims()
+    //and other signals could be also here
+
+    property int elementHeight: 45 //apply to every one
     property int widthOffset: 70
 
     property int yOffset: 50 //be aware of low screens try everywhere
@@ -27,13 +32,19 @@ Item {
 
         placeholderText: "Aim name"
     }
-    ComboBox
+    QmlOld.ComboBox //please try to replace with a test project - maybe later
     {
         id: listName
 
         y:yOffset+elementHeight*1
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        height: elementHeight-5
+
+        editable: true
+
+
 
         model : ["Insert into list:","list2","list3"]
     }
@@ -62,13 +73,17 @@ Item {
         }
     }
 
-    ComboBox
+    QmlOld.ComboBox
     {
         id: categoryName
 
         y:yOffset+elementHeight*3
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        height: elementHeight-5
+
+        editable: true
 
         model: ["Choose category:","tag1.tag2","t1.t2.t3.t4"] //if too long let stay only last 80 chars
     }
@@ -82,6 +97,8 @@ Item {
         property string fullText: ""
 
         property int tumblerColShift: 10
+
+        //style: "Flat"
 
         TumblerColumn { //looks like better to replace with: http://doc.qt.io/qt-5/qml-qtquick-controls2-tumbler.html
             id: monthRepeat
@@ -214,7 +231,7 @@ Item {
         x: parent.width - width - widthOffset
 
         onClicked: {
-            var insertedIndex = localBase.addAim(aimName.text,listName.currentText,timeAndDate.text,categoryName.currentText,
+            var insertedIndex = localBase.addAim(aimName.text,listName.editText,timeAndDate.text,categoryName.editText,
                                                  repeatable.fullText,privacy.currentText,assignTo.currentText,
                                                  parentAim.currentText,childAimsList.currentText,progress.currentText);
 
@@ -226,16 +243,20 @@ Item {
 
     Dialog {
         id: afterAddDialog
-        title: "Do you wish to add another aim?"
+        title: "Request"
+        Text
+        {
+            text:  "Do you wish to add another aim?"
+        }
+
         standardButtons: Dialog.Yes | Dialog.No
 
         onYes:
         {
-
             aimName.text=""
-            listName.currentIndex=0
+            listName.currentIndex = -1 //not sure
             timeAndDate.text=""
-            categoryName.currentIndex=0
+            categoryName.currentIndex  = -1
             //reset repeatable
             privacy.currentIndex=0
             assignTo.currentIndex=0
@@ -245,9 +266,7 @@ Item {
         }
         onNo:
         {
-            //must jump to the aims view
-
-            //use wellknown connection mechanics
+            aimAddWindow.requestOpenViewAims()
         }
     }
 

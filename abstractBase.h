@@ -52,6 +52,8 @@ public:
     Q_INVOKABLE virtual bool sendGroupMessage(QString groupName, QString message, QString aimId="")=0; //group name
 
 
+    ///FOR a little while class abadoned untill remote appear so please later inlucde things such as search etc
+
 protected:
     virtual QSqlQuery executeRequest(QString requestBody)=0;
 
@@ -87,6 +89,12 @@ public:
 
     Q_INVOKABLE QStringList getAimLinks(QString aimName);
     Q_INVOKABLE bool setAimLinks(QString aimName, QStringList aimLinks);
+
+
+    //search functions
+    Q_INVOKABLE QVariantList searchAimsByName(QString searchText);
+
+
 
     //Category
     Q_INVOKABLE int addCategory(QString categoryName, QString categoryParent); //name, parent

@@ -4,6 +4,8 @@
 #include <QSqlError>
 #include <QtSql>
 
+#include <QRegExp>
+
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
 
@@ -243,25 +245,35 @@ QVariantList LocalSqlBase::getAims()
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimsList = fillList(request,11);
 
-
-   // if (aimsList.size() == 0)
-    {
-        //tester
-
-        QStringList aim1;
-        QStringList aim2;
-        QStringList aim3;
-
-        aim1 << "0"<< "Aim name1 "<<"" <<""<<"tag1"<<""<<"private"<<""<<""<<""<<""<<"created";
-        aim2 << "0"<< "Aim name2 "<<"" <<""<<"tag2"<<""<<"private"<<""<<""<<""<<""<<"created";
-        aim3 << "0"<< "Aim name3 "<<"" <<""<<"tag1"<<""<<"private"<<""<<""<<""<<""<<"created";
-
-        aimsList << aim1 << aim2 << aim3;
-
-    }
+    ///GOOD to scroll qml to add, if there are no aims
 
     return aimsList;
 }
+
+QVariantList LocalSqlBase::searchAimsByName(QString searchText)
+{
+    QString requestBody = "SELECT * FROM aims";
+    QSqlQuery request = executeRequest(requestBody);
+
+    QVariantList searchResult;
+    QVariantList aimsList = fillList(request,11);
+
+    QRegExp pattern("*" + searchText + "*");
+    pattern.setPatternSyntax(QRegExp::Wildcard);
+
+    for (int i = 0; i < aimsList.size(); ++i)
+    {
+        QStringList aimLine= aimsList[i].toStringList();
+        QString aimName = aimLine[1];
+
+        if (pattern.exactMatch(aimName))
+            searchResult.append(aimLine);
+
+    }
+
+    return searchResult;
+}
+
 
 QStringList LocalSqlBase::getAimLinks(QString aimName)
 {

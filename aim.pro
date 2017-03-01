@@ -2,7 +2,7 @@
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
 
-QT += sql qml quick widgets
+QT += sql qml quick quickcontrols2
 
 android {
     QT += androidextras
