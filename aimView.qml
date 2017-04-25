@@ -17,7 +17,7 @@ Item {
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
-    property string highlightAimColor : "#98FB98" //to settings please
+    property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
 
     Item
     {
@@ -85,7 +85,7 @@ Item {
             id: searchByName
             checked: true
             text: "name"
-            onCheckedChanged:
+            onCheckedChanged: //cover under function
             {
                 if (checked)
                 {
@@ -95,6 +95,25 @@ Item {
                 }
             }
        }
+
+       RadioButton
+       {
+            y: elementHeight
+            x: parent.width/2 - width/2
+            id: searchByType
+            text: "type"   //assigned to me, done, overdated etc
+
+            onCheckedChanged: //cover under function
+            {
+                if (checked)
+                {
+                    aimNameSearch.visible = false
+                    aimTagSearch.visible = true
+                    searchTimer.restart()
+                }
+            }
+       }
+
        RadioButton
        {
             y: elementHeight
@@ -102,7 +121,7 @@ Item {
             id: searchByTag
             text: "tag"
 
-            onCheckedChanged:
+            onCheckedChanged: //cover under function
             {
                 if (checked)
                 {
@@ -141,94 +160,93 @@ Item {
     Popup {
         id: viewSettingsPopup //make also time popup with tumbler
         x: 100
-        y: 100
+        y: 50
         width: 230
-        height: 525
+        height: 560 //ensure manual sizing
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-            //DateTimeChoose{}
-            //old way - and its better and must be applied on refact, but now we should do faster way :
+        Component.onCompleted: //onOpened:
+        {
+            var settingList = userSettings.getViewAimSettings()
+
+            aimListField.checked = settingList[0]
+            timeAndDateField.checked = settingList[1]
+            categoryField.checked = settingList[2]
+            repeatableField.checked = settingList[3]
+            privacyField.checked = settingList[4]
+            assignToField.checked = settingList[5]
+            parentField.checked  = settingList[6]
+            childField.checked  = settingList[7]
+            progressField.checked  = settingList[8]
+        }
+
         Item {
             ColumnLayout
             {
             CheckBox
             {
+                id: aimListField
                 text: "Aim list"
             }
             CheckBox
             {
+                id: timeAndDateField
                 text: "Time and date"
             }
             CheckBox
             {
+                id: categoryField
                 text: "Category"
             }
             CheckBox
             {
+                id: repeatableField
                 text: "Repeatable"
             }
             CheckBox
             {
+                id: privacyField
                 text: "Privacy"
             }
             CheckBox
             {
+                id: assignToField
                 text: "Assign to"
             }
             CheckBox
             {
+                id: parentField
                 text: "Parent"
             }
             CheckBox
             {
+                id: childField
                 text: "Child"
             }
             CheckBox
             {
+                id: progressField
                 text: "Progress"
             }
-            RowLayout
+            Button
             {
-                Rectangle
+                text:"Save settings"
+                onClicked:
                 {
-                    id: colorTester
-                    height: 35
-                    width: 100 //calculate better
-                    color: "#98FB98"
-                    border.color: "black"
-                    border.width: 1
+                    var viewAimList = [aimListField.checked,timeAndDateField.checked,
+                            categoryField.checked,repeatableField.checked,
+                            privacyField.checked,assignToField.checked,parentField.checked,
+                            childField.checked,progressField.checked]
+
+                    userSettings.setViewAimSettings(viewAimList)
+
+                    loadViewSettings()
+
+                    viewSettingsPopup.close()
+
                 }
-                Button
-                {
-                    text: "Highlight color"
-                    onClicked:
-                    {
-                        colorDialog.color = colorTester.color
-                        colorDialog.open()
-                    }
-                }
-            }
-            RowLayout
-            {
-                Button
-                {
-                    text:"Cancel"
-                    onClicked:
-                    {
-                        viewSettingsPopup.close()
-                    }
-                }
-                Button
-                {
-                    text:"Save settings"
-                    onClicked:
-                    {
-                        aimViewWindow.highlightAimColor = colorTester.color
-                        viewSettingsPopup.close()
-                    }
-                }//leave here only save button
             }
             }
         }
@@ -298,15 +316,69 @@ Item {
 
 
     //update width and so on
+
+    function loadViewSettings()
+    {
+       var settingsList =  userSettings.getViewAimSettings()
+
+        aimViewWindow.aimListShow = settingsList[0]
+        aimViewWindow.timeAndDateShow = settingsList[1]
+        aimViewWindow.categoryShow = settingsList[2]
+        aimViewWindow.repeatableShow = settingsList[3]
+        aimViewWindow.privacyShow = settingsList[4]
+        aimViewWindow.assignToShow = settingsList[5]
+        aimViewWindow.parentAimShow = settingsList[6]
+        aimViewWindow.childAimsShow = settingsList[7]
+        aimViewWindow.progressShow = settingsList[8]
+    }
+
+    property bool aimListShow : true
+    property bool timeAndDateShow: true
+    property bool categoryShow: true
+    property bool repeatableShow: true
+    property bool privacyShow: true
+    property bool assignToShow: true
+    property bool parentAimShow: true
+    property bool childAimsShow: true
+    property bool progressShow: true
+
     Component {
         id: anotherDeligate
+
+
         Item {
-            id: wrapper
+            id: wrapper //rename on refact
             width: aimList.width
-            height: 55      //calculate on option
+            height: 110  //means need to know fonts also
+
+
             Column {
-                Text { text: 'Name: ' + name }
-                Text { text: 'Category: ' + category }
+                Row
+                {
+                    height: 25 //must look over here
+                    Text { text: '<i>Name:</i> <b>' + name + '</b>' }
+                    Text { text: ' Moment: ' + timeAndDate; visible: aimViewWindow.timeAndDateShow }
+                    Text { text: ' Repeat: ' + repeatable; visible: aimViewWindow.repeatableShow }
+                }
+                Row
+                {
+                    height: 25
+                    Text { text: 'Category: ' + categoryValue; visible: aimViewWindow.categoryShow }
+                    Text { text: ' List: ' + aimListName; visible: aimViewWindow.repeatableShow }
+                    Text { text: ' Progress: ' + progress; visible: aimViewWindow.progressShow }
+                }
+                Row
+                {
+                    height: 25
+                    Text { text: ' Privacy: ' + privacy; visible: aimViewWindow.privacyShow}
+                    Text { text: ' AssignTo: ' + assignTo; visible: aimViewWindow.assignToShow}
+                }
+                Row
+                {
+                    height: 25
+                    Text { text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow}
+                    Text { text: ' Children: ' + child; visible: aimViewWindow.childAimsShow}
+                }
             }
             states: State { // indent the item if it is the current item
                 name: "Current"
@@ -378,8 +450,8 @@ Item {
 
             //var linkList = localBase.getAimLinks(aimName)
 
-            listModel.append({"name":aimName,"list":aimList,"timeAndDate":timeAndDate,"category":category,
-                             "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parent":parentAim,
+            listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
+                             "repeatable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
                              "child":childAim,"progress":progress})
         }
     }
@@ -406,8 +478,8 @@ Item {
 
             //also could run as set of filters making another list - first filter name, then tag etc
             if (aimName.search(regExpName) !== -1)
-                listModel.append({"name":aimName,"list":aimList,"timeAndDate":timeAndDate,"category":category,
-                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parent":parentAim,
+                listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
+                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
                                  "child":childAim,"progress":progress})
         }
     }
@@ -432,8 +504,8 @@ Item {
 
             //also could run as set of filters making another list - first filter name, then tag etc
             if (category == searchTag)
-                listModel.append({"name":aimName,"list":aimList,"timeAndDate":timeAndDate,"category":category,
-                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parent":parentAim,
+                listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
+                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
                                  "child":childAim,"progress":progress})
         }
     }

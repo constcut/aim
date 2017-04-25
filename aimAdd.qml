@@ -18,7 +18,7 @@ Item {
     //and other signals could be also here
 
     property int elementHeight: 45 //apply to every one
-    property int widthOffset: 70
+    property int widthOffset: 20 //70
 
     property int yOffset: 50 //be aware of low screens try everywhere
 

@@ -9,7 +9,9 @@ android {
 }
 
 SOURCES += main.cpp \
-    abstractBase.cpp
+    abstractBase.cpp \
+    userSettings.cpp \
+    screenglobal.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -26,7 +28,9 @@ DISTFILES += \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java
 
 HEADERS += \
-    abstractBase.h
+    abstractBase.h \
+    userSettings.h \
+    screenglobal.h
 
 #dunno what is that
 INSTALLS += target

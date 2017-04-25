@@ -8,38 +8,27 @@ import QtQuick.Controls.Material 2.1
 ApplicationWindow {
     id: window
     title: qsTr("Aim")
-    width: 480
-    height: 800
+    width: 480 //screenGlobal.getScreenWidth();
+    height: 800 //screenGlobal.getScreenHeight();
     visible: true
 
-    Material.accent: Material.Green
-    //Material.theme: Material.Dark
+    Material.accent: userSettings.getColor("Accent");
+    Material.primary: userSettings.getColor("Primary");
+    Material.foreground: userSettings.getColor("Foreground");
+    Material.background: userSettings.getColor("Background");
+    //Theme - for a while not supported because then we had to change everything
+
+    //Material elevation
 
     Component.onCompleted: {
+        console.log (window.Material.foreground)
     }
 
-   header:  ToolBar { //or header
+   header:  ToolBar
+   {
             id: toolBar
         RowLayout
         {
-           // anchors.fill: parent
-
-            //old way will remove soon
-            /*
-            ToolButton
-            {
-                text: "Add aim"
-                onClicked: mainLoader.source = "aimAdd.qml"
-            }
-            ToolButton
-            {
-                text: "View aims"
-                onClicked: mainLoader.source = "aimView.qml"
-            }
-            */
-
-            //vertical position not so well - need to absolute it
-
             ToolButton
             {
                 text: "Aims"
@@ -54,17 +43,6 @@ ApplicationWindow {
             {
                 text: "Chats"
                 onClicked:  drawerDown.open()
-            }
-
-            ToolButton
-            {
-                text: "Dark"
-                onClicked: window.Material.theme = Material.Dark
-            }
-            ToolButton
-            {
-                text: "Light"
-                onClicked: window.Material.theme = Material.Light
             }
 
             //http://doc.qt.io/qt-5/qml-qtquick-controls2-toolbar.html

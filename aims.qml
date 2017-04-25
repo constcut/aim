@@ -15,35 +15,7 @@ Item {
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
-    RowLayout
-    {
-        y: yOffset/2
-        //anchors.bottom: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
 
-    RoundButton
-    {
-        text:"<"
-        onClicked: swipeView.decrementCurrentIndex()
-    } //HEY show the buttons only on desktop app
-
-    PageIndicator {
-        id: pageIndicator
-        interactive: false
-        count: swipeView.count
-        currentIndex: swipeView.currentIndex
-
-    }
-
-    RoundButton
-    {
-        text:">"
-        onClicked: swipeView.incrementCurrentIndex()
-    } //HEY show the buttons only on desktop app
-
-    //Could make settings over here also - and hidable toolbar then
-
-    }
 
     SwipeView {
         id: swipeView
@@ -87,6 +59,36 @@ Item {
                 source: "schedule.qml"
             }
         }
+    }
+
+    RowLayout
+    {
+        y: yOffset/2
+        //anchors.bottom: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+
+    RoundButton
+    {
+        text:"<"
+        onClicked: swipeView.decrementCurrentIndex()
+    } //HEY show the buttons only on desktop app
+
+    PageIndicator {
+        id: pageIndicator
+        interactive: false
+        count: swipeView.count
+        currentIndex: swipeView.currentIndex
+
+    }
+
+    RoundButton
+    {
+        text:">"
+        onClicked: swipeView.incrementCurrentIndex()
+    } //HEY show the buttons only on desktop app
+
+    //Could make settings over here also - and hidable toolbar then
+
     }
 
     Connections

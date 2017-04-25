@@ -6,31 +6,15 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 
 Item {
-
-    RowLayout
-    {
-        y:50
-        RadioButton
-        {
-            text: "calendar"
-        }
-        RadioButton
-        {
-            text: "upcoming"
-        }
-        RadioButton
-        {
-            text: "day"
-        }
-    }
-
     Calendar
     {
-        y: 150
+        y: 0
+        x: 100 //SHOULD BE REPLACE WITH SOME SCREEN VALUE
 
-        width: 200
-        height: 200
+        width: parent.width - x*2
+        height: parent.width - x*2 //special logic for always vertical Application
 
         id: calendar
     }
+
 }

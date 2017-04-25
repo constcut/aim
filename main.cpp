@@ -6,13 +6,19 @@
 #include <QQuickStyle>
 
 #include "abstractBase.h"
+#include "userSettings.h"
+#include "screenglobal.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    ScreenGlobal screen;
+
     LocalSqlBase localBase(&app);
     localBase.createTablesIfNeeded();
+
+    UserSettings userSettings(&app);
 
     if (qgetenv("QT_QUICK_CONTROLS_1_STYLE").isEmpty()) {
 #ifdef QT_STATIC
@@ -31,6 +37,8 @@ int main(int argc, char *argv[])
     QQmlContext *context = engine.rootContext();
 
     context->setContextProperty("localBase",&localBase);
+    context->setContextProperty("userSettings",&userSettings);
+    context->setContextProperty("screenGlobal",&screen);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
