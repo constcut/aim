@@ -2,8 +2,10 @@ import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-import QtQuick.Extras 1.4
+//import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
+
+import QtQuick.Extras 1.4 as QmlExtra
 
 import QtQuick.Controls 1.4 as QmlOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
@@ -32,22 +34,7 @@ Item {
 
         placeholderText: "Aim name"
     }
-    QmlOld.ComboBox //please try to replace with a test project - maybe later
-    {
-        id: listName
 
-        y:yOffset+elementHeight*1
-        width: parent.width-widthOffset*2
-        x: widthOffset
-
-        height: elementHeight-5
-
-        editable: true
-
-
-
-        model : ["Insert into list:","list2","list3"]
-    }
     TextField
     {
         id: timeAndDate
@@ -56,7 +43,7 @@ Item {
         width: parent.width-widthOffset*2-50 - 5//also small offset
         x: widthOffset
 
-        placeholderText: "Time and\or date"
+        placeholderText: "Time / date"
         //format { hh:mm[:ss] dd.MM[.yyyy] } //can have also buttons for dialogs
     }
     Button
@@ -73,20 +60,34 @@ Item {
         }
     }
 
-    QmlOld.ComboBox
-    {
-        id: categoryName
 
-        y:yOffset+elementHeight*3
+    TextArea
+    {
+        id: commentText
+
+        y: yOffset+elementHeight*4
+        width: parent.width-widthOffset*2
+        height: elementHeight*2
+
+        x: widthOffset
+
+        placeholderText: "Place for comment\nMany lines"
+    }
+
+
+    TextField
+    {
+        id: tags
+
+        y:yOffset+elementHeight*7
         width: parent.width-widthOffset*2
         x: widthOffset
 
-        height: elementHeight-5
-
-        editable: true
-
-        model: ["Choose category:","tag1.tag2","t1.t2.t3.t4"] //if too long let stay only last 80 chars
+        placeholderText: "#tags"
     }
+
+    //in future make repatable by period
+    /*
     Tumbler {
         id:repeatable
 
@@ -126,6 +127,10 @@ Item {
             width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
         }
     }
+    */
+
+    //later
+    /*
     ComboBox
     {
         id: privacy
@@ -135,17 +140,32 @@ Item {
         x: widthOffset
 
         model : ["Choose privacy:","private","shared","group:groupname"]
-    }
+    }*/
     ComboBox
     {
         id: assignTo
 
-        y:yOffset+elementHeight*8
+        y:yOffset+elementHeight*9
         width: parent.width-widthOffset*2
         x: widthOffset
 
         model : ["Assign to:","myself","friend1","friend2"]
     }
+
+
+    ComboBox
+    {
+        id: priority
+
+        y:yOffset+elementHeight*11
+        width: parent.width-widthOffset*2
+        x: widthOffset
+
+        model : ["Priority:","0-none","25-low","50-mid","75-high","100-critical"]
+    }
+
+    //MUST BE LIST WHERE CAN BE SELECTED MANY
+    /*
     ComboBox
     {
         id: parentAim
@@ -170,7 +190,11 @@ Item {
         //currentText: "Child aims"
 
         model: ["Child aim:","aim1","aim2","aim3"]
-    }
+    }*/
+
+
+    ///well not on start right now i guess
+    /*
     ComboBox
     {
         id: progress
@@ -181,6 +205,7 @@ Item {
 
         model: ["Progress: ","created","in progress","done"] //make few scale to %
     }
+    */
     //ITEM here to be able add links ass needed
 
     //Make a scroll area maximum of 3 here!! later
@@ -189,6 +214,10 @@ Item {
                if( contentY < -100 ) {
                    searchField.visible = true;
                } */
+
+
+    //yes and links we dont need also right now
+    /*
     Repeater
     {
         id: linkRepeater
@@ -223,23 +252,50 @@ Item {
             linkRepeater.model = linkRepeater.model + 1
         }
     }
+    */
     Button
     {
         id: addAimButton
         text: "Create aim"
-        y: yOffset+elementHeight*12 + linkRepeater.model * elementHeight
+        y: yOffset+elementHeight*13 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
         onClicked: {
-            var insertedIndex = localBase.addAim(aimName.text,listName.editText,timeAndDate.text,categoryName.editText,
-                                                 repeatable.fullText,privacy.currentText,assignTo.currentText,
-                                                 parentAim.currentText,childAimsList.currentText,progress.currentText);
 
-            //missing links here
+            var assignToText = assignTo.currentText
+            if (assignToText == "Assign to:")
+                assignToText = ""
 
-            afterAddDialog.open()
+            var priorityText = priority.currentText
+            if (priorityText == "Priority:")
+                priorityText = ""
+
+
+            var insertedIndex =
+            localBase.addAim(aimName.text,timeAndDate.text, commentText.text, tags.text,
+                                                 assignToText, priorityText);
+
+            aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+            assignTo.currentIndex = -1
+            priority.currentIndex = -1
+
+            aimAddWindow.requestOpenViewAims()
         }
     }
+
+
+    Text
+    {
+        id: notifyTODO
+        text: "Missing: parent, child list, period."
+        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
+        x: parent.width - width - widthOffset
+
+    }
+
+
+    //TODO:
+    ///SO NOW ONLY MISSING CONFIGURATION AND SCROLLABLE IF TOO MANY ELEMENTS
 
     Dialog {
         id: afterAddDialog
@@ -273,10 +329,10 @@ Item {
 
     Popup {
         id: dateTimePopup //make also time popup with tumbler
-        x: 100
+        x: 10
         y: 100
-        width: 220
-        height: 450
+        width: 360
+        height: 600
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -284,52 +340,77 @@ Item {
             //DateTimeChoose{}
             //old way - and its better and must be applied on refact, but now we should do faster way :
         Item {
-            Tumbler
+
+            id: popupItem
+
+            QmlOld.Calendar
             {
                 y: 5
-                id: dateTumbler
-                TumblerColumn {
-                    id: dayChoose
-                    model: 31 //auto update on month choose
-                }
-                TumblerColumn {
-                    id: monthChoose
-                    model: ["January","Febuary","March","April","May"]
+                x: 5 //SHOULD BE REPLACE WITH SOME SCREEN VALUE
 
-                    onCurrentIndexChanged:
-                    {
-                        //so should chande model
+                width:  260
+                height: 260 //special logic for always vertical Application
 
-                        //and save the index - if it possible - if not shouse last one, for example 31 jan switches to 28 feb then
-
-                        if (currentIndex == 0)
-                            dayChoose.model = 31        //should do it more complex
-                        if (currentIndex == 1)
-                            dayChoose.model = 28
-                        if (currentIndex == 2)
-                            dayChoose.model = 30
-                    }
-                }
-                TumblerColumn {
-                    id: yearChoose
-                    model: ["2017","2018","2019","2020","2021","2022","2023"]
-                }
-
-            }
-            //switch off if we don't need date
-
-            Switch
-            {
-                y: dateTumbler.height + 5
-                id: useDate
-                checked: true
+                id: calendar
             }
 
+            function formatText(count, modelData) {
+                var data = count === 12 ? modelData + 1 : modelData;
+                return data.toString().length < 2 ? "0" + data : data;
+            }
+
+            FontMetrics {
+                id: fontMetrics
+            }
+
+            Component {
+                  id: delegateTumbler
+
+                  Label {
+                      text: popupItem.formatText(Tumbler.tumbler.count, modelData)
+                      opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                      font.pixelSize: fontMetrics.font.pixelSize * 1.25
+                  }
+              }
+
+            Row {
+                id: timeTumbler
+
+                y: calendar.height + 10
+                x: 5
+
+
+
+                Tumbler {
+                  id: hoursTumbler
+                  model: 24
+                  delegate: delegateTumbler
+
+                  width:  120
+                }
+
+                Tumbler {
+                  id: minutesTumbler
+                  model: 60
+                  delegate: delegateTumbler
+
+                  width:  120
+                }
+
+                //ON CHOOSE TURN ON SWITCH
+            }
+
+            /*
             Tumbler
             {
                 id: timeTumbler
 
-                y: dateTumbler.height + 5 + useDate.height + 5
+                y: calendar.height + 10
+                x: 5
+
+                width:  260
 
                 TumblerColumn {
                     id: hourChoose
@@ -344,12 +425,13 @@ Item {
                     model: 60
                 }
             }
+            */
 
             Switch
             {
                 y: timeTumbler.y + timeTumbler.height + 5
                 id: useTime
-                checked: true
+                checked: false
             }
 
             Button
@@ -357,8 +439,13 @@ Item {
                 y: useTime.y + useTime.height
                 text: "Choose"
 
+                x: 260-width-10
+
                 onClicked: {
                     console.log("done") //output values
+
+                    timeAndDate.text = calendar.selectedDate
+
                     dateTimePopup.close()
                 }
             }

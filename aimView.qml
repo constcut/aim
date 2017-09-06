@@ -13,68 +13,56 @@ Item {
     width: 480
     height: 800
 
+    signal requestOpenAddAim()
+
     property int elementHeight: 45
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
     property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
 
+    property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
+
     Item
     {
       y: yOffset
-      x: widthOffset
+      x: 10 //widthOffset
 
       width: parent.width - widthOffset*2
 
       id: searchBox
-      visible: false //false
+      visible: desktopClient //false
 
       property int fullHeight: elementHeight*2
+
 
 
        TextField
        {
            id: aimNameSearch
-           placeholderText: "Input here aim name"
+           placeholderText: "Input here search request"
            visible: true
            width: parent.width
 
            onTextChanged:
            {
                searchTimer.restart()
-               if (text.length > 0)
+
+               if (searchByName.checked)
                {
-                   searchModel(text)
+                   if (text.length > 0)
+                       searchModel(text)
+                   else
+                       loadModel()
                }
-               else
+
+               if (searchByTag.checked)
                {
-                   loadModel()
+                   if (text.length > 0)
+                       searchModelTag(text)
+                   else
+                       loadModel()
                }
-           }
-       }
-       ComboBox
-       {
-           id: aimTagSearch
-           model: ["Select tag: ", "tag1","tag2","tag3","tag4"]
-           visible: false
-           width: parent.width
-
-           onActiveFocusChanged:
-           {
-               if (activeFocus)
-                   searchTimer.stop()
-               else
-                   searchTimer.start()
-           }
-
-           onActivated:
-           {
-            searchTimer.start()
-
-               if (currentIndex==0)
-                   loadModel()
-               else
-                   searchModelTag(currentText)
            }
        }
 
@@ -87,30 +75,8 @@ Item {
             text: "name"
             onCheckedChanged: //cover under function
             {
-                if (checked)
-                {
-                    aimTagSearch.visible = false
-                    aimNameSearch.visible = true
-                    searchTimer.restart()
-                }
-            }
-       }
-
-       RadioButton
-       {
-            y: elementHeight
-            x: parent.width/2 - width/2
-            id: searchByType
-            text: "type"   //assigned to me, done, overdated etc
-
-            onCheckedChanged: //cover under function
-            {
-                if (checked)
-                {
-                    aimNameSearch.visible = false
-                    aimTagSearch.visible = true
-                    searchTimer.restart()
-                }
+                //only for android
+                //if (checked) searchTimer.restart()
             }
        }
 
@@ -123,29 +89,25 @@ Item {
 
             onCheckedChanged: //cover under function
             {
-                if (checked)
-                {
-                    aimNameSearch.visible = false
-                    aimTagSearch.visible = true
-                    searchTimer.restart()
-                }
+                //only for android
+                //if (checked) searchTimer.restart()
             }
        }
     } //SEARCH BOX END
     Item
     {
         //settings box
-        y: yOffset
+        y: yOffset - 20
         x: searchBox.width + widthOffset + 15
 
         width: widthOffset-10
 
         id: settingsBox
-        visible: false //false
+        visible: desktopClient //false
 
         RoundButton
         {
-            text:  "\u2699"
+            text:  "*" // "\u2699"
             font.pixelSize: 20
             onClicked:
             {
@@ -157,9 +119,37 @@ Item {
         }
     }
 
+    //please note it yet not hided like another button does, so it would have to make some tricks on android around it, but its simple
+    Item
+    {
+        //settings box
+        y: yOffset + 50
+        x: searchBox.width + widthOffset + 15
+
+        width: widthOffset-10
+
+        id: addBox
+        visible: desktopClient //false
+
+        RoundButton
+        {
+            text:  "+"
+            font.pixelSize: 20
+            onClicked:
+            {
+                aimViewWindow.requestOpenAddAim()
+            }
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Add aim")
+        }
+    }
+
+
+
     Popup {
         id: viewSettingsPopup //make also time popup with tumbler
-        x: 100
+        x: 50
         y: 50
         width: 230
         height: 560 //ensure manual sizing
@@ -262,28 +252,46 @@ Item {
         }
 
     Timer{
+
+        //should avoid it for desktop
+
             id: searchTimer; running: false; interval: 10000; repeat: false
             onTriggered: {
 
-                if (listModel.count == 0)
+
+                if (desktopClient == false)
                 {
-                    running = true
-                }
-                else
-                {
-                    searchBox.visible = false
-                    settingsBox.visible = false
+                    if (listModel.count == 0)
+                    {
+                        running = true
+                    }
+                    else
+                    {
+                        searchBox.visible = false
+                        settingsBox.visible = false
+                    }
                 }
             }
         }
 
+
+    Rectangle
+    {
+         y: searchBox.visible ? searchBox.fullHeight + yOffset +10: yOffset+10
+         x: 0
+         width: parent.width
+         height:10
+
+         border.color: "black"
+         color: "gray"
+    }
 
     ListView
     {
         id:aimList
         clip: true
         width: parent.width
-        y: searchBox.visible ? searchBox.fullHeight + yOffset : yOffset
+        y: searchBox.visible ? searchBox.fullHeight + yOffset+25 : yOffset+25
         height: parent.height - yOffset*4 //if put someting down make it *4
 
         model: listModel
@@ -293,16 +301,27 @@ Item {
                 }
 
         onContentYChanged: {
-                   if( contentY < -100 ) {
-                       searchBox.visible = true
-                       settingsBox.visible = true
-                       searchTimer.running = true
-                   }
-                   if (contentY > 300)
+
+
+                   if (desktopClient == false) //android or ios
                    {
-                        searchBox.visible = false
-                        settingsBox.visible = false
+                       if( contentY < -100 ) {
+                           searchBox.visible = true
+                           settingsBox.visible = true
+                           searchTimer.running = true
+                       }
+                       if (contentY > 300)
+                       {
+                            searchBox.visible = false
+                            settingsBox.visible = false
+                       }
                    }
+                   else
+                   {
+                       //desktop
+                   }
+
+
                }
 
         delegate: anotherDeligate//listDelegate
@@ -355,29 +374,24 @@ Item {
             Column {
                 Row
                 {
-                    height: 25 //must look over here
-                    Text { text: '<i>Name:</i> <b>' + name + '</b>' }
-                    Text { text: ' Moment: ' + timeAndDate; visible: aimViewWindow.timeAndDateShow }
-                    Text { text: ' Repeat: ' + repeatable; visible: aimViewWindow.repeatableShow }
+                    height: 30 //must look over here
+                    Text { color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: 15}
                 }
                 Row
                 {
                     height: 25
-                    Text { text: 'Category: ' + categoryValue; visible: aimViewWindow.categoryShow }
-                    Text { text: ' List: ' + aimListName; visible: aimViewWindow.repeatableShow }
-                    Text { text: ' Progress: ' + progress; visible: aimViewWindow.progressShow }
+                    Text { color:userSettings.getColor("Text");text: 'Category: ' + tag; visible: aimViewWindow.categoryShow   ; font.pointSize: 15}
                 }
                 Row
                 {
                     height: 25
-                    Text { text: ' Privacy: ' + privacy; visible: aimViewWindow.privacyShow}
-                    Text { text: ' AssignTo: ' + assignTo; visible: aimViewWindow.assignToShow}
+                    Text { x: 100; color:userSettings.getColor("Text");text: ' AssignTo: ' + assignTo; visible: aimViewWindow.assignToShow  ; font.pointSize: 15}
                 }
                 Row
                 {
                     height: 25
-                    Text { text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow}
-                    Text { text: ' Children: ' + child; visible: aimViewWindow.childAimsShow}
+                    //Text { color:userSettings.getColor("Text"); text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow  ; font.pointSize: 15 }
+                    //Text { color:userSettings.getColor("Text");text: ' Children: ' + child; visible: aimViewWindow.childAimsShow  ; font.pointSize: 15 }
                 }
             }
             states: State { // indent the item if it is the current item
@@ -423,7 +437,7 @@ Item {
             width: 200; height: 50
             color: highlightAimColor //"#FFFF88"
             y: aimList.currentItem.y;
-            Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } } //read about it
+            Behavior on y { SpringAnimation { spring: 2; damping: 0.3 } } //read about it
         }
     }
 
@@ -436,23 +450,27 @@ Item {
         {
             //aimId is 0
 
-
             var aimName = aimList[i][1]
-            var aimListName = aimList[i][2]
-            var timeAndDate = aimList[i][3]
-            var category = aimList[i][4]
-            var repeatable = aimList[i][5]
-            var privacy = aimList[i][6]
-            var assignTo = aimList[i][7]
-            var parentAim = aimList[i][8]
-            var childAim = aimList[i][9]
-            var progress = aimList[i][10]
+            var timeAndDate = aimList[i][2]
+            var comment = aimList[i][3]
+            var tag = aimList[i][4]
+            var assignTo = aimList[i][5]
+            var priority = aimList[i][6]
 
-            //var linkList = localBase.getAimLinks(aimName)
+            var progress = aimList[i][7]
+            var progressText = aimList[i][8]
+            var parentAim = aimList[i][9]
+            var childAim = aimList[i][10]
 
-            listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
-                             "repeatable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
-                             "child":childAim,"progress":progress})
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
+
+
+            listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+                             "assignTo":assignTo,"priority":priority,
+                             "progress":progress,"progressText":progressText,
+                             "parentAim":parentAim,"childAim":childAim,
+                             "repeatable":repeatable,"privacy":privacy})
         }
     }
 
@@ -465,22 +483,30 @@ Item {
 
         for (var i = 0; i < aimList.length; ++i)
         {
+
             var aimName = aimList[i][1]
-            var aimListName = aimList[i][2]
-            var timeAndDate = aimList[i][3]
-            var category = aimList[i][4]
-            var repeatable = aimList[i][5]
-            var privacy = aimList[i][6]
-            var assignTo = aimList[i][7]
-            var parentAim = aimList[i][8]
-            var childAim = aimList[i][9]
-            var progress = aimList[i][10]
+            var timeAndDate = aimList[i][2]
+            var comment = aimList[i][3]
+            var tag = aimList[i][4]
+            var assignTo = aimList[i][5]
+            var priority = aimList[i][6]
+
+            var progress = aimList[i][7]
+            var progressText = aimList[i][8]
+            var parentAim = aimList[i][9]
+            var childAim = aimList[i][10]
+
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
+
 
             //also could run as set of filters making another list - first filter name, then tag etc
             if (aimName.search(regExpName) !== -1)
-                listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
-                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
-                                 "child":childAim,"progress":progress})
+                listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+                                 "assignTo":assignTo,"priority":priority,
+                                 "progress":progress,"progressText":progressText,
+                                 "parentAim":parentAim,"childAim":childAim,
+                                 "repeatable":repeatable,"privacy":privacy})
         }
     }
     //unite + extend
@@ -489,24 +515,34 @@ Item {
         listModel.clear()
         var aimList =  localBase.getAims()
 
+         var regExpTag= new RegExp(searchTag)
+
         for (var i = 0; i < aimList.length; ++i)
         {
             var aimName = aimList[i][1]
-            var aimListName = aimList[i][2]
-            var timeAndDate = aimList[i][3]
-            var category = aimList[i][4]
-            var repeatable = aimList[i][5]
-            var privacy = aimList[i][6]
-            var assignTo = aimList[i][7]
-            var parentAim = aimList[i][8]
-            var childAim = aimList[i][9]
-            var progress = aimList[i][10]
+            var timeAndDate = aimList[i][2]
+            var comment = aimList[i][3]
+            var tag = aimList[i][4]
+            var assignTo = aimList[i][5]
+            var priority = aimList[i][6]
+
+            var progress = aimList[i][7]
+            var progressText = aimList[i][8]
+            var parentAim = aimList[i][9]
+            var childAim = aimList[i][10]
+
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
 
             //also could run as set of filters making another list - first filter name, then tag etc
-            if (category == searchTag)
-                listModel.append({"name":aimName,"aimListName":aimList,"timeAndDate":timeAndDate,"categoryValue":category,
-                                 "repeateable":repeatable,"privacy":privacy,"assignTo":assignTo,"parentAim":parentAim,
-                                 "child":childAim,"progress":progress})
+
+            if (tag.search(regExpTag) !== -1)
+            //if (tag == searchTag)
+                listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+                                      "assignTo":assignTo,"priority":priority,
+                                      "progress":progress,"progressText":progressText,
+                                      "parentAim":parentAim,"childAim":childAim,
+                                      "repeatable":repeatable,"privacy":privacy})
         }
     }
 

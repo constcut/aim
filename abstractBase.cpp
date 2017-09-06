@@ -207,20 +207,14 @@ QVariantList LocalSqlBase::getLists()
 ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-int LocalSqlBase::addAim(QString aimName,QString aimList, QString timeAndDate, QString category,
-                        QString repeatable, QString privacy, QString assignTo, QString parent,
-                        QString child, QString progress)
+int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                         QString assignTo, /*delayed*/ QString priority, QString progress, QString parent,
+                       QStringList childList, QString repeatable, QString privacy)
 {
-    ///HEY must clean off default values
-    ///
-    //'Insert into list:','QQuickTextField(0x246915c0)','Choose category:','','Choose privacy:','Assign to:','Parent aim:','Child aim:','Progress: '
+    QString requestBody("INSERT INTO aims (aimName,timeAndDate,comment,tag," //OUTPUT INSERTED.aimId
+                        "assignTo,priority) VALUES('" + aimName + "','" +
+                        timeAndDate + "','" + comment + "','" + tag + "','" + assignTo + "','" + priority  + "');");
 
-    QString requestBody("INSERT INTO aims (aimName,aimList,timeAndDate,category,repeatable,privacy," //OUTPUT INSERTED.aimId
-                        "assignTo,parentAim,childAim,progress) VALUES('" + aimName + "','" + aimList + "','" +
-                        timeAndDate + "','" + category + "','" + repeatable + "','" + privacy + "','" + assignTo
-                        + "','" + parent + "','" + child + "','" + progress + "');");
-
-    qDebug() << "Test debug output";
 
     QSqlQuery request = executeRequest(requestBody);
 
@@ -230,9 +224,9 @@ int LocalSqlBase::addAim(QString aimName,QString aimList, QString timeAndDate, Q
     return -1;
 }
 
-bool LocalSqlBase::editAim(QString aimName,QString aimList, QString timeAndDate, QString category,
-                         QString repeatable, QString privacy, QString assignTo, QString parent,
-                         QString child, QString progress)
+bool LocalSqlBase::editAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                           QString assignTo, /*delayed*/ QString priority, QString progress, QString parent,
+                         QStringList childList, QString repeatable, QString privacy)
 {
     return false;
 }
@@ -326,15 +320,20 @@ bool LocalSqlBase::createTablesIfNeeded()
     QString aimTableCreate("CREATE TABLE IF NOT EXISTS aims (" //
                            "aimId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
-                           "aimList text NOT NULL,"
-                           "timeAndDate text NOT NULL,"
-                           "category text NOT NULL,"
-                           "repeatable text NOT NULL,"
-                           "privacy text NOT NULL,"
+                           "timeAndDate text,"
+                           "comment text,"
+                           "tag text,"
                            "assignTo text NOT NULL,"
-                           "parentAim text NOT NULL,"
-                           "childAim text NOT NULL,"
-                           "progress text NOT NULL"
+
+                           "priority text,"
+                           "progress text,"
+                           "progressText text,"
+                           "parentAim text,"
+                           "childAim text,"
+
+                           "repeatable text,"
+                           "privacy text"
+
                          ");"); //charset no used sorry
 
     QSqlQuery request = executeRequest(aimTableCreate);

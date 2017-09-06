@@ -13,13 +13,13 @@ public:
     explicit AbstractSqlBase(QObject *parent = 0);
 
     //Aims
-    Q_INVOKABLE virtual int addAim(QString aimName,QString aimList, QString timeAndDate, QString category,
-                                    QString repeatable, QString privacy, QString assignTo, QString parent,
-                                    QString child, QString progress)=0;
+    Q_INVOKABLE virtual int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                                   QString assignTo, QString priority="", QString progress="", QString parent="",
+                                 QStringList childList=QStringList(), QString repeatable="", QString privacy="")=0;
 
-    Q_INVOKABLE virtual bool editAim(QString aimName,QString aimList, QString timeAndDate, QString category,
-                                     QString repeatable, QString privacy, QString assignTo, QString parent,
-                                     QString child, QString progress)=0; //maybe some params as links should be accesable alone
+    Q_INVOKABLE virtual bool editAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                                     QString assignTo, QString priority="", QString progress="", QString parent="",
+                                   QStringList childList=QStringList(), QString repeatable="", QString privacy="")=0; //maybe some params as links should be accesable alone
 
     Q_INVOKABLE virtual QVariantList getAims()=0;
 
@@ -69,7 +69,7 @@ public slots:
 
 ///===========================================================================
 
-class LocalSqlBase : public AbstractSqlBase
+class LocalSqlBase : public AbstractSqlBase  //RENAME into LocalAimBase
 {
         Q_OBJECT
 public:
@@ -77,13 +77,13 @@ public:
     ~LocalSqlBase();
 
     //Aims
-    Q_INVOKABLE int addAim(QString aimName, QString aimList, QString timeAndDate, QString category,
-                            QString repeatable, QString privacy, QString assignTo, QString parent,
-                            QString child, QString progress);
+    Q_INVOKABLE int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                           QString assignTo, QString priority="", QString progress="", QString parent="",
+                         QStringList childList=QStringList(), QString repeatable="", QString privacy="");
 
-    Q_INVOKABLE bool editAim(QString aimName,QString aimList, QString timeAndDate, QString category,
-                             QString repeatable, QString privacy, QString assignTo, QString parent,
-                             QString child, QString progress); //maybe some params as links should be accesable alone
+    Q_INVOKABLE bool editAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                             QString assignTo, QString priority="", QString progress="", QString parent="",
+                           QStringList childList=QStringList(), QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
 
     Q_INVOKABLE QVariantList getAims();
 

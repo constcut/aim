@@ -6,9 +6,12 @@ UserSettings::UserSettings(QObject *parent):QObject(parent)
 
     setColor("Accent","#4CAF50"); //Material.Green
     setColor("Primary","#3F51B5"); //Material.Ingido
-    setColor("Foreground","#000000"); // #795548or Material.Brown
-    setColor("Background","#FFFFFF"); //or Material.Grey#607D8B
-    setColor("ListHightlight","#98FB98");
+    setColor("Foreground","#111111"); // #795548or Material.Brown
+    setColor("Background","#111111"); //or Material.Grey#607D8B
+    setColor("ListHightlight","#263E26"); //#98FB98
+
+
+    setColor("Text","#CCCCCC");
     ///maybe better store as propeties to be able to update asap
 
 

@@ -6,10 +6,13 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 
 Item {
+
+    anchors.fill: parent
+
     Calendar
     {
         y: 0
-        x: 100 //SHOULD BE REPLACE WITH SOME SCREEN VALUE
+        x: 50 //SHOULD BE REPLACE WITH SOME SCREEN VALUE
 
         width: parent.width - x*2
         height: parent.width - x*2 //special logic for always vertical Application
