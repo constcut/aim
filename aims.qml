@@ -16,7 +16,6 @@ Item {
     property int yOffset: 50 //be aware of low screens try everywhere
 
 
-
     SwipeView {
         id: swipeView
 
@@ -96,17 +95,5 @@ Item {
         target: addLoader.item
         onRequestOpenViewAims: swipeView.setCurrentIndex(1); //also had to forse load
     }
-
-    /*
-    onRequestOpenAddAim:
-    {
-        //some params could be given here
-    }
-    onRequestOpenEditAim:
-    {
-
-    }
-    */
-
 
 }

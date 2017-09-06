@@ -86,61 +86,6 @@ Item {
         placeholderText: "#tags"
     }
 
-    //in future make repatable by period
-    /*
-    Tumbler {
-        id:repeatable
-
-        y:yOffset+elementHeight*4
-        height: elementHeight*3 - 5
-        x: widthOffset
-
-        property string fullText: ""
-
-        property int tumblerColShift: 10
-
-        //style: "Flat"
-
-        TumblerColumn { //looks like better to replace with: http://doc.qt.io/qt-5/qml-qtquick-controls2-tumbler.html
-            id: monthRepeat
-            model: 13 //take attention o code below
-            width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
-        }
-        TumblerColumn {
-            id: dayRepeat
-            model: 8
-            width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
-        }
-        TumblerColumn {
-            id:hourRepeat
-            model: 24
-            width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
-        }
-        TumblerColumn {
-            id: minuteRepeat
-            model: 60
-            width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
-        }
-        TumblerColumn {
-            id: secondRepeat
-            model: 60
-            width: (parent.width-widthOffset*2)/5 - repeatable.tumblerColShift
-        }
-    }
-    */
-
-    //later
-    /*
-    ComboBox
-    {
-        id: privacy
-
-        y:yOffset+elementHeight*7
-        width: parent.width-widthOffset*2
-        x: widthOffset
-
-        model : ["Choose privacy:","private","shared","group:groupname"]
-    }*/
     ComboBox
     {
         id: assignTo
@@ -164,95 +109,7 @@ Item {
         model : ["Priority:","0-none","25-low","50-mid","75-high","100-critical"]
     }
 
-    //MUST BE LIST WHERE CAN BE SELECTED MANY
-    /*
-    ComboBox
-    {
-        id: parentAim
 
-        y:yOffset+elementHeight*9
-        width: parent.width-widthOffset*2
-        x: widthOffset
-
-        //currentText: "Parent aim"
-
-        model: ["Parent aim:","aim1","aim2","aim3"]
-    }
-    ComboBox
-    {
-        id: childAimsList
-        //should make with another element that could select few
-
-        y:yOffset+elementHeight*10
-        width: parent.width-widthOffset*2
-        x: widthOffset
-
-        //currentText: "Child aims"
-
-        model: ["Child aim:","aim1","aim2","aim3"]
-    }*/
-
-
-    ///well not on start right now i guess
-    /*
-    ComboBox
-    {
-        id: progress
-
-        y:yOffset+elementHeight*11
-        width: parent.width-widthOffset*2
-        x: widthOffset
-
-        model: ["Progress: ","created","in progress","done"] //make few scale to %
-    }
-    */
-    //ITEM here to be able add links ass needed
-
-    //Make a scroll area maximum of 3 here!! later
-    /*
-    onContentYChanged: {
-               if( contentY < -100 ) {
-                   searchField.visible = true;
-               } */
-
-
-    //yes and links we dont need also right now
-    /*
-    Repeater
-    {
-        id: linkRepeater
-        //y:5+elementHeight*12
-        //width: parent.width-widthOffset*2
-        //x: widthOffset
-
-        model: 0
-
-        TextField
-        {
-            id: linkField1 //how to access it ?
-
-            x: widthOffset
-            y: elementHeight*index + yOffset+elementHeight*12
-            height: elementHeight-5
-            width: parent.width-widthOffset*2
-            placeholderText: "Link"
-        }
-        //good to have remove button also
-    }
-    Button
-    {
-        id: addLinkButton
-        text: "Add link"
-        y: yOffset+elementHeight*12 + linkRepeater.model * elementHeight
-        x: widthOffset
-
-        onClicked:
-        {
-            if (linkRepeater.model < 4)
-            linkRepeater.model = linkRepeater.model + 1
-        }
-    }
-    */
     Button
     {
         id: addAimButton
@@ -402,30 +259,6 @@ Item {
                 //ON CHOOSE TURN ON SWITCH
             }
 
-            /*
-            Tumbler
-            {
-                id: timeTumbler
-
-                y: calendar.height + 10
-                x: 5
-
-                width:  260
-
-                TumblerColumn {
-                    id: hourChoose
-                    model: 24
-                }
-                TumblerColumn {
-                    id: minuteChoose
-                    model: 60
-                }
-                TumblerColumn {
-                    id: secondChoose
-                    model: 60
-                }
-            }
-            */
 
             Switch
             {

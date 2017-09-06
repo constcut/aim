@@ -161,15 +161,15 @@ Item {
         {
             var settingList = userSettings.getViewAimSettings()
 
-            aimListField.checked = settingList[0]
-            timeAndDateField.checked = settingList[1]
-            categoryField.checked = settingList[2]
-            repeatableField.checked = settingList[3]
-            privacyField.checked = settingList[4]
-            assignToField.checked = settingList[5]
-            parentField.checked  = settingList[6]
-            childField.checked  = settingList[7]
-            progressField.checked  = settingList[8]
+            timeAndDateField.checked = settingList[0]
+            commentField.checked = settingList[1]
+            tagField.checked = settingList[2]
+            assignToField.checked = settingList[3]
+            priorityField.checked = settingList[4]
+            progressField.checked = settingList[5]
+            progressTextField.checked  = settingList[6]
+            parentField.checked  = settingList[7]
+            childField.checked  = settingList[8]
         }
 
         Item {
@@ -177,33 +177,38 @@ Item {
             {
             CheckBox
             {
-                id: aimListField
-                text: "Aim list"
-            }
-            CheckBox
-            {
                 id: timeAndDateField
                 text: "Time and date"
             }
             CheckBox
             {
-                id: categoryField
-                text: "Category"
+                id: commentField
+                text: "Comment"
             }
             CheckBox
             {
-                id: repeatableField
-                text: "Repeatable"
-            }
-            CheckBox
-            {
-                id: privacyField
-                text: "Privacy"
+                id: tagField
+                text: "Tag"
             }
             CheckBox
             {
                 id: assignToField
                 text: "Assign to"
+            }
+            CheckBox
+            {
+                id: priorityField
+                text: "Priority"
+            }
+            CheckBox
+            {
+                id: progressField
+                text: "Progress"
+            }
+            CheckBox
+            {
+                id: progressTextField
+                text: "Progress text"
             }
             CheckBox
             {
@@ -215,20 +220,15 @@ Item {
                 id: childField
                 text: "Child"
             }
-            CheckBox
-            {
-                id: progressField
-                text: "Progress"
-            }
             Button
             {
                 text:"Save settings"
                 onClicked:
                 {
-                    var viewAimList = [aimListField.checked,timeAndDateField.checked,
-                            categoryField.checked,repeatableField.checked,
-                            privacyField.checked,assignToField.checked,parentField.checked,
-                            childField.checked,progressField.checked]
+                    var viewAimList = [timeAndDateField.checked,commentField.checked,
+                            tagField.checked,assignToField.checked,
+                            priorityField.checked,progressField.checked,progressTextField.checked,
+                            parentField.checked,childField.checked]
 
                     userSettings.setViewAimSettings(viewAimList)
 
@@ -340,26 +340,32 @@ Item {
     {
        var settingsList =  userSettings.getViewAimSettings()
 
-        aimViewWindow.aimListShow = settingsList[0]
-        aimViewWindow.timeAndDateShow = settingsList[1]
-        aimViewWindow.categoryShow = settingsList[2]
-        aimViewWindow.repeatableShow = settingsList[3]
-        aimViewWindow.privacyShow = settingsList[4]
-        aimViewWindow.assignToShow = settingsList[5]
-        aimViewWindow.parentAimShow = settingsList[6]
-        aimViewWindow.childAimsShow = settingsList[7]
-        aimViewWindow.progressShow = settingsList[8]
+        aimViewWindow.timeAndDateShow = settingsList[0]
+        aimViewWindow.commentShow = settingsList[1]
+        aimViewWindow.tagShow = settingsList[2]
+        aimViewWindow.assignToShow = settingsList[3]
+        aimViewWindow.priorityShow = settingsList[4]
+        aimViewWindow.progressShow = settingsList[5]
+        aimViewWindow.progressTextShow = settingsList[6]
+        aimViewWindow.parentAimShow = settingsList[7]
+        aimViewWindow.childAimShow = settingsList[8]
+
+        //aimViewWindow.repeatableShow = settingsList[9] //not yet
+        //aimViewWindow.privacyShow = settingsList[10] //not yet
     }
 
-    property bool aimListShow : true
     property bool timeAndDateShow: true
-    property bool categoryShow: true
-    property bool repeatableShow: true
-    property bool privacyShow: true
+    property bool commentShow: true
+    property bool tagShow: true
     property bool assignToShow: true
+    property bool priorityShow: true
+    property bool progressShow:  true
+    property bool progressTextShow: true
     property bool parentAimShow: true
-    property bool childAimsShow: true
-    property bool progressShow: true
+    property bool childAimShow: true
+
+    property bool repeatableShow: false //not yet
+    property bool privacyShow: false //not yet
 
     Component {
         id: anotherDeligate
@@ -370,28 +376,36 @@ Item {
             width: aimList.width
             height: 110  //means need to know fonts also
 
-
             Column {
                 Row
                 {
                     height: 30 //must look over here
-                    Text { color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: 15}
+                    Text { id: aimNameText; color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: 20}
+                    rightPadding:  (aimList.width - aimNameText.width)/2 - 10
+                    leftPadding:  (aimList.width - aimNameText.width)/2 - 10
+                }
+                RowLayout
+                {
+                    height: 25
+                    width: aimList.width
+
+                    Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimViewWindow.tagShow && tag.length > 0   ; font.pointSize: 15}
+                    //spacing: 50 //later can make it just like left\right padding
+                    Text { rightPadding: 25; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimViewWindow.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: 15}
+                }
+                RowLayout
+                {
+                    height: 15
+                    width: aimList.width
+
+                    Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimViewWindow.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pointSize: 10}
+                    //spacing: 50 //later can make it just like left\right padding
+                    Text { rightPadding: 25; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimViewWindow.priorityShow && priority.length > 0; font.pointSize: 10}
                 }
                 Row
                 {
                     height: 25
-                    Text { color:userSettings.getColor("Text");text: 'Category: ' + tag; visible: aimViewWindow.categoryShow   ; font.pointSize: 15}
-                }
-                Row
-                {
-                    height: 25
-                    Text { x: 100; color:userSettings.getColor("Text");text: ' AssignTo: ' + assignTo; visible: aimViewWindow.assignToShow  ; font.pointSize: 15}
-                }
-                Row
-                {
-                    height: 25
-                    //Text { color:userSettings.getColor("Text"); text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow  ; font.pointSize: 15 }
-                    //Text { color:userSettings.getColor("Text");text: ' Children: ' + child; visible: aimViewWindow.childAimsShow  ; font.pointSize: 15 }
+                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimViewWindow.commentShow  && comment.length > 0 ; font.pointSize: 10}
                 }
             }
             states: State { // indent the item if it is the current item
@@ -421,12 +435,32 @@ Item {
 
         MenuItem {
             text: "Edit"
+
+            onTriggered:
+            {
+                console.log("edit triggered")
+            }
         }
         MenuItem {
             text: "Delete"
+
+            onTriggered:
+            {
+                console.log("delete triggered")
+
+                //aimList.currentIndex
+                //get needed info to delete that aim;
+
+                //MUST ADD ID
+            }
         }
         MenuItem {
             text: "Send"
+
+            onTriggered:
+            {
+                console.log("send triggered")
+            }
         }
     }
 
@@ -448,8 +482,7 @@ Item {
 
         for (var i = 0; i < aimList.length; ++i)
         {
-            //aimId is 0
-
+            var aimId = aimList[i][0]
             var aimName = aimList[i][1]
             var timeAndDate = aimList[i][2]
             var comment = aimList[i][3]
@@ -466,7 +499,7 @@ Item {
             var privacy = aimList[i][12]
 
 
-            listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+            listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                              "assignTo":assignTo,"priority":priority,
                              "progress":progress,"progressText":progressText,
                              "parentAim":parentAim,"childAim":childAim,
@@ -483,7 +516,7 @@ Item {
 
         for (var i = 0; i < aimList.length; ++i)
         {
-
+            var aimId = aimList[i][0]
             var aimName = aimList[i][1]
             var timeAndDate = aimList[i][2]
             var comment = aimList[i][3]
@@ -502,7 +535,7 @@ Item {
 
             //also could run as set of filters making another list - first filter name, then tag etc
             if (aimName.search(regExpName) !== -1)
-                listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+                listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                                  "assignTo":assignTo,"priority":priority,
                                  "progress":progress,"progressText":progressText,
                                  "parentAim":parentAim,"childAim":childAim,
@@ -519,6 +552,7 @@ Item {
 
         for (var i = 0; i < aimList.length; ++i)
         {
+            var aimId = aimList[i][0]
             var aimName = aimList[i][1]
             var timeAndDate = aimList[i][2]
             var comment = aimList[i][3]
@@ -538,7 +572,7 @@ Item {
 
             if (tag.search(regExpTag) !== -1)
             //if (tag == searchTag)
-                listModel.append({"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
+                listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                                       "assignTo":assignTo,"priority":priority,
                                       "progress":progress,"progressText":progressText,
                                       "parentAim":parentAim,"childAim":childAim,

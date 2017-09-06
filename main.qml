@@ -38,33 +38,6 @@ ApplicationWindow {
         RowLayout
         {
 
-            /*
-            ToolButton
-            {
-                text: "Aims"
-                onClicked: mainLoader.source = "aims.qml" //earlier
-            }
-            */
-
-
-            //DELAYED
-
-
-            /*
-
-            ToolButton
-            {
-                text: "User settings"
-                onClicked:  drawerLeft.open()
-            }
-            ToolButton
-            {
-                text: "Chats"
-                onClicked:  drawerDown.open()
-            }
-
-            */
-
             ToolButton
             {
                 text: "view"
@@ -129,8 +102,6 @@ ApplicationWindow {
 
 
 
-
-
     Drawer {
            id: drawerRight
            width: 0.66 * window.width
@@ -157,7 +128,6 @@ ApplicationWindow {
            }
 
        }
-
 
     Drawer {
            id: drawerDown
