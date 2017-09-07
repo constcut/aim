@@ -449,9 +449,14 @@ Item {
                 console.log("delete triggered")
 
                 //aimList.currentIndex
-                //get needed info to delete that aim;
 
-                //MUST ADD ID
+                var index = aimList.currentIndex
+                var aimId = listModel.get(index).aimId
+
+                localBase.deleteAim(aimId)
+
+                loadModel()
+
             }
         }
         MenuItem {

@@ -21,6 +21,8 @@ public:
                                      QString assignTo, QString priority="", QString progress="", QString parent="",
                                    QStringList childList=QStringList(), QString repeatable="", QString privacy="")=0; //maybe some params as links should be accesable alone
 
+    Q_INVOKABLE virtual bool deleteAim(QString aimId)=0;
+
     Q_INVOKABLE virtual QVariantList getAims()=0;
 
     Q_INVOKABLE virtual QStringList getAimLinks(QString aimName)=0; //aim id
@@ -84,6 +86,8 @@ public:
     Q_INVOKABLE bool editAim(QString aimName, QString timeAndDate, QString comment, QString tag,
                              QString assignTo, QString priority="", QString progress="", QString parent="",
                            QStringList childList=QStringList(), QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
+
+    Q_INVOKABLE bool deleteAim(QString aimId);
 
     Q_INVOKABLE QVariantList getAims();
 

@@ -231,6 +231,17 @@ bool LocalSqlBase::editAim(QString aimName, QString timeAndDate, QString comment
     return false;
 }
 
+bool LocalSqlBase::deleteAim(QString aimId)
+{
+    QString requestBody("DELETE FROM aims WHERE aimId='"+
+                        aimId + "';");
+
+
+    QSqlQuery request = executeRequest(requestBody);
+
+    return request.next();
+}
+
 
 QVariantList LocalSqlBase::getAims()
 {
