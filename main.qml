@@ -78,7 +78,19 @@ ApplicationWindow {
     {
         target: mainLoader.item
         onRequestOpenAddAim: {
+
+            addLoader.item.loadForAddNew()
             drawerRight.open()
+        }
+        onRequestOpenEditAim: {
+            //LOAD ITEM IN DRAWER
+
+            //console.log("going to edit things " + aimId)
+
+            addLoader.item.loadAimForEdit(aimId)
+
+            drawerRight.open()
+
         }
     }
 

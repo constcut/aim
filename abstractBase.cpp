@@ -224,10 +224,22 @@ int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, 
     return -1;
 }
 
-bool LocalSqlBase::editAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, QString comment, QString tag,
                            QString assignTo, /*delayed*/ QString priority, QString progress, QString parent,
                          QStringList childList, QString repeatable, QString privacy)
 {
+    QString requestBody = QString("UPDATE aims SET aimName='%1',timeAndDate='%2',comment='%3',tag='%4',"
+                        "assignTo='%5',priority='%6' WHERE aimId='%7';")
+            .arg(aimName).arg(timeAndDate).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(aimId);
+    ///use this practice to replace all the bad code
+
+   // qDebug() << requestBody << " formed request";
+
+    QSqlQuery request = executeRequest(requestBody);
+
+    if (request.next())
+        return request.value(0).toInt(); //no sure it works..
+
     return false;
 }
 
@@ -248,11 +260,22 @@ QVariantList LocalSqlBase::getAims()
     QString requestBody = "SELECT * FROM aims";
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,11);
+    QVariantList aimsList = fillList(request,11); //11 is fields amount
 
     ///GOOD to scroll qml to add, if there are no aims
 
     return aimsList;
+}
+
+QStringList LocalSqlBase::getSingleAim(QString aimId)
+{
+    QString requestBody = "SELECT * FROM aims WHERE aimId='" + aimId + "';";
+    QSqlQuery request = executeRequest(requestBody);
+
+    QVariantList oneLine = fillList(request,11); //11 is fields amount
+    QStringList result = oneLine[0].toStringList();
+
+    return result;
 }
 
 QVariantList LocalSqlBase::searchAimsByName(QString searchText)

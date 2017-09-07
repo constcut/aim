@@ -1,0 +1,12 @@
+
+
+
+
+
+
+
+
+
+    1) pick the time - if it set, or cut it if there is no time there
+    2) make 2 fields in the  sql - time and date - for better search
+    3) schedule view (calendar + list view but with special loader - that also sorts)

@@ -25,7 +25,8 @@ include(deployment.pri)
 DISTFILES += \
     general_notes \
     android-sources/AndroidManifest.xml \
-    android-sources/src/at/wavespl/apps/aim/NotificationClient.java
+    android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
+    TODO
 
 HEADERS += \
     abstractBase.h \

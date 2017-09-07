@@ -14,6 +14,7 @@ Item {
     height: 800
 
     signal requestOpenAddAim()
+    signal requestOpenEditAim(var aimId)
 
     property int elementHeight: 45
     property int widthOffset: 70
@@ -430,6 +431,24 @@ Item {
         }
     }
 
+
+    MessageDialog {
+        id: deleteConfirmDialog
+        title: "Confirm"
+        text: "Are you sure want to delete this aim?"
+
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        //something not enough good with this style
+        //long russian names became short
+
+        onAccepted:   {
+            var index = aimList.currentIndex
+            var aimId = listModel.get(index).aimId
+            localBase.deleteAim(aimId)
+            loadModel()
+        }
+    }
+
     Menu {
         id: aimMenu
 
@@ -438,7 +457,10 @@ Item {
 
             onTriggered:
             {
-                console.log("edit triggered")
+               // console.log("edit triggered")
+                var index = aimList.currentIndex
+                var aimId = listModel.get(index).aimId
+                aimViewWindow.requestOpenEditAim(aimId)
             }
         }
         MenuItem {
@@ -449,13 +471,7 @@ Item {
                 console.log("delete triggered")
 
                 //aimList.currentIndex
-
-                var index = aimList.currentIndex
-                var aimId = listModel.get(index).aimId
-
-                localBase.deleteAim(aimId)
-
-                loadModel()
+                deleteConfirmDialog.open()
 
             }
         }

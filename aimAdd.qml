@@ -24,6 +24,9 @@ Item {
 
     property int yOffset: 50 //be aware of low screens try everywhere
 
+    property bool editMode : false
+    property string editingAimId : ""
+
     TextField
     {
         id: aimName
@@ -117,6 +120,8 @@ Item {
         y: yOffset+elementHeight*13 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
+        visible: !editMode
+
         onClicked: {
 
             var assignToText = assignTo.currentText
@@ -139,6 +144,86 @@ Item {
             aimAddWindow.requestOpenViewAims()
         }
     }
+
+    function loadAimForEdit(aimId)
+    {
+        //takes single aim and loads it things
+        var aimList = localBase.getSingleAim(aimId)
+
+        var aimNameValue = aimList[1]
+        var timeAndDateValue = aimList[2]
+        var commentValue = aimList[3]
+        var tagValue = aimList[4]
+        var assignToValue = aimList[5]
+        var priorityValue = aimList[6]
+
+        //OK must store also aimId somewhere
+
+        aimName.text = aimNameValue
+        timeAndDate.text = timeAndDateValue
+        commentText.text = commentValue
+        tags.text = tagValue
+
+        //assign to + priority skipped for a while..
+
+        //need a nice way for combo boxes, probably function to pass through list and then find index and set in for combo
+
+        editingAimId = aimId
+
+        var progressValue = aimList[7]
+        var progressTextValue = aimList[8]
+        var parentAimValue = aimList[9]
+        var childAimValue = aimList[10]
+
+        var repeatableValue = aimList[11]
+        var privacyValue = aimList[12]
+
+        editMode = true
+    }
+
+    function loadForAddNew()
+    {
+        aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+        assignTo.currentIndex = -1
+        priority.currentIndex = -1
+
+        editMode = false //to prepare for next time
+    }
+
+    Button
+    {
+        id: editAimButton
+        text: "Edit aim"
+        y: yOffset+elementHeight*13 //+ linkRepeater.model * elementHeight
+        x: parent.width - width - widthOffset
+
+        visible: editMode
+
+        onClicked: {
+
+            var assignToText = assignTo.currentText
+            if (assignToText == "Assign to:")
+                assignToText = ""
+
+            var priorityText = priority.currentText
+            if (priorityText == "Priority:")
+                priorityText = ""
+
+
+            var insertedIndex =
+            localBase.editAim(editingAimId ,aimName.text,timeAndDate.text, commentText.text, tags.text,
+                                                 assignToText, priorityText);
+
+            aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+            assignTo.currentIndex = -1
+            priority.currentIndex = -1
+
+            editMode = false //to prepare for next time
+
+            aimAddWindow.requestOpenViewAims()
+        }
+    }
+
 
 
     Text
