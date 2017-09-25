@@ -1,53 +1,118 @@
-        ---------------------------------------------------------------------------
+        =======================================================================================================================================================================================
+        \       Общий план разработки блока модулей aim:
+         \
+          \     Паралельная разработка отдельных модулей с перечнем задач в каждом, однако разработка идет в одном проекте
+           \
+           |        1: назначение задач
+            |               а. расписание (разделение полей дата и время и наполнение формы) б. родительские задачи в добавлении и просмотре в. дерево задач
 
-        1) pick the time - if it set, or cut it if there is no time there
-        2) make 2 fields in the  sql - time and date - for better search
-        3) schedule view (calendar + list view but with special loader - that also sorts)
+            |
+            |       2: общие програмные модули
+           |                а. авторегистрация в сети, даже если нет логина. б. привязка устройства к логину(устройств может быть несколько) в. добавление друзей г. отправка сообщений
+           |
+           |
+           |        3: модуль рецептов (посмотреть Qt пример с рецептами - для listview)
+                            а. окно добавления б. окно добавления нового ингридиента в. окно просмотра ингридиентов г. окно просмотра рецептов (просчёт значений) д. история блюд (с учетом времени готовки start\stop)
+           |
+           |
+           |        4: модуль книг
+                            а. окно книги {комбо-боксы: название, глава; Текст главы, с гипер ссылками; Подтекст - в котором открываются гиперссылки; Кнопка для открытия расширенного окна подтекста
+           |                б. окно подтекста - комментарий к главе, конкретному понятию, слову (идеи)
 
-        4) parent fields (delete child field)
-        5) tree view parent aims
+           |
+           |        5: модуль подсчета средств, для автоматической калькуляции затрат на еду - и в целом расходов
 
-        6) online sync with mac based id for phone
+           |
+           |
+           |        6: модуль быков и коров
+           |
+           |
+           |
+           |        7: формы для багтрекинга
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+           |
+            ---------------------------------------------------------------------------
 
-        7) login creation, attaching mac based id to login
+            1) pick the time - if it set, or cut it if there is no time there
+            2) make 2 fields in the  sql - time and date - for better search
+            3) schedule view (calendar + list view but with special loader - that also sorts)
 
-        8) adding friends
-        9) sending messages
-        10) receiving messages
+            4) parent fields (delete child field)
+            5) tree view parent aims
 
-        11) notifications - reminder on time - tray or android notifications
-        12) notifications about new messages & sended aims
+            6) online sync with mac based id for phone
 
-        13) using many tags in #tag field, to set multipule categories at the same time
+            7) login creation, attaching mac based id to login
 
-        14) periodical aims - update of schedule
-        15) starting aim execution button, stopping button - measures of time (at first just to fill work time)
+            8) adding friends
+            9) sending messages
+            10) receiving messages
 
-        ---------------------------------------------------------------------------
+            11) notifications - reminder on time - tray or android notifications
+            12) notifications about new messages & sended aims
 
-        16) day as an abstraction - as template for job day, for week end and so on
+            13) using many tags in #tag field, to set multipule categories at the same time
 
-        17) finance calculations
+            14) periodical aims - update of schedule
+            15) starting aim execution button, stopping button - measures of time (at first just to fill work time)
 
-        18) recipes, simple 3 peace form - ingredients, tools, actions
-        19) sending recipe
+            ---------------------------------------------------------------------------
 
-        20) book comments for whole chapter
-        21) book comments for single word like neologizm
+            16) day as an abstraction - as template for job day, for week end and so on
 
-        22) idea conception: desctiption, possible math
-        23) new types of input ideas
+            17) finance calculations
 
-        ---------------------------------------------------------------------------
+            18) recipes, simple 3 peace form - ingredients, tools, actions
+            19) sending recipe
 
-        24) bug tracker integrated
-        25) crash report sender
+            20) book comments for whole chapter
+            21) book comments for single word like neologizm
 
-        ---------------------------------------------------------------------------
+            22) idea conception: desctiption, possible math
+            23) new types of input ideas
 
-        26) bull & cows : digits N with M range, N letters, N colors\notes
-        27) tournament - when both make 10 numbers, and then trying to guess as fast as it possible
+            ---------------------------------------------------------------------------
 
-        ---------------------------------------------------------------------------
+            24) bug tracker integrated
+            25) crash report sender
 
-        //Then we can fully switch to music, and after music to graphics
+            ---------------------------------------------------------------------------
+
+            26) bull & cows : digits N with M range, N letters, N colors\notes
+            27) tournament - when both make 10 numbers, and then trying to guess as fast as it possible
+
+            ---------------------------------------------------------------------------
+
+            //Then we can fully switch to music, and after music to graphics
+
+            //But also we can take care about costs, for the upcoming work:
+                //at least 1k for qt 1year
+                //and 2-3 more for the gears
+                //and at least 1 more k for ads
