@@ -67,6 +67,19 @@
             4) parent fields (delete child field)
             5) tree view parent aims
 
+            6) tag tree with aim list
+
+            ==========================================================================
+
+            :android
+
+            11) notifications - reminder on time - tray or android notifications
+
+            14) periodical aims - update of schedule
+            15) starting aim execution button, stopping button - measures of time (at first just to fill work time)
+
+            ==========================================================================
+
             6) online sync with mac based id for phone
 
             7) login creation, attaching mac based id to login
@@ -75,13 +88,19 @@
             9) sending messages
             10) receiving messages
 
-            11) notifications - reminder on time - tray or android notifications
+            ?Python, php, qt socket...
+
+            ==========================================================================
+
+            ---------------------------------------------------------------------------
+
+            24) bug tracker integrated
+            25) crash report sender
+
+
+            ============================================================================
             12) notifications about new messages & sended aims
-
             13) using many tags in #tag field, to set multipule categories at the same time
-
-            14) periodical aims - update of schedule
-            15) starting aim execution button, stopping button - measures of time (at first just to fill work time)
 
             ---------------------------------------------------------------------------
 
@@ -98,10 +117,6 @@
             22) idea conception: desctiption, possible math
             23) new types of input ideas
 
-            ---------------------------------------------------------------------------
-
-            24) bug tracker integrated
-            25) crash report sender
 
             ---------------------------------------------------------------------------
 

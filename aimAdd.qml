@@ -113,11 +113,22 @@ Item {
     }
 
 
+    ComboBox
+    {
+        id: parentAim
+
+        y:yOffset+elementHeight*13
+        width: parent.width-widthOffset*2
+        x: widthOffset
+
+        model : localBase.getAimsNames()
+    }
+
     Button
     {
         id: addAimButton
         text: "Create aim"
-        y: yOffset+elementHeight*13 //+ linkRepeater.model * elementHeight
+        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
         visible: !editMode
@@ -135,7 +146,7 @@ Item {
 
             var insertedIndex =
             localBase.addAim(aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText);
+                                                 assignToText, priorityText,parentAim.currentText);
 
             aimName.text = timeAndDate.text = commentText.text = tags.text = ""
             assignTo.currentIndex = -1
@@ -151,11 +162,21 @@ Item {
         var aimList = localBase.getSingleAim(aimId)
 
         var aimNameValue = aimList[1]
+
+        var timePart = aimList[2]
+        var datePart = aimList[3]
+
         var timeAndDateValue = aimList[2]
-        var commentValue = aimList[3]
-        var tagValue = aimList[4]
-        var assignToValue = aimList[5]
-        var priorityValue = aimList[6]
+
+        timeAndDateValue = datePart;
+        if (timePart.length > 0)
+            timeAndDateValue += "T" + timePart;
+
+
+        var commentValue = aimList[4]
+        var tagValue = aimList[5]
+        var assignToValue = aimList[6]
+        var priorityValue = aimList[7]
 
         //OK must store also aimId somewhere
 
@@ -170,13 +191,15 @@ Item {
 
         editingAimId = aimId
 
-        var progressValue = aimList[7]
-        var progressTextValue = aimList[8]
-        var parentAimValue = aimList[9]
-        var childAimValue = aimList[10]
+        var progressValue = aimList[8]
+        var progressTextValue = aimList[9]
+        var parentAimValue = aimList[10]
+        var childAimValue = aimList[11]
 
-        var repeatableValue = aimList[11]
-        var privacyValue = aimList[12]
+        var repeatableValue = aimList[12]
+        var privacyValue = aimList[13]
+
+         parentAim.model = localBase.getAimsNames()
 
         editMode = true
     }
@@ -188,13 +211,15 @@ Item {
         priority.currentIndex = -1
 
         editMode = false //to prepare for next time
+
+        parentAim.model = localBase.getAimsNames()
     }
 
     Button
     {
         id: editAimButton
         text: "Edit aim"
-        y: yOffset+elementHeight*13 //+ linkRepeater.model * elementHeight
+        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
         visible: editMode
@@ -212,7 +237,7 @@ Item {
 
             var insertedIndex =
             localBase.editAim(editingAimId ,aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText);
+                                                 assignToText, priorityText,parentAim.currentText);
 
             aimName.text = timeAndDate.text = commentText.text = tags.text = ""
             assignTo.currentIndex = -1
@@ -229,8 +254,8 @@ Item {
     Text
     {
         id: notifyTODO
-        text: "Missing: parent, child list, period."
-        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
+        text: "Missing: period."
+        y: yOffset+elementHeight*17 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
     }
@@ -363,6 +388,20 @@ Item {
                     console.log("done") //output values
 
                     timeAndDate.text = calendar.selectedDate
+
+                    var datePart = timeAndDate.text.substring(0,10)
+
+                    if (useTime.checked==false)
+                        timeAndDate.text = datePart
+                    else
+                    {
+                        var hoursValue = hoursTumbler.currentIndex < 10 ? "0" + hoursTumbler.currentIndex : hoursTumbler.currentIndex;
+                        var minutesValue = minutesTumbler.currentIndex < 10 ? "0" + minutesTumbler.currentIndex : minutesTumbler.currentIndex;
+
+                        var timeValue =  hoursValue + ":" + minutesValue;
+
+                        timeAndDate.text = datePart + "T" + timeValue;
+                    }
 
                     dateTimePopup.close()
                 }

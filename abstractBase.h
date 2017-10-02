@@ -5,6 +5,7 @@
 #include <QVariantList>
 #include <QSqlQuery>
 
+#include "wslib/treemodel.h"
 
 class AbstractSqlBase : public QObject
 {
@@ -14,17 +15,20 @@ public:
 
     //Aims
     Q_INVOKABLE virtual int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                                   QString assignTo, QString priority="", QString progress="", QString parent="",
-                                 QStringList childList=QStringList(), QString repeatable="", QString privacy="")=0;
+                                   QString assignTo, QString priority="",  QString parent="", QString progress="",
+                                  QString repeatable="", QString privacy="")=0;
 
     Q_INVOKABLE virtual bool editAim(QString aimId, QString aimName, QString timeAndDate, QString comment, QString tag,
-                                     QString assignTo, QString priority="", QString progress="", QString parent="",
-                                   QStringList childList=QStringList(), QString repeatable="", QString privacy="")=0; //maybe some params as links should be accesable alone
+                                     QString assignTo, QString priority="",  QString parent="", QString progress="",
+                                   QString repeatable="", QString privacy="")=0; //maybe some params as links should be accesable alone
 
     Q_INVOKABLE virtual bool deleteAim(QString aimId)=0;
 
     Q_INVOKABLE virtual QVariantList getAims()=0;
+    Q_INVOKABLE virtual QVariantList getAimsByDate(QString date)=0;
     Q_INVOKABLE virtual QStringList getSingleAim(QString aimId)=0;
+
+     Q_INVOKABLE virtual QStringList getAimsNames()=0;
 
     Q_INVOKABLE virtual QStringList getAimLinks(QString aimName)=0; //aim id
     Q_INVOKABLE virtual bool setAimLinks(QString aimName, QStringList aimLinks)=0; //aim id
@@ -81,17 +85,23 @@ public:
 
     //Aims
     Q_INVOKABLE int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                           QString assignTo, QString priority="", QString progress="", QString parent="",
-                         QStringList childList=QStringList(), QString repeatable="", QString privacy="");
+                           QString assignTo, QString priority="",  QString parent="", QString progress="",
+                           QString repeatable="", QString privacy="");
 
     Q_INVOKABLE bool editAim(QString aimId, QString aimName, QString timeAndDate, QString comment, QString tag,
-                             QString assignTo, QString priority="", QString progress="", QString parent="",
-                           QStringList childList=QStringList(), QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
+                             QString assignTo, QString priority="", QString parent="", QString progress="",
+                           QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
 
     Q_INVOKABLE bool deleteAim(QString aimId);
 
     Q_INVOKABLE QVariantList getAims();
+
+    Q_INVOKABLE QVariantList getAimsByDate(QString date);
     Q_INVOKABLE QStringList getSingleAim(QString aimId);
+
+    Q_INVOKABLE QStringList getAimsNames();
+
+    bool fillTreeModelWithAims(TreeModel *treeModel);
 
     Q_INVOKABLE QStringList getAimLinks(QString aimName);
     Q_INVOKABLE bool setAimLinks(QString aimName, QStringList aimLinks);

@@ -208,12 +208,17 @@ QVariantList LocalSqlBase::getLists()
 
 
 int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                         QString assignTo, /*delayed*/ QString priority, QString progress, QString parent,
-                       QStringList childList, QString repeatable, QString privacy)
+                         QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
+                        QString repeatable, QString privacy)
 {
-    QString requestBody("INSERT INTO aims (aimName,timeAndDate,comment,tag," //OUTPUT INSERTED.aimId
-                        "assignTo,priority) VALUES('" + aimName + "','" +
-                        timeAndDate + "','" + comment + "','" + tag + "','" + assignTo + "','" + priority  + "');");
+    QString timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
+    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+
+
+    QString requestBody("INSERT INTO aims (aimName,timePart,datePart,comment,tag," //OUTPUT INSERTED.aimId
+                        "assignTo,priority,parentAim) VALUES('" + aimName + "','" +
+                        timePart + "','" + datePart  + "','" + comment + "','" + tag + "','" + assignTo + "','" + priority  +
+                         "','" + parent + "');");
 
 
     QSqlQuery request = executeRequest(requestBody);
@@ -225,12 +230,16 @@ int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, 
 }
 
 bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, QString comment, QString tag,
-                           QString assignTo, /*delayed*/ QString priority, QString progress, QString parent,
-                         QStringList childList, QString repeatable, QString privacy)
+                           QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
+                         QString repeatable, QString privacy)
 {
-    QString requestBody = QString("UPDATE aims SET aimName='%1',timeAndDate='%2',comment='%3',tag='%4',"
-                        "assignTo='%5',priority='%6' WHERE aimId='%7';")
-            .arg(aimName).arg(timeAndDate).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(aimId);
+    QString timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
+    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+
+
+    QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',timePart='%3',comment='%4',tag='%5',"
+                        "assignTo='%6',priority='%7',parent='%8' WHERE aimId='%9';")
+            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(aimId);
     ///use this practice to replace all the bad code
 
    // qDebug() << requestBody << " formed request";
@@ -254,10 +263,46 @@ bool LocalSqlBase::deleteAim(QString aimId)
     return request.next();
 }
 
+QStringList LocalSqlBase::getAimsNames()
+{
+    //later make a filter that not already done or something simmiliar
+
+    QString requestBody = "SELECT * FROM aims";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,2);  //no need too much mostly id + name, that are first 2
+
+    QStringList result;
+
+    for (int i = 0; i < aimsList.size(); ++i)
+    {
+        QStringList aimFields =  aimsList[i].toStringList();
+
+        result << aimFields[1]; //aim name
+    }
+
+    return result;
+}
+
 
 QVariantList LocalSqlBase::getAims()
 {
     QString requestBody = "SELECT * FROM aims";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,11); //11 is fields amount
+
+    ///GOOD to scroll qml to add, if there are no aims
+
+    return aimsList;
+}
+
+QVariantList LocalSqlBase::getAimsByDate(QString date)
+{
+    if (date.indexOf("T") != -1)
+        date = date.mid(0,date.indexOf("T"));
+
+    QString requestBody = "SELECT * FROM aims WHERE datePart='" + date + "';";
 
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimsList = fillList(request,11); //11 is fields amount
@@ -354,7 +399,8 @@ bool LocalSqlBase::createTablesIfNeeded()
     QString aimTableCreate("CREATE TABLE IF NOT EXISTS aims (" //
                            "aimId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
-                           "timeAndDate text,"
+                           "timePart text,"//"timeAndDate text,"
+                           "datePart text,"
                            "comment text,"
                            "tag text,"
                            "assignTo text NOT NULL,"
@@ -363,7 +409,6 @@ bool LocalSqlBase::createTablesIfNeeded()
                            "progress text,"
                            "progressText text,"
                            "parentAim text,"
-                           "childAim text,"
 
                            "repeatable text,"
                            "privacy text"
@@ -376,4 +421,100 @@ bool LocalSqlBase::createTablesIfNeeded()
 
      return false;
     //return request.next();
+}
+
+
+bool LocalSqlBase::fillTreeModelWithAims(TreeModel *treeModel)
+{
+    QVariantList allAims = getAims();
+
+    QVariantList rootAims;
+    QList<TreeItem*> treeItems;
+
+    for (int i = 0 ; i < allAims.size(); ++i)
+    {
+        QStringList aimList = allAims[i].toStringList();
+        QString parent = aimList[10];
+        if (parent.isEmpty())
+        {
+            rootAims << aimList;
+            //and also need to delete it from all aims...
+            //not extra nice but:
+            allAims.removeAt(i);
+            --i; ///shift because of delete
+
+            //ALSO here we create new TreeItem - thats linked
+                                        //to rootItem in TreeModel
+
+            //And we would use it later
+
+            QVector<QVariant> listPreparedForTree;
+
+            for (int k = 0; k < aimList.size(); ++i)
+            {
+                QVariant value = aimList[k];
+                listPreparedForTree << value;
+            }
+                                                ///CHECK about 2nd argument, columns count maybe shouldn't exceed predefined names (4 in our case)
+
+            TreeItem *item = new TreeItem(listPreparedForTree,treeModel->getColumnNamesSize(),treeModel->getRootItem()); ///CONSTRUCTOR!
+            //WE MUST SET HERE ALL THE DATA IN ITEM!
+            treeItems << item;
+        }
+    }
+
+    while (rootAims.empty()==false && allAims.size() > 0)
+    {
+        QVariantList nextRootAims;
+        QList<TreeItem*> nextTreeItems;
+
+        for (int i = 0; i < rootAims.size(); ++i)
+        {
+            QStringList aimList = rootAims[i].toStringList();
+            QString aimName = aimList[1];
+
+            for (int j = 0; j < allAims.size(); ++j)
+            {
+                QStringList nextAimList = allAims[j].toStringList();
+                QString parent = nextAimList[10];
+
+                if (parent == aimName)
+                {
+                    nextRootAims << nextAimList;
+                    allAims.removeAt(j);
+                    --j;
+
+                    TreeItem *parentItem = treeItems[i];
+
+                    //SO AGAIN: here we create a TreeItem,
+                            //and store is somewhere, but also this time
+                    //WE NEED to add this one, to its parent TreeItem!
+                    //So need to have some sublist
+
+                    QVector<QVariant> listPreparedForTree;
+
+                    for (int k = 0; k < nextAimList.size(); ++i)
+                    {
+                        QVariant value = nextAimList[k];
+                        listPreparedForTree << value;
+                    }
+
+                    TreeItem *item = new TreeItem(listPreparedForTree,treeModel->getColumnNamesSize(),parentItem); ///CONSTRUCTOR!
+                    //WE MUST SET HERE ALL THE DATA IN ITEM!
+                    nextTreeItems << item;
+
+                    parentItem->appendChild(item);
+
+                }
+            }
+        }
+
+        rootAims = nextRootAims;
+    }
+
+    //1: get with no parent
+    //a: make list of them b: delete them from the main list
+    //2: try to find from the rest those whose parent are in list
+    //a: make list of them b: delete them from the main list
+    //3: if list of them != 0 and if main list != 0 jump to 2
 }

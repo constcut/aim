@@ -11,7 +11,8 @@ android {
 SOURCES += main.cpp \
     abstractBase.cpp \
     userSettings.cpp \
-    screenglobal.cpp
+    screenglobal.cpp \
+    wslib/treemodel.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -31,7 +32,8 @@ DISTFILES += \
 HEADERS += \
     abstractBase.h \
     userSettings.h \
-    screenglobal.h
+    screenglobal.h \
+    wslib/treemodel.h
 
 #dunno what is that
 INSTALLS += target

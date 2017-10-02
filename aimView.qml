@@ -407,6 +407,8 @@ Item {
                 {
                     height: 25
                     Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimViewWindow.commentShow  && comment.length > 0 ; font.pointSize: 10}
+
+                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow  && parentAim.length > 0 ; font.pointSize: 10}
                 }
             }
             states: State { // indent the item if it is the current item
@@ -483,6 +485,14 @@ Item {
                 console.log("send triggered")
             }
         }
+        MenuItem {
+            text: "Add child"
+
+            onTriggered:
+            {
+                console.log("add child triggered")
+            }
+        }
     }
 
     Component {
@@ -505,19 +515,28 @@ Item {
         {
             var aimId = aimList[i][0]
             var aimName = aimList[i][1]
-            var timeAndDate = aimList[i][2]
-            var comment = aimList[i][3]
-            var tag = aimList[i][4]
-            var assignTo = aimList[i][5]
-            var priority = aimList[i][6]
+            var timeAndDate //= aimList[i][2]
 
-            var progress = aimList[i][7]
-            var progressText = aimList[i][8]
-            var parentAim = aimList[i][9]
-            var childAim = aimList[i][10]
+            var timePart = aimList[i][2]
+            var datePart = aimList[i][3]
 
-            var repeatable = aimList[i][11]
-            var privacy = aimList[i][12]
+            timeAndDate = datePart;
+
+            if (timePart.length > 0)
+                timeAndDate += "T" + timePart;
+
+            var comment = aimList[i][4]
+            var tag = aimList[i][5]
+            var assignTo = aimList[i][6]
+            var priority = aimList[i][7]
+
+            var progress = aimList[i][8]
+            var progressText = aimList[i][9]
+            var parentAim = aimList[i][10]
+            var childAim = aimList[i][11]
+
+            var repeatable = aimList[i][12]
+            var privacy = aimList[i][13]
 
 
             listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
@@ -539,19 +558,28 @@ Item {
         {
             var aimId = aimList[i][0]
             var aimName = aimList[i][1]
-            var timeAndDate = aimList[i][2]
-            var comment = aimList[i][3]
-            var tag = aimList[i][4]
-            var assignTo = aimList[i][5]
-            var priority = aimList[i][6]
+            var timeAndDate //= aimList[i][2]
 
-            var progress = aimList[i][7]
-            var progressText = aimList[i][8]
-            var parentAim = aimList[i][9]
-            var childAim = aimList[i][10]
+            var timePart = aimList[i][2]
+            var datePart = aimList[i][3]
 
-            var repeatable = aimList[i][11]
-            var privacy = aimList[i][12]
+            timeAndDate = datePart;
+
+            if (timePart.length > 0)
+                timeAndDate += "T" + timePart;
+
+            var comment = aimList[i][4]
+            var tag = aimList[i][5]
+            var assignTo = aimList[i][6]
+            var priority = aimList[i][7]
+
+            var progress = aimList[i][8]
+            var progressText = aimList[i][9]
+            var parentAim = aimList[i][10]
+            var childAim = aimList[i][11]
+
+            var repeatable = aimList[i][12]
+            var privacy = aimList[i][13]
 
 
             //also could run as set of filters making another list - first filter name, then tag etc
@@ -575,20 +603,28 @@ Item {
         {
             var aimId = aimList[i][0]
             var aimName = aimList[i][1]
-            var timeAndDate = aimList[i][2]
-            var comment = aimList[i][3]
-            var tag = aimList[i][4]
-            var assignTo = aimList[i][5]
-            var priority = aimList[i][6]
+            var timeAndDate //= aimList[i][2]
 
-            var progress = aimList[i][7]
-            var progressText = aimList[i][8]
-            var parentAim = aimList[i][9]
-            var childAim = aimList[i][10]
+            var timePart = aimList[i][2]
+            var datePart = aimList[i][3]
 
-            var repeatable = aimList[i][11]
-            var privacy = aimList[i][12]
+            timeAndDate = datePart;
 
+            if (timePart.length > 0)
+                timeAndDate += "T" + timePart;
+
+            var comment = aimList[i][4]
+            var tag = aimList[i][5]
+            var assignTo = aimList[i][6]
+            var priority = aimList[i][7]
+
+            var progress = aimList[i][8]
+            var progressText = aimList[i][9]
+            var parentAim = aimList[i][10]
+            var childAim = aimList[i][11]
+
+            var repeatable = aimList[i][12]
+            var privacy = aimList[i][13]
             //also could run as set of filters making another list - first filter name, then tag etc
 
             if (tag.search(regExpTag) !== -1)

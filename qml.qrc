@@ -5,5 +5,6 @@
         <file>aimView.qml</file>
         <file>aims.qml</file>
         <file>schedule.qml</file>
+        <file>aimTree.qml</file>
     </qresource>
 </RCC>

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     TreeModel treeModel;
     context->setContextProperty("treeModel",&treeModel);
-    ///localBase.fillTreeModelWithAims(&treeModel);
+    localBase.fillTreeModelWithAims(&treeModel);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
