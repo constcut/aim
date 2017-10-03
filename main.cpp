@@ -38,13 +38,19 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
 
+    TreeModel aimsTree(&app);
+    TreeModel tagsTree(&app);
+
+    localBase.fillTreeModelWithAims(&aimsTree);
+    tagsTree.fillWithTagList(localBase.getAllTags());
+
     context->setContextProperty("localBase",&localBase);
     context->setContextProperty("userSettings",&userSettings);
-    context->setContextProperty("screenGlobal",&screen);
+    context->setContextProperty("screenGlobal22",&screen);
 
-    TreeModel treeModel;
-    context->setContextProperty("treeModel",&treeModel);
-    ///localBase.fillTreeModelWithAims(&treeModel);
+    context->setContextProperty("treeModel",&aimsTree);
+    context->setContextProperty("tagTree",&tagsTree);
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

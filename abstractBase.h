@@ -92,6 +92,9 @@ public:
                              QString assignTo, QString priority="", QString parent="", QString progress="",
                            QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
 
+    Q_INVOKABLE bool editTreeAims(TreeModel *aims);
+    Q_INVOKABLE QVariantList getAllTags();
+
     Q_INVOKABLE bool deleteAim(QString aimId);
 
     Q_INVOKABLE QVariantList getAims();

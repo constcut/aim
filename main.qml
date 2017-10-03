@@ -56,6 +56,11 @@ ApplicationWindow {
                 onClicked:  mainLoader.source = "aimTree.qml"
             }
 
+            ToolButton
+            {
+                text: "tags"
+                onClicked:  mainLoader.source = "tagTree.qml"
+            }
 
             ToolButton
             {

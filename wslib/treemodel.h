@@ -93,23 +93,20 @@ public:
     Q_INVOKABLE QString getModelDataString();
     void setModelDataString(const QString &linesData);
 
+
     Q_INVOKABLE void fillWithAimList(QVariantList allAims);
+     Q_INVOKABLE void fillWithTagList(QVariantList allTags);
 
 
     Q_INVOKABLE void saveToFile(QString filename="");
     Q_INVOKABLE void loadFromFile(QString filename="");
 
-    QList<QStringList> getFullList();
+    QVariantList getFullList();
 
-    Q_INVOKABLE QVariantList getStructureList()
+    Q_INVOKABLE QVariantList getStructureList() //delete on refact
     {
-        QList<QStringList> list =  getFullList();
-
-        QVariantList result;
-        for (int i = 0; i < list.size(); ++i)
-            result << list[i];
-
-        return result;
+        QVariantList list =  getFullList();
+        return list;
     }
 
     bool setValueOnCondition(int conditionIndex, QString conditionText,
@@ -143,7 +140,7 @@ private:
     void setupModelData(const QString &linesData, TreeItem *parent);
     void addChildrenExport(QStringList &outputList, TreeItem *parent, int level);
 
-    void addChildrenList(QList<QStringList> &outputList, TreeItem *parent);
+    void addChildrenList(QVariantList &outputList, TreeItem *parent);
 
     TreeItem *rootItem;
     QHash<int, QByteArray> roleNameMapping;

@@ -15,6 +15,37 @@ Item {
     width: 480
     height: 800
 
+
+    Button{
+
+        y: 550
+        x: parent.width - 10 - width
+
+        text: "Cохранить"
+        onClicked:
+        {
+            localBase.editTreeAims(treeModel)
+        }
+
+        onDoubleClicked:
+        {
+            if (text == "Сохранить")
+            {
+                text = "Сохранять";
+                highlighted = true
+            }
+            else
+            {
+                text = "Сохранить";
+                highlighted = false
+            }
+
+
+        }
+
+        highlighted: false
+    }
+
     RowLayout
     {
         y: 600
@@ -22,24 +53,24 @@ Item {
 
     Button{
         text: "Добавить узел"
-        onClicked: treeModel.addTopItem(firmStructure.currentIndex)
+        onClicked: treeModel.addTopItem(aimsTree.currentIndex)
         highlighted: true
     }
     Button{
         text: "Добавить под-узел"
-        onClicked:  treeModel.addChildItem(firmStructure.currentIndex)
+        onClicked:  treeModel.addChildItem(aimsTree.currentIndex)
         highlighted: true
     }
     Button{
         text: "Удалить узел"
-        onClicked: treeModel.removeItem(firmStructure.currentIndex)
+        onClicked: treeModel.removeItem(aimsTree.currentIndex)
         highlighted: true
     }
     }
 
     QMLOld.TreeView
     {
-        id: firmStructure
+        id: aimsTree
         model: treeModel //hierarchy
 
         width: 480
@@ -62,7 +93,7 @@ Item {
 
             textColor: "white"
 
-            control: firmStructure
+            control: aimsTree
 
             headerDelegate: Item {
                 Rectangle {
@@ -90,7 +121,9 @@ Item {
             Connections {
                 target: editingField
                 onEditingFinished: {
-                    firmTree.setItemText(firmStructure.currentIndex,editingField.text, firmTree.getColumnIndex(styleData.role))
+
+
+                    treeModel.setItemText(aimsTree.currentIndex,editingField.text, treeModel.getColumnIndex(styleData.role))
                 }
             }
         }
@@ -119,7 +152,7 @@ Item {
         onClicked:
         {
             //mainWindow.reloadPlaceList(firmTree.getFieldByIndex(index,1))
-            //console.log("Place code for reload : " + firmTree.getFieldByIndex(index,1))
+            console.log("Place code for reload : " + treeModel.getFieldByIndex(index,1))
         }
     }
 }

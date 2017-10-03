@@ -8,29 +8,6 @@
 
 Q_DECLARE_METATYPE(QModelIndex)
 
-//HOTFIX function
-
-//IM sorry but there are done some issues in recognizing, when we have no columns
-//there is an issue if we would leave at least one field without flags
-///PLEASE PAY attention here, on refactoring or glossing
-
-void repairOldFirmStructureStringLine(QStringList& firmLine)
-{
-    //this function used simply to swap fields for example place code and
-
-    int startSize = firmLine.size();
-
-    //if (firmLine.size() > 3)
-    {
-        QString flags = firmLine[3];
-        firmLine.removeAt(3);
-        firmLine << flags;
-    }
-
-    if (firmLine.size() != startSize)
-        qDebug() << "Fields unequal size "<<firmLine.size();
-}
-
 //============Table=============
 
 TreeItem::TreeItem(const QVector<QVariant> &data, int columnsCount, TreeItem *parent)
@@ -110,13 +87,14 @@ QStringList TreeItem::getColumns(QString parentCode)
     for (int i = 0; i < columnCount(); ++i)
         response << data(i).toString();
 
+    //response << parentCode;
 
-    response << parentCode;
-
+    /*
     if (childCount() > 0)
         response << "HasChild";
     else
         response << "NoChild";
+        */
 
     return response;
 }
@@ -421,19 +399,34 @@ QString TreeModel::getModelDataString()
     return response;
 }
 
-QList<QStringList> TreeModel::getFullList()
+
+QStringList putIdOnFirstPlace(QStringList oldList)
 {
-    QList<QStringList> response;
+    QStringList lineWithFineId;
+
+    if (oldList.size())
+    {
+        lineWithFineId << oldList[oldList.size()-1];
+
+        for (int j = 0; j < oldList.size()-1; ++j)
+            lineWithFineId << oldList[j];
+    }
+    return lineWithFineId;
+}
+
+QVariantList TreeModel::getFullList()
+{
+    QVariantList response;
 
     for (int i = 0; i < rootItem->childCount(); ++i)
     {
         TreeItem *currentItem = rootItem->child(i);
         QStringList oneLine = currentItem->getColumns();
 
-        //oneLine << " ";
-        repairOldFirmStructureStringLine(oneLine);
-
-        response << oneLine;
+        ///response << oneLine;
+        QStringList lineWithFineId;
+        lineWithFineId = putIdOnFirstPlace(oneLine);
+        response << lineWithFineId;
 
         if (currentItem->childCount())
             addChildrenList(response,currentItem);
@@ -516,7 +509,7 @@ bool TreeItem::setValueOnConditionIfEmpty(int conditionIndex, QString conditionT
 
 
 //not set yet
-void TreeModel::addChildrenList(QList<QStringList> &outputList, TreeItem *parent)
+void TreeModel::addChildrenList(QVariantList &outputList, TreeItem *parent)
 {
     QStringList parentLine = parent->getColumns();
     QString parentCode =  parentLine[1];
@@ -527,9 +520,12 @@ void TreeModel::addChildrenList(QList<QStringList> &outputList, TreeItem *parent
         QStringList oneLine = currentItem->getColumns(parentCode);
 
         //oneLine << " ";
-        repairOldFirmStructureStringLine(oneLine);
+        //repairOldFirmStructureStringLine(oneLine);
 
-        outputList.append(oneLine);
+        QStringList lineWithFineId;
+        lineWithFineId = putIdOnFirstPlace(oneLine);
+
+        outputList.append(lineWithFineId); //oneLine!
 
         if (currentItem->childCount()) //recurse should leave - it always possible
             addChildrenList(outputList,currentItem);
@@ -588,7 +584,187 @@ void TreeModel::fillWithAimList(QVariantList allAims)
 
     beginResetModel();
 
+    //qDebug() << "Start filling with aim list";
+
     //action itself
+
+    QVariantList rootAims;
+    QList<TreeItem*> treeItems;
+
+    for (int i = 0 ; i < allAims.size(); ++i)
+    {
+        QStringList aimList = allAims[i].toStringList();
+        QString parent = aimList[10];
+
+      //  qDebug() << "Trace #"<<i<<" pa:"<<parent<<".";
+
+        if (parent.isEmpty())
+        {
+            rootAims << aimList;
+            allAims.removeAt(i);
+            --i; ///shift because of delete
+
+            QVector<QVariant> listPreparedForTree;
+            for (int k = 1; k < aimList.size(); ++k)
+            {
+                QVariant value = aimList[k];
+                listPreparedForTree << value;
+            }
+            listPreparedForTree << aimList[0]; //put AimId int the end
+
+            TreeItem *item = new TreeItem(listPreparedForTree,getColumnNamesSize(),getRootItem()); ///CONSTRUCTOR!
+            treeItems << item;
+            getRootItem()->appendChild(item);
+
+           // qDebug () << "Found root item "<< aimList;
+
+        }
+    }
+
+    while (rootAims.empty()==false && allAims.size() > 0)
+    {
+        //qDebug() << "Next wave";
+
+        QVariantList nextRootAims;
+        QList<TreeItem*> nextTreeItems;
+
+        for (int i = 0; i < rootAims.size(); ++i)
+        {
+            QStringList aimList = rootAims[i].toStringList();
+            QString aimName = aimList[1];
+
+            for (int j = 0; j < allAims.size(); ++j)
+            {
+                QStringList nextAimList = allAims[j].toStringList();
+                QString parent = nextAimList[10];
+
+                if (parent == aimName)
+                {
+                    nextRootAims << nextAimList;
+                    allAims.removeAt(j);
+                    --j;
+
+                    TreeItem *parentItem = treeItems[i];
+
+                    QVector<QVariant> listPreparedForTree;
+
+                    for (int k = 1; k < nextAimList.size(); ++k)
+                    {
+                        QVariant value = nextAimList[k];
+                        listPreparedForTree << value;
+                    }
+                    listPreparedForTree << nextAimList[0]; //put AimId int the end
+
+                    TreeItem *item = new TreeItem(listPreparedForTree,getColumnNamesSize(),parentItem); ///CONSTRUCTOR!
+                    nextTreeItems << item;
+
+                    parentItem->appendChild(item);
+
+                    //qDebug () << "Found next root item "<< nextAimList<< " for " <<aimName;
+                }
+            }
+        }
+
+        rootAims = nextRootAims;
+        treeItems = nextTreeItems;
+    }
+
+
+    //action end
+
+    endResetModel();
+}
+
+void TreeModel::fillWithTagList(QVariantList allTags)
+{
+
+    beginResetModel();
+
+    if (rootItem)
+    {
+        delete rootItem;
+        rootItem = 0;
+    }
+
+    createRootElement();
+    endResetModel();;
+
+    beginResetModel();
+
+    QVariantList rootTags;
+    QList<TreeItem*> treeItems;
+
+    for (int i = 0 ; i < allTags.size(); ++i)
+    {
+        QStringList tagList = allTags[i].toStringList();
+        QString parent = tagList[1];
+
+
+        if (parent.isEmpty())
+        {
+            rootTags << tagList;
+            allTags.removeAt(i);
+            --i; ///shift because of delete
+
+            QVector<QVariant> listPreparedForTree;
+            for (int k = 0; k < tagList.size(); ++k)
+            {
+                QVariant value = tagList[k];
+                listPreparedForTree << value;
+            }
+
+            TreeItem *item = new TreeItem(listPreparedForTree,getColumnNamesSize(),getRootItem()); ///CONSTRUCTOR!
+            treeItems << item;
+            getRootItem()->appendChild(item);
+
+        }
+    }
+
+    while (rootTags.empty()==false && allTags.size() > 0)
+    {
+        //qDebug() << "Next wave";
+
+        QVariantList nextRootTags;
+        QList<TreeItem*> nextTreeItems;
+
+        for (int i = 0; i < rootTags.size(); ++i)
+        {
+            QStringList tagList = rootTags[i].toStringList();
+            QString tagName = tagList[0];
+
+            for (int j = 0; j < allTags.size(); ++j)
+            {
+                QStringList nextTagList = allTags[j].toStringList();
+                QString parent = nextTagList[1];
+
+                if (parent == tagName)
+                {
+                    nextRootTags << nextTagList;
+                    allTags.removeAt(j);
+                    --j;
+
+                    TreeItem *parentItem = treeItems[i];
+
+                    QVector<QVariant> listPreparedForTree;
+
+                    for (int k = 0; k < nextTagList.size(); ++k)
+                    {
+                        QVariant value = nextTagList[k];
+                        listPreparedForTree << value;
+                    }
+
+                    TreeItem *item = new TreeItem(listPreparedForTree,getColumnNamesSize(),parentItem); ///CONSTRUCTOR!
+                    nextTreeItems << item;
+
+                    parentItem->appendChild(item);
+
+                }
+            }
+        }
+
+        rootTags = nextRootTags;
+        treeItems = nextTreeItems;
+    }
 
 
     //action end

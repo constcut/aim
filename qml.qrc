@@ -6,5 +6,6 @@
         <file>aims.qml</file>
         <file>schedule.qml</file>
         <file>aimTree.qml</file>
+        <file>tagTree.qml</file>
     </qresource>
 </RCC>

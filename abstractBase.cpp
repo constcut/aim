@@ -237,8 +237,8 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
     QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
 
 
-    QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',timePart='%3',comment='%4',tag='%5',"
-                        "assignTo='%6',priority='%7',parent='%8' WHERE aimId='%9';")
+    QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',datePart='%3',comment='%4',tag='%5',"
+                        "assignTo='%6',priority='%7',parentAim='%8' WHERE aimId='%9';")
             .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(aimId);
     ///use this practice to replace all the bad code
 
@@ -251,6 +251,247 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
 
     return false;
 }
+
+//=============!!!!!!!!!!!!!!!!!!!!!!!!!====================
+/////////HEY please move that function outside it could be used in many places
+/// nice to make file something like listoperations.h
+//=============!!!!!!!!!!!!!!!!!!!!!!!!!====================
+
+bool areLinesSame(const QStringList &firstLine, const QStringList &secondLine)
+{
+    for (int i = 0; i < firstLine.size(); ++i) // firstLine.size()
+    {
+        QString firstString = firstLine[i].trimmed();
+        QString secondString = secondLine[i].trimmed();
+
+        if (firstString != secondString)
+        {
+            qDebug() << "Lines don't fit: "<<firstString<<" "<<secondString;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void compareLists(const QVariantList &firstList, const QVariantList &secondList,
+                  QVariantList &toInsert, QVariantList &toEdit, QVariantList &toDelete)
+{
+
+    for (int i =0; i < firstList.size(); ++i)
+    {
+        bool wasFound = false;
+
+        QStringList firstLine = firstList[i].toStringList();
+        QString firstCode = firstLine[0];
+
+        for (int j = 0; j < secondList.size(); ++j)
+        {
+            QStringList secondLine = secondList[j].toStringList();
+            QString secondCode = secondLine[0];
+
+            if (firstCode == secondCode)
+            {
+                wasFound = true;
+
+                if (areLinesSame(firstLine,secondLine) == false)
+                {
+                    toEdit << secondLine;
+                }
+
+                break;
+            }
+
+        }
+
+        if (wasFound == false)
+            toDelete << firstLine;
+
+    }
+
+     for (int i = 0; i < secondList.size(); ++i)
+     {
+         QStringList secondLine = secondList[i].toStringList();
+
+         QString secondCode = secondLine[0];
+
+         bool wasFound = false;
+
+         for (int j = 0; j < firstList.size(); ++j)
+         {
+                QStringList firstLine = firstList[j].toStringList();
+                QString firstCode = firstLine[0];
+
+                if (firstCode == secondCode)
+                {
+                    wasFound = true;
+                    break;
+                }
+         }
+
+         if (wasFound==false)
+             toInsert << secondLine;
+     }
+}
+
+
+bool LocalSqlBase::editTreeAims(TreeModel *aims) //actually here must be QObject
+{
+    qDebug() << "Editing Tree Aims";
+
+    QVariantList treeAims =  aims->getFullList();
+    QVariantList allAims = getAims();
+
+    QVariantList toInsert,toEdit,toDelete;
+    compareLists(allAims, treeAims,toInsert,toEdit,toDelete);
+
+    for (int i = 0 ; i < toInsert.size(); ++i)
+    {
+        QStringList aimLine = toInsert[i].toStringList();
+
+        QString aimId = aimLine[0];
+        QString aimName = aimLine[1];
+        QString timePart = aimLine[2];
+        QString datePart = aimLine[3];
+        QString comment = aimLine[4];
+        QString tag = aimLine[5];
+        QString assignTo = aimLine[6];
+        QString priority = aimLine[7];
+        QString progress = aimLine[8];
+        QString progressText = aimLine[9];
+        QString parentAim = aimLine[10];
+        //privacy had to be missing
+
+        QString timeAndDate = datePart;
+        if (timePart.isEmpty()==false)
+            timeAndDate += "T" + timePart;
+
+        //some other fields yet missing
+        addAim(aimName,timeAndDate,comment,tag,assignTo,priority,parentAim,progress);
+    }
+
+    for (int i = 0; i < toEdit.size(); ++i)
+    {
+        QStringList aimLine = toEdit[i].toStringList();
+
+        QString aimId = aimLine[0];
+        QString aimName = aimLine[1];
+        QString timePart = aimLine[2];
+        QString datePart = aimLine[3];
+        QString comment = aimLine[4];
+        QString tag = aimLine[5];
+        QString assignTo = aimLine[6];
+        QString priority = aimLine[7];
+        QString progress = aimLine[8];
+        QString progressText = aimLine[9];
+        QString parentAim = aimLine[10];
+        //privacy had to be missing
+
+        QString timeAndDate = datePart;
+        if (timePart.isEmpty()==false)
+            timeAndDate += "T" + timePart;
+
+        editAim(aimId,aimName,timeAndDate,comment,tag,assignTo,priority,parentAim,progress);
+    }
+
+    //nice if there would be not a real delete but some put in trash
+    for (int i = 0; i < toDelete.size(); ++i)
+    {
+        QStringList aimLine = toDelete[i].toStringList();
+
+        QString aimId = aimLine[0];
+
+        deleteAim(aimId);
+    }
+
+    return true;
+        //1: should make from it another QVariantList
+        //this means - add field parent, and also contain all other fields
+        //as extra option there could be an exercise, for addin field parent, into table,
+        //and on edit of that field - reload model, if was changed parent one
+
+        //2: compare 2 Lists this could be done by something like void UsersLoader::compareLists
+        //also same thing was in rmp
+
+        //3: use 3 lists - to insert, to delete, to edit
+
+        //great if they can work just by QStringList, even if they would work slow first
+}
+
+
+///TO USE THIS FUNCTION WE MUST HAVE STORED VARIABLES IN CLASS LSB
+///
+///
+///
+
+
+inline uint qHash(const QVariant& varString)
+{
+    QString stringValue = varString.toString();
+    return qHash(stringValue,0xa03f);
+}
+
+QVariantList addTagPairs(QStringList aimLine)
+{
+    QString tag=aimLine[5]; //~ :)
+    QVariantList result;
+
+if (tag.isEmpty())
+    return result;
+
+    int lastDot = tag.lastIndexOf(".");
+    while (lastDot != -1) //hope its right condition
+    {
+        QStringList tagsPair;
+        QString parentTag = tag.mid(0,lastDot); //or no -1. hahaha?
+
+        tagsPair << tag << parentTag;
+
+        result << tagsPair;
+
+        tag=parentTag;
+        lastDot = tag.lastIndexOf(".");
+    }
+
+    QStringList tagsPair;
+    tagsPair << tag << QString(); //and root one
+
+    result << tagsPair;
+
+    return result;
+}
+
+QVariantList LocalSqlBase::getAllTags()
+{
+        QVariantList allAims = getAims();
+
+        QVariantList allTags;
+
+        for (int i = 0; i < allAims.size(); ++i)
+        {
+           QVariantList thisTag = addTagPairs(allAims[i].toStringList());
+           //Must be putted in set then
+           //OR can just first summ all of them,
+           //then put into set - deleting all the repeats
+
+            allTags += thisTag;
+        }
+
+        QSet<QVariant> norepeats = allTags.toSet();
+
+        QVariantList norepeatsList = norepeats.toList();
+
+        return norepeatsList;
+
+        //1: get all aims, trace through them adding new tags to list
+
+        //2: make function that adds to set pairs (tag,parent), and creates as many as needed for dotted tags
+
+        //3: from that set of pairs we fill the TreeModel -
+            ///BUT here we can only make QVariantList yet - so we make it, with 2 QStrings tag, parent; and then make TreeModel outside
+}
+
 
 bool LocalSqlBase::deleteAim(QString aimId)
 {
@@ -273,6 +514,7 @@ QStringList LocalSqlBase::getAimsNames()
     QVariantList aimsList = fillList(request,2);  //no need too much mostly id + name, that are first 2
 
     QStringList result;
+    result << QString(); //first string is empty
 
     for (int i = 0; i < aimsList.size(); ++i)
     {
@@ -426,91 +668,11 @@ bool LocalSqlBase::createTablesIfNeeded()
 
 bool LocalSqlBase::fillTreeModelWithAims(TreeModel *treeModel)
 {
-    QVariantList allAims = getAims();
+    treeModel->fillWithAimList(getAims());
 
-    QVariantList rootAims;
-    QList<TreeItem*> treeItems;
+    return false;
 
-    for (int i = 0 ; i < allAims.size(); ++i)
-    {
-        QStringList aimList = allAims[i].toStringList();
-        QString parent = aimList[10];
-        if (parent.isEmpty())
-        {
-            rootAims << aimList;
-            //and also need to delete it from all aims...
-            //not extra nice but:
-            allAims.removeAt(i);
-            --i; ///shift because of delete
-
-            //ALSO here we create new TreeItem - thats linked
-                                        //to rootItem in TreeModel
-
-            //And we would use it later
-
-            QVector<QVariant> listPreparedForTree;
-
-            for (int k = 0; k < aimList.size(); ++i)
-            {
-                QVariant value = aimList[k];
-                listPreparedForTree << value;
-            }
-                                                ///CHECK about 2nd argument, columns count maybe shouldn't exceed predefined names (4 in our case)
-
-            TreeItem *item = new TreeItem(listPreparedForTree,treeModel->getColumnNamesSize(),treeModel->getRootItem()); ///CONSTRUCTOR!
-            //WE MUST SET HERE ALL THE DATA IN ITEM!
-            treeItems << item;
-        }
-    }
-
-    while (rootAims.empty()==false && allAims.size() > 0)
-    {
-        QVariantList nextRootAims;
-        QList<TreeItem*> nextTreeItems;
-
-        for (int i = 0; i < rootAims.size(); ++i)
-        {
-            QStringList aimList = rootAims[i].toStringList();
-            QString aimName = aimList[1];
-
-            for (int j = 0; j < allAims.size(); ++j)
-            {
-                QStringList nextAimList = allAims[j].toStringList();
-                QString parent = nextAimList[10];
-
-                if (parent == aimName)
-                {
-                    nextRootAims << nextAimList;
-                    allAims.removeAt(j);
-                    --j;
-
-                    TreeItem *parentItem = treeItems[i];
-
-                    //SO AGAIN: here we create a TreeItem,
-                            //and store is somewhere, but also this time
-                    //WE NEED to add this one, to its parent TreeItem!
-                    //So need to have some sublist
-
-                    QVector<QVariant> listPreparedForTree;
-
-                    for (int k = 0; k < nextAimList.size(); ++i)
-                    {
-                        QVariant value = nextAimList[k];
-                        listPreparedForTree << value;
-                    }
-
-                    TreeItem *item = new TreeItem(listPreparedForTree,treeModel->getColumnNamesSize(),parentItem); ///CONSTRUCTOR!
-                    //WE MUST SET HERE ALL THE DATA IN ITEM!
-                    nextTreeItems << item;
-
-                    parentItem->appendChild(item);
-
-                }
-            }
-        }
-
-        rootAims = nextRootAims;
-    }
+    //function moved into void TreeModel::fillWithAimList(QVariantList allAims)
 
     //1: get with no parent
     //a: make list of them b: delete them from the main list
