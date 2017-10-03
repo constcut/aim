@@ -12,7 +12,11 @@ SOURCES += main.cpp \
     abstractBase.cpp \
     userSettings.cpp \
     screenglobal.cpp \
-    wslib/treemodel.cpp
+    wslib/treemodel.cpp \
+    wslib/notifications.cpp \
+    wslib/popup.cpp \
+    wslib/systemtray.cpp \
+    wslib/tabelserialize.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -33,7 +37,11 @@ HEADERS += \
     abstractBase.h \
     userSettings.h \
     screenglobal.h \
-    wslib/treemodel.h
+    wslib/treemodel.h \
+    wslib/notifications.h \
+    wslib/popup.h \
+    wslib/systemtray.h \
+    wslib/tabelserialize.h
 
 #dunno what is that
 INSTALLS += target
