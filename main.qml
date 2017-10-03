@@ -2,7 +2,7 @@ import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
-
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Material 2.1
 
 
@@ -32,6 +32,12 @@ ApplicationWindow {
 
     }
 
+
+    onClosing: {
+        window.hide();
+    }
+
+
    header:  ToolBar
    {
             id: toolBar
@@ -60,6 +66,12 @@ ApplicationWindow {
             {
                 text: "tags"
                 onClicked:  mainLoader.source = "tagTree.qml"
+            }
+
+            ToolButton
+            {
+                text: "run"
+                onClicked:  mainLoader.source = "runningAim.qml"
             }
 
             ToolButton
@@ -98,6 +110,58 @@ ApplicationWindow {
 
         }
     }
+
+
+    MessageDialog {
+        id: confirmExitDialog
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        width: 400
+        title: "Ожидание подтверждения"
+        text: "Вы уверенны что хотите выйти из приложения?\nНовые уведомления не смогут быть полученны пока приложение не запущенно."
+
+        onAccepted: {
+           Qt.quit();
+        }
+        onRejected: {
+            systemTray.showNotification(userCheck.getDomainName(),userCheck.getUserName(),5);
+        }
+    }
+
+
+    Connections {
+         target: systemTray
+
+         onSignalShow: {
+             window.show();
+         }
+
+         onSignalAdd: {
+             if(window.visibility === Window.Hidden)
+                 window.show()
+            drawerRight.open()
+         }
+
+         onSignalQuit: {
+             confirmExitDialog.open();
+         }
+
+         onSignalIconActivated: {
+              if(window.visibility === Window.Hidden) {
+                  window.show()
+              }
+         }
+     } //Connections
+
+    Connections {
+         target: popUpItem
+
+         onRequestNotificationsViewFromCpp:
+         {
+             window.show();
+             mainLoader.source = "runningAim.qml"
+         }
+
+     }
 
     Drawer {
            id: drawerLeft

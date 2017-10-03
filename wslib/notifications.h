@@ -25,10 +25,7 @@ public slots:
     virtual void watchDogWoughf()=0; //Woughf-woughf!!!
 
 protected:
-    QString daysText(int days);
-
-    //UsersLoader *users;
-    //SystemTray *systemTray;
+    //QString daysText(int days);
 
     QTimer watchDogTimer;
 };

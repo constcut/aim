@@ -5,24 +5,21 @@
 
 void SystemTray::switchIcon(QString iconName)
 {
-    if (iconName == "PPC")
+    if (iconName == "Aim")
     {
-         trayIcon->setIcon(QIcon(":/icons/mainIcon.ico"));
-         trayIcon->setToolTip("Контроль производства:" "\n"
-                              "Нажмите на иконку, чтобы развернуть скрытое окно");
+         trayIcon->setIcon(QIcon(":/icons/settings.png")); //aimIcon
+         trayIcon->setToolTip("Wavesplat aim");
     }
-    if (iconName == "birth")
+    if (iconName == "Recipe")
     {
-        trayIcon->setIcon(QIcon(":/icons/birthIcon.ico"));
-        trayIcon->setToolTip("Дни рождения предприятия:" "\n"
-                             "Нажмите на иконку, чтобы развернуть скрытое окно");
+        trayIcon->setIcon(QIcon(":/icons/recipeIcon.ico"));
+        trayIcon->setToolTip("Wavesplat recipe");
     }
-    if (iconName == "IDM")
+    if (iconName == "Boook")
     {
-        trayIcon->setIcon(QIcon(":/icons/mainIcon.ico"));
-        trayIcon->setToolTip("IDM:контроль пользователей" "\n"
-                             "Нажмите на иконку, чтобы развернуть скрытое окно");
-        hideIconTray();
+        trayIcon->setIcon(QIcon(":/icons/boookIcon.ico"));
+        trayIcon->setToolTip("Wavesplat boook");
+        //hideIconTray();
     }
 }
 
@@ -31,21 +28,26 @@ SystemTray::SystemTray(QObject *parent) : QObject(parent), trayIcon(0)
 {
     QMenu *trayIconMenu = new QMenu();
 
-    QAction * viewWindow = new QAction("Развернуть окно", this);
-    QAction * quitAction = new QAction("Выход", this); //trUtf was here
+    //MAY MISS SPECIAL FIELDS
+
+    QAction * viewWindow = new QAction("Show", this);
+    QAction * addAction = new QAction("Add", this);
+   // QAction * startStopAction = new QAction("Start>", this);
+    QAction * quitAction = new QAction("Quit", this); //trUtf was here
 
     connect(viewWindow, &QAction::triggered, this, &SystemTray::signalShow);
     connect(quitAction, &QAction::triggered, this, &SystemTray::signalQuit);
+    connect(addAction, &QAction::triggered, this, &SystemTray::signalAdd);
 
     trayIconMenu->addAction(viewWindow);
+    trayIconMenu->addAction(addAction);
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon();
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(QIcon(":/icons/mainIcon.ico")); //must ensure
     trayIcon->show();
-    trayIcon->setToolTip("Приложение НИТИ" "\n"
-                         "Дождитесь загрузку приложения");
+    trayIcon->setToolTip("Wavesplat");
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));

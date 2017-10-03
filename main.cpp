@@ -1,6 +1,7 @@
 //#include <QApplication>
 #include <QtGui>
 #include <QQmlApplicationEngine>
+#include <QApplication>
 #include <QQmlContext>
 
 #include <QQuickStyle>
@@ -10,10 +11,14 @@
 #include "screenglobal.h"
 
 #include "wslib/treemodel.h"
+#include "wslib/systemtray.h"
+#include "wslib/popup.h"
+
+#include "aimnotifications.h"
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     ScreenGlobal screen;
 
@@ -51,6 +56,17 @@ int main(int argc, char *argv[])
     context->setContextProperty("treeModel",&aimsTree);
     context->setContextProperty("tagTree",&tagsTree);
 
+    //SYSTEM tray actions
+    SystemTray tray(&app);
+    tray.switchIcon("Aim");
+    context->setContextProperty("systemTray",&tray);
+
+    //Notifications
+    PopUp popUp;
+    AimNotifications notifications(&localBase,&popUp,&app);
+    notifications.startWatchDog(30);
+
+    context->setContextProperty("popUpItem",&popUp);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

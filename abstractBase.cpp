@@ -6,6 +6,8 @@
 
 #include <QRegExp>
 
+#include <QDateTime>
+
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
 
@@ -211,14 +213,17 @@ int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, 
                          QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
                         QString repeatable, QString privacy)
 {
-    QString timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
-    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
 
+    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+    QString timePart;
+
+    if (timeAndDate.indexOf("T") > 0)
+        timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
 
     QString requestBody("INSERT INTO aims (aimName,timePart,datePart,comment,tag," //OUTPUT INSERTED.aimId
-                        "assignTo,priority,parentAim) VALUES('" + aimName + "','" +
+                        "assignTo,priority,parentAim,repeatable) VALUES('" + aimName + "','" +
                         timePart + "','" + datePart  + "','" + comment + "','" + tag + "','" + assignTo + "','" + priority  +
-                         "','" + parent + "');");
+                         "','" + parent +  "','" + repeatable + "');");
 
 
     QSqlQuery request = executeRequest(requestBody);
@@ -233,16 +238,19 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
                            QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
                          QString repeatable, QString privacy)
 {
-    QString timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
     QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+    QString timePart;
 
+    if (timeAndDate.indexOf("T") > 0)
+        timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
 
     QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',datePart='%3',comment='%4',tag='%5',"
-                        "assignTo='%6',priority='%7',parentAim='%8' WHERE aimId='%9';")
-            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(aimId);
+                        "assignTo='%6',priority='%7',parentAim='%8',repeatable='%9'")
+            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(repeatable)
+            +  QString(" WHERE aimId='%1';").arg(aimId);
     ///use this practice to replace all the bad code
 
-   // qDebug() << requestBody << " formed request";
+    qDebug() << requestBody << " formed request";
 
     QSqlQuery request = executeRequest(requestBody);
 
@@ -526,13 +534,33 @@ QStringList LocalSqlBase::getAimsNames()
     return result;
 }
 
+QVariantList LocalSqlBase::getCurrentMomementAims()
+{
+    QDateTime now(QDateTime::currentDateTime());
+
+    QString dateAndTime = now.toString("yyyy-MM-ddTHH:mm");
+
+    QString timePart,datePart;
+
+    datePart = dateAndTime.mid(0,dateAndTime.indexOf("T"));
+    timePart = dateAndTime.mid(dateAndTime.indexOf("T")+1);
+
+    QString requestBody = QString("SELECT * FROM aims WHERE timePart='%1' AND datePart='%2';")
+            .arg(timePart).arg(datePart);
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
+
+    return aimsList;
+}
+
 
 QVariantList LocalSqlBase::getAims()
 {
     QString requestBody = "SELECT * FROM aims";
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,11); //11 is fields amount
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
 
     ///GOOD to scroll qml to add, if there are no aims
 
@@ -547,7 +575,7 @@ QVariantList LocalSqlBase::getAimsByDate(QString date)
     QString requestBody = "SELECT * FROM aims WHERE datePart='" + date + "';";
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,11); //11 is fields amount
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
 
     ///GOOD to scroll qml to add, if there are no aims
 
@@ -559,7 +587,7 @@ QStringList LocalSqlBase::getSingleAim(QString aimId)
     QString requestBody = "SELECT * FROM aims WHERE aimId='" + aimId + "';";
     QSqlQuery request = executeRequest(requestBody);
 
-    QVariantList oneLine = fillList(request,11); //11 is fields amount
+    QVariantList oneLine = fillList(request,13); //11 is fields amount
     QStringList result = oneLine[0].toStringList();
 
     return result;
@@ -571,7 +599,7 @@ QVariantList LocalSqlBase::searchAimsByName(QString searchText)
     QSqlQuery request = executeRequest(requestBody);
 
     QVariantList searchResult;
-    QVariantList aimsList = fillList(request,11);
+    QVariantList aimsList = fillList(request,12);
 
     QRegExp pattern("*" + searchText + "*");
     pattern.setPatternSyntax(QRegExp::Wildcard);
@@ -651,6 +679,11 @@ bool LocalSqlBase::createTablesIfNeeded()
                            "progress text,"
                            "progressText text,"
                            "parentAim text,"
+
+                           //OH looks like we didn't recreate everything
+                           //after deleting this field - so
+                           //now there are some errors in qml for repeatable
+                           //and privacy that are fine with old base, lol
 
                            "repeatable text,"
                            "privacy text"

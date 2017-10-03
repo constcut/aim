@@ -30,6 +30,7 @@ signals:
     void signalIconActivated();
     void signalShow();
     void signalQuit();
+    void signalAdd();
 
 
 signals: //used for notifications and probably had to be updated one time

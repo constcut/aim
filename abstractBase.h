@@ -106,6 +106,9 @@ public:
 
     bool fillTreeModelWithAims(TreeModel *treeModel);
 
+    Q_INVOKABLE QVariantList getCurrentMomementAims();
+
+
     Q_INVOKABLE QStringList getAimLinks(QString aimName);
     Q_INVOKABLE bool setAimLinks(QString aimName, QStringList aimLinks);
 

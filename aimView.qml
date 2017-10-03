@@ -392,7 +392,7 @@ Item {
 
                     Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimViewWindow.tagShow && tag.length > 0   ; font.pointSize: 15}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { rightPadding: 25; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimViewWindow.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: 15}
+                    Text { rightPadding: 15; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimViewWindow.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: 15}
                 }
                 RowLayout
                 {
@@ -533,16 +533,19 @@ Item {
             var progress = aimList[i][8]
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
-            var childAim = aimList[i][11]
 
             var repeatable = aimList[i][12]
             var privacy = aimList[i][13]
+
+            //quick shower
+            if (repeatable.length > 0)
+                timeAndDate += " : " + repeatable
 
 
             listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                              "assignTo":assignTo,"priority":priority,
                              "progress":progress,"progressText":progressText,
-                             "parentAim":parentAim,"childAim":childAim,
+                             "parentAim":parentAim,
                              "repeatable":repeatable,"privacy":privacy})
         }
     }
@@ -576,10 +579,13 @@ Item {
             var progress = aimList[i][8]
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
-            var childAim = aimList[i][11]
 
             var repeatable = aimList[i][12]
             var privacy = aimList[i][13]
+
+            //quick shower
+            if (repeatable.length > 0)
+                timeAndDate += " : " + repeatable
 
 
             //also could run as set of filters making another list - first filter name, then tag etc
@@ -587,7 +593,7 @@ Item {
                 listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                                  "assignTo":assignTo,"priority":priority,
                                  "progress":progress,"progressText":progressText,
-                                 "parentAim":parentAim,"childAim":childAim,
+                                 "parentAim":parentAim,
                                  "repeatable":repeatable,"privacy":privacy})
         }
     }
@@ -621,18 +627,21 @@ Item {
             var progress = aimList[i][8]
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
-            var childAim = aimList[i][11]
 
             var repeatable = aimList[i][12]
             var privacy = aimList[i][13]
             //also could run as set of filters making another list - first filter name, then tag etc
+
+            //quick shower
+            if (repeatable.length > 0)
+                timeAndDate += " : " + repeatable
 
             if (tag.search(regExpTag) !== -1)
             //if (tag == searchTag)
                 listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                                       "assignTo":assignTo,"priority":priority,
                                       "progress":progress,"progressText":progressText,
-                                      "parentAim":parentAim,"childAim":childAim,
+                                      "parentAim":parentAim,
                                       "repeatable":repeatable,"privacy":privacy})
         }
     }

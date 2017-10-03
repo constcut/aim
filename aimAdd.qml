@@ -4,9 +4,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 //import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
-
 import QtQuick.Extras 1.4 as QmlExtra
-
 import QtQuick.Controls 1.4 as QmlOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
@@ -31,7 +29,7 @@ Item {
     {
         id: aimName
 
-        y:yOffset+elementHeight*0
+        y:yOffset+elementHeight*0-45
         width: parent.width-widthOffset*2
         x: widthOffset
 
@@ -42,7 +40,7 @@ Item {
     {
         id: timeAndDate
 
-        y:yOffset+elementHeight*2
+        y:yOffset+elementHeight*2-45
         width: parent.width-widthOffset*2-50 - 5//also small offset
         x: widthOffset
 
@@ -52,7 +50,7 @@ Item {
     Button
     {
         id: timeAndDatePick
-        y:yOffset+elementHeight*2
+        y:yOffset+elementHeight*2-45
         x: widthOffset  + timeAndDate.width + 5
         width: 50
         text: "Pick"
@@ -68,7 +66,7 @@ Item {
     {
         id: commentText
 
-        y: yOffset+elementHeight*4
+        y: yOffset+elementHeight*4-45
         width: parent.width-widthOffset*2
         height: elementHeight*2
 
@@ -82,7 +80,7 @@ Item {
     {
         id: tags
 
-        y:yOffset+elementHeight*7
+        y:yOffset+elementHeight*7-45
         width: parent.width-widthOffset*2
         x: widthOffset
 
@@ -93,7 +91,7 @@ Item {
     {
         id: assignTo
 
-        y:yOffset+elementHeight*9
+        y:yOffset+elementHeight*8-45
         width: parent.width-widthOffset*2
         x: widthOffset
 
@@ -105,7 +103,7 @@ Item {
     {
         id: priority
 
-        y:yOffset+elementHeight*11
+        y:yOffset+elementHeight*10-45
         width: parent.width-widthOffset*2
         x: widthOffset
 
@@ -117,18 +115,44 @@ Item {
     {
         id: parentAim
 
-        y:yOffset+elementHeight*13
+        y:yOffset+elementHeight*12-45
         width: parent.width-widthOffset*2
         x: widthOffset
 
         model : localBase.getAimsNames()
     }
 
+
+    TextField
+    {
+        id: repeatPeriod
+
+        y:yOffset+elementHeight*14-45
+        width: parent.width-widthOffset*2-50 - 5//also small offset
+        x: widthOffset
+
+        placeholderText: "Repeat period"
+        //format { hh:mm[:ss] dd.MM[.yyyy] } //can have also buttons for dialogs
+    }
+    Button
+    {
+        id: repeatPeriodPick
+        y:yOffset+elementHeight*14-45
+        x: widthOffset  + timeAndDate.width + 5
+        width: 50
+        text: "Set"
+
+        onClicked:
+        {
+                periodPopup.open()
+        }
+    }
+
     Button
     {
         id: addAimButton
         text: "Create aim"
-        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
+        y: yOffset+elementHeight*16-45 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
         visible: !editMode
@@ -144,11 +168,11 @@ Item {
                 priorityText = ""
 
 
-            var insertedIndex =
+            var insertedIndex =//missing "" is progress
             localBase.addAim(aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText,parentAim.currentText);
+                                                 assignToText, priorityText,parentAim.currentText,"",repeatPeriod.text);
 
-            aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+            aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
             assignTo.currentIndex = -1
             priority.currentIndex = -1
 
@@ -194,7 +218,7 @@ Item {
         var progressValue = aimList[8]
         var progressTextValue = aimList[9]
         var parentAimValue = aimList[10]
-        var childAimValue = aimList[11]
+
 
         var repeatableValue = aimList[12]
         var privacyValue = aimList[13]
@@ -206,7 +230,7 @@ Item {
 
     function loadForAddNew()
     {
-        aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+        aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
         assignTo.currentIndex = -1
         priority.currentIndex = -1
 
@@ -219,7 +243,7 @@ Item {
     {
         id: editAimButton
         text: "Edit aim"
-        y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
+        y: yOffset+elementHeight*16-45 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
         visible: editMode
@@ -235,11 +259,11 @@ Item {
                 priorityText = ""
 
 
-            var insertedIndex =
+            var insertedIndex = //missing "" field is progress
             localBase.editAim(editingAimId ,aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText,parentAim.currentText);
+                                                 assignToText, priorityText,parentAim.currentText,"",repeatPeriod.text);
 
-            aimName.text = timeAndDate.text = commentText.text = tags.text = ""
+            aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
             assignTo.currentIndex = -1
             priority.currentIndex = -1
 
@@ -251,14 +275,7 @@ Item {
 
 
 
-    Text
-    {
-        id: notifyTODO
-        text: "Missing: period."
-        y: yOffset+elementHeight*17 //+ linkRepeater.model * elementHeight
-        x: parent.width - width - widthOffset
 
-    }
 
 
     //TODO:
@@ -294,6 +311,85 @@ Item {
     }
 
 
+    FontMetrics {
+        id: fontMetrics
+    }
+
+    Component {
+          id: delegateTumbler
+
+          Label {
+              text: popupDateItem.formatText(Tumbler.tumbler.count, modelData)
+              opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              font.pixelSize: fontMetrics.font.pixelSize * 1.25
+          }
+      }
+
+    Popup {
+        id: periodPopup //make also time popup with tumbler
+        x: 10
+        y: 100
+        width: 360
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Item {
+            id: popupPeriodItem
+
+            Row {
+                id: periodRow
+
+                y: 5
+                x: 5
+
+
+                Tumbler {
+                  id: daysTumbler
+                  model: 31
+                  delegate: delegateTumbler
+
+                  width:  120
+                }
+
+
+                //ON CHOOSE TURN ON SWITCH
+            }
+
+            Button
+            {
+                y: 230
+                text: "Choose days period"
+
+                x: 260-width-10
+
+                onClicked: {
+                    console.log("done")
+
+                    var daysAmount = daysTumbler.currentIndex
+
+                    if (daysAmount)
+                        repeatPeriod.text =  daysAmount + "d";
+
+                    periodPopup.close()
+                }
+            }
+            Button
+            {
+                y: 230
+                text: "Cancel"
+                x: 10
+                onClicked: {
+                    periodPopup.close()
+                }
+            }
+        }
+        }
+
+
     Popup {
         id: dateTimePopup //make also time popup with tumbler
         x: 10
@@ -308,7 +404,7 @@ Item {
             //old way - and its better and must be applied on refact, but now we should do faster way :
         Item {
 
-            id: popupItem
+            id: popupDateItem
 
             QmlOld.Calendar
             {
@@ -326,21 +422,7 @@ Item {
                 return data.toString().length < 2 ? "0" + data : data;
             }
 
-            FontMetrics {
-                id: fontMetrics
-            }
 
-            Component {
-                  id: delegateTumbler
-
-                  Label {
-                      text: popupItem.formatText(Tumbler.tumbler.count, modelData)
-                      opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-                      horizontalAlignment: Text.AlignHCenter
-                      verticalAlignment: Text.AlignVCenter
-                      font.pixelSize: fontMetrics.font.pixelSize * 1.25
-                  }
-              }
 
             Row {
                 id: timeTumbler

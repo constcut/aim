@@ -2,7 +2,7 @@
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
 
-QT += sql qml quick quickcontrols2
+QT += sql qml quick widgets quickcontrols2
 
 android {
     QT += androidextras
@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     wslib/notifications.cpp \
     wslib/popup.cpp \
     wslib/systemtray.cpp \
-    wslib/tabelserialize.cpp
+    wslib/tabelserialize.cpp \
+    aimnotifications.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -41,7 +42,8 @@ HEADERS += \
     wslib/notifications.h \
     wslib/popup.h \
     wslib/systemtray.h \
-    wslib/tabelserialize.h
+    wslib/tabelserialize.h \
+    aimnotifications.h
 
 #dunno what is that
 INSTALLS += target
