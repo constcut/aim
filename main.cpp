@@ -15,6 +15,9 @@
 #include "wslib/popup.h"
 
 #include "aimnotifications.h"
+#include "runningaims.h"
+
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -65,8 +68,18 @@ int main(int argc, char *argv[])
     PopUp popUp;
     AimNotifications notifications(&localBase,&popUp,&app);
     notifications.startWatchDog(30);
-
     context->setContextProperty("popUpItem",&popUp);
+
+    //Running aims
+    RunningAims runningAims(&localBase,&app);
+    context->setContextProperty("runningAims",&runningAims);
+
+    //DEBUG
+    qDebug() << localBase.getActivityLog("1");
+    qDebug() << localBase.getActivityLog("2");
+    qDebug() << localBase.getActivityLog("3");
+    qDebug() << localBase.getActivityLog("4");
+    qDebug() << localBase.getActivityLog("5");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

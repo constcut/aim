@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     wslib/popup.cpp \
     wslib/systemtray.cpp \
     wslib/tabelserialize.cpp \
-    aimnotifications.cpp
+    aimnotifications.cpp \
+    runningaims.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -43,7 +44,8 @@ HEADERS += \
     wslib/popup.h \
     wslib/systemtray.h \
     wslib/tabelserialize.h \
-    aimnotifications.h
+    aimnotifications.h \
+    runningaims.h
 
 #dunno what is that
 INSTALLS += target

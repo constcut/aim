@@ -7,6 +7,7 @@
 #include <QRegExp>
 
 #include <QDateTime>
+#include <QDate>
 
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
@@ -512,24 +513,31 @@ bool LocalSqlBase::deleteAim(QString aimId)
     return request.next();
 }
 
+///ON REFACT THIS FUNCTION GOES TO LIST OPERATIONS AS COMPARE LISTS
+QStringList createListByField(QVariantList source, int fieldIndex)
+{
+    QStringList result;
+    for (int i = 0; i < source.size(); ++i)
+    {
+        QStringList fields = source[i].toStringList();
+        QString exactField = fields[fieldIndex];
+
+        result << exactField;
+    }
+    return result;
+}
+
 QStringList LocalSqlBase::getAimsNames()
 {
     //later make a filter that not already done or something simmiliar
 
-    QString requestBody = "SELECT * FROM aims";
-
-    QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,2);  //no need too much mostly id + name, that are first 2
+   // QString requestBody = "SELECT * FROM aims";
+    //QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = getAims();// = fillList(request,2);  //no need too much mostly id + name, that are first 2
 
     QStringList result;
-    result << QString(); //first string is empty
-
-    for (int i = 0; i < aimsList.size(); ++i)
-    {
-        QStringList aimFields =  aimsList[i].toStringList();
-
-        result << aimFields[1]; //aim name
-    }
+    result << QString();
+    result += createListByField(aimsList,1);
 
     return result;
 }
@@ -554,6 +562,72 @@ QVariantList LocalSqlBase::getCurrentMomementAims()
     return aimsList;
 }
 
+QStringList LocalSqlBase::getCurrentMomementAimsNames()
+{
+   return createListByField(getCurrentMomementAims(),1);
+}
+
+
+QVariantList LocalSqlBase::getFutureAims()
+{
+    QDate today(QDate::currentDate());
+
+    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
+
+    QVariantList futureAims;
+
+    for (int i = 0; i < aimsList.size(); ++i)
+    {
+        QStringList aimLine = aimsList[i].toStringList();
+        QString dateValue = aimLine[3];
+
+        QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
+
+        if (date > today)
+            futureAims << aimLine;
+    }
+
+    return futureAims;
+}
+
+QVariantList LocalSqlBase::getDelayedAims()
+{
+    QDate today(QDate::currentDate());
+    //can refact to function getAimsWithDate()
+    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
+
+    QVariantList pastAims;
+
+    for (int i = 0; i < aimsList.size(); ++i)
+    {
+        QStringList aimLine = aimsList[i].toStringList();
+        QString dateValue = aimLine[3];
+
+        QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
+
+        if (date < today)
+            pastAims << aimLine;
+    }
+
+    return pastAims;
+}
+
+QStringList LocalSqlBase::getFutureAimsNames()
+{
+    return createListByField(getFutureAims(),1);
+}
+
+QStringList LocalSqlBase::getDelayedAimsNames()
+{
+    return createListByField(getDelayedAims(),1);
+}
+
 
 QVariantList LocalSqlBase::getAims()
 {
@@ -569,6 +643,14 @@ QVariantList LocalSqlBase::getAims()
 
 QVariantList LocalSqlBase::getAimsByDate(QString date)
 {
+    QVariantList aimsList = getAimsByDateOnly(date);
+            aimsList += getPeriodHitAimsByDate(date);
+
+    return aimsList;
+}
+
+QVariantList LocalSqlBase::getAimsByDateOnly(QString date)
+{
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
 
@@ -580,6 +662,51 @@ QVariantList LocalSqlBase::getAimsByDate(QString date)
     ///GOOD to scroll qml to add, if there are no aims
 
     return aimsList;
+}
+
+bool canDateHitPeriod(QString originDate, QString period, QString searchDate)
+{
+    QDate originDateValue = QDate::fromString(originDate,"yyyy-MM-dd");
+    QDate searchDateValue = QDate::fromString(searchDate,"yyyy-MM-dd");
+
+    if (searchDateValue <= originDateValue)
+        return false;
+
+    QString daysPeriod = period.mid(0,period.indexOf("d"));
+    qint64 daysAmount = daysPeriod.toInt();
+    qint64 daysBetween = originDateValue.daysTo(searchDateValue);
+
+    if (daysBetween%daysAmount==0)
+        return true;
+
+    return false;
+}
+
+QVariantList LocalSqlBase::getPeriodHitAimsByDate(QString date)
+{
+    if (date.indexOf("T") != -1)
+        date = date.mid(0,date.indexOf("T"));
+
+    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL AND repeatable NOT NULL;";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
+
+    QVariantList hittedPeriodAims;
+
+    //then we must check each of the date + period, for posibility to hit date
+    for (int i = 0; i < aimsList.size(); ++i)
+    {
+        QStringList aimLine = aimsList[i].toStringList();
+
+        QString originDate = aimLine[3];
+        QString period = aimLine[12]; //actually 11, but only after reboot of base.. terrible
+
+        if (canDateHitPeriod(originDate,period,date))
+            hittedPeriodAims << aimLine;
+    }
+
+    return hittedPeriodAims;
 }
 
 QStringList LocalSqlBase::getSingleAim(QString aimId)
@@ -659,6 +786,52 @@ QSqlError  LocalSqlBase::initDatabase()
     return QSqlError();
 }
 
+
+//========================================================================
+//Activity things
+
+bool LocalSqlBase::addActivity(QString aimId, QString aimName,
+                 QString operation, QString totalLength)
+{
+    QDateTime now = QDateTime::currentDateTime();
+    QString currentMoment = now.toString("yyyy-MM-ddTHH:mm:ss");
+
+    QString requestBody("INSERT INTO actions (aimName,aimId,operation,moment,totalLength) VALUES('"
+                        +aimName + "','" + aimId  + "','" + operation + "','" + currentMoment + "','" + totalLength + "');");
+
+
+    QSqlQuery request = executeRequest(requestBody);
+    if (request.next())
+        return request.value(0).toInt();
+
+    return false;
+}
+
+QVariantList LocalSqlBase::getActivityLog(QString aimId)
+{
+    //only last 100 records - make limit in future pay attention!
+    QString requestBody("SELECT * FROM actions WHERE aimId='" + aimId + "';");
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList activityLogResult = fillList(request,13);
+    return activityLogResult;
+}
+
+QString LocalSqlBase::getActivitySummary(QString aimId)
+{
+    QVariantList actLog = getActivityLog(aimId);
+
+    //count total length ower all
+    //count total times done
+    //count days since first action till today
+
+    QString result = "Summary: ";
+
+    return result;
+}
+
+//End of activity things
+//========================================================================
+
 bool LocalSqlBase::createTablesIfNeeded()
 {
 
@@ -693,8 +866,19 @@ bool LocalSqlBase::createTablesIfNeeded()
     QSqlQuery request = executeRequest(aimTableCreate);
 
 
+    QString activityableCreate("CREATE TABLE IF NOT EXISTS actions (" //
+                           "actId integer primary key autoincrement NOT NULL,"
+                           "aimName text NOT NULL,"
+                           "aimId text NOT NULL,"//"timeAndDate text,"
+                           "operation text,"
+                           "moment text,"
+                           "totalLength text" //helper for stops
+                         ");"); //charset no used sorry
 
-     return false;
+    QSqlQuery request2 = executeRequest(activityableCreate);
+
+
+     return request.isValid() && request2.isValid();
     //return request.next();
 }
 

@@ -100,6 +100,9 @@ public:
     Q_INVOKABLE QVariantList getAims();
 
     Q_INVOKABLE QVariantList getAimsByDate(QString date);
+    Q_INVOKABLE QVariantList getAimsByDateOnly(QString date);
+    Q_INVOKABLE QVariantList getPeriodHitAimsByDate(QString date);
+
     Q_INVOKABLE QStringList getSingleAim(QString aimId);
 
     Q_INVOKABLE QStringList getAimsNames();
@@ -107,7 +110,24 @@ public:
     bool fillTreeModelWithAims(TreeModel *treeModel);
 
     Q_INVOKABLE QVariantList getCurrentMomementAims();
+    Q_INVOKABLE QStringList getCurrentMomementAimsNames();
 
+
+    Q_INVOKABLE QVariantList getFutureAims();
+    Q_INVOKABLE QVariantList getDelayedAims();
+
+    Q_INVOKABLE QStringList getFutureAimsNames();
+    Q_INVOKABLE QStringList getDelayedAimsNames();
+
+    //=====================================
+
+    Q_INVOKABLE bool addActivity(QString aimId, QString aimName,
+                     QString operation, QString totalLength="");
+
+    Q_INVOKABLE QVariantList getActivityLog(QString aimId); //all records
+    Q_INVOKABLE QString getActivitySummary(QString aimId);
+
+    //=========================
 
     Q_INVOKABLE QStringList getAimLinks(QString aimName);
     Q_INVOKABLE bool setAimLinks(QString aimName, QStringList aimLinks);
