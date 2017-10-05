@@ -113,7 +113,7 @@ Item {
 
     ComboBox
     {
-        id: parentAim
+        id: parentAimName
 
         y:yOffset+elementHeight*12-45
         width: parent.width-widthOffset*2
@@ -167,10 +167,20 @@ Item {
             if (priorityText == "Priority:")
                 priorityText = ""
 
+            var parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
+            var parentId = ""
+
+            if (parentPossibleList.length > 0)
+            {
+                var firstLine = parentPossibleList[0]
+                if (firstLine.length > 1)
+                    parentId = firstLine[0]
+            }
+
 
             var insertedIndex =//missing "" is progress
             localBase.addAim(aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText,parentAim.currentText,"",repeatPeriod.text);
+                                                 assignToText, priorityText,parentId,"",repeatPeriod.text);
 
             aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
             assignTo.currentIndex = -1
@@ -223,7 +233,7 @@ Item {
         var repeatableValue = aimList[11]
         var privacyValue = aimList[12]
 
-         parentAim.model = localBase.getAimsNames()
+         parentAimName.model = localBase.getAimsNames()
 
         editMode = true
     }
@@ -236,7 +246,7 @@ Item {
 
         editMode = false //to prepare for next time
 
-        parentAim.model = localBase.getAimsNames()
+        parentAimName.model = localBase.getAimsNames()
     }
 
     Button
@@ -258,10 +268,16 @@ Item {
             if (priorityText == "Priority:")
                 priorityText = ""
 
+            var parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
+            var firstLine = parentPossibleList[0]
+            var parentId = firstLine[0]
+
+
+
 
             var insertedIndex = //missing "" field is progress
             localBase.editAim(editingAimId ,aimName.text,timeAndDate.text, commentText.text, tags.text,
-                                                 assignToText, priorityText,parentAim.currentText,"",repeatPeriod.text);
+                                                 assignToText, priorityText,parentId,"",repeatPeriod.text);
 
             aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
             assignTo.currentIndex = -1
@@ -294,15 +310,15 @@ Item {
         onYes:
         {
             aimName.text=""
-            listName.currentIndex = -1 //not sure
+            //listName.currentIndex = -1 //not sure
             timeAndDate.text=""
-            categoryName.currentIndex  = -1
+            //categoryName.currentIndex  = -1
             //reset repeatable
-            privacy.currentIndex=0
+            //privacy.currentIndex=0
             assignTo.currentIndex=0
-            parentAim.currentIndex=0
-            childAimsList.currentIndex=0
-            progress.currentIndex=0
+            parentAimName.currentIndex=0
+            //childAimsList.currentIndex=0
+            //progress.currentIndex=0
         }
         onNo:
         {

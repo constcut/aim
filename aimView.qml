@@ -409,7 +409,7 @@ Item {
                     height: 25
                     Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimViewWindow.commentShow  && comment.length > 0 ; font.pointSize: 10}
 
-                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentAim; visible: aimViewWindow.parentAimShow  && parentAim.length > 0 ; font.pointSize: 10}
+                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimViewWindow.parentAimShow  && parentAim.length > 0 ; font.pointSize: 10}
                 }
             }
             states: State { // indent the item if it is the current item
@@ -547,6 +547,12 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
+            var parentName
+            var parentLine = localBase.getSingleAim(parentAim)
+            if (parentLine.length > 1)
+                parentName = parentLine[1]
+
+
             var repeatable = aimList[i][11]
             var privacy = aimList[i][12]
 
@@ -559,7 +565,7 @@ Item {
                              "assignTo":assignTo,"priority":priority,
                              "progress":progress,"progressText":progressText,
                              "parentAim":parentAim,
-                             "repeatable":repeatable,"privacy":privacy})
+                             "repeatable":repeatable,"privacy":privacy,"parentName":parentName})
         }
     }
 
@@ -593,6 +599,11 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
+            var parentName
+                     var parentLine = localBase.getSingleAim(parentAim)
+             if (parentLine.length > 1)
+                     parentName = parentLine[1]
+
             var repeatable = aimList[i][11]
             var privacy = aimList[i][12]
 
@@ -607,7 +618,7 @@ Item {
                                  "assignTo":assignTo,"priority":priority,
                                  "progress":progress,"progressText":progressText,
                                  "parentAim":parentAim,
-                                 "repeatable":repeatable,"privacy":privacy})
+                                 "repeatable":repeatable,"privacy":privacy,"parentName":parentName})
         }
     }
     //unite + extend
@@ -641,6 +652,11 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
+            var parentName
+                     var parentLine = localBase.getSingleAim(parentAim)
+             if (parentLine.length > 1)
+                     parentName = parentLine[1]
+
             var repeatable = aimList[i][11]
             var privacy = aimList[i][12]
             //also could run as set of filters making another list - first filter name, then tag etc
@@ -655,7 +671,7 @@ Item {
                                       "assignTo":assignTo,"priority":priority,
                                       "progress":progress,"progressText":progressText,
                                       "parentAim":parentAim,
-                                      "repeatable":repeatable,"privacy":privacy})
+                                      "repeatable":repeatable,"privacy":privacy,"parentName":parentName})
         }
     }
 
