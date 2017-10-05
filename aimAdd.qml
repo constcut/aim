@@ -428,8 +428,6 @@ Item {
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-            //DateTimeChoose{}
-            //old way - and its better and must be applied on refact, but now we should do faster way :
         Item {
 
             id: popupDateItem

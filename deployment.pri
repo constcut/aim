@@ -25,3 +25,9 @@ android-no-sdk {
 }
 
 export(INSTALLS)
+
+HEADERS += \
+    $$PWD/listoperations.h
+
+SOURCES += \
+    $$PWD/listoperations.cpp

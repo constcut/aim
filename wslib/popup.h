@@ -33,7 +33,7 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 public slots:
-    void setPopupText(const QString& text, const QString& color, const int seconds); //idea on refact
+    void setPopupText(const QString& text, const QString& color, const int seconds);
     void show();
 
 

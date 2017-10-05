@@ -77,57 +77,29 @@ Item {
         model : localBase.getAimsNames()
 
         onCurrentIndexChanged: {
+
+            var aimTable
+
             if (listTypeSelect.currentIndex == 0) //ALL
                 if (currentIndex >=1)
-                {
-                    var aimTable = localBase.getAims()
-                    var aimLine = aimTable[currentIndex-1]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
-                else
-                    currentAimId = ""
-
+                    aimTable = localBase.getAims()
             if (listTypeSelect.currentIndex == 1) //CurrentMoment
-                {
-                    var aimTable = localBase.getCurrentMomementAims()
-                    var aimLine = aimTable[currentIndex]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
-
-            //REFACT those parts to as example +
+                    aimTable = localBase.getCurrentMomementAims()
             if (listTypeSelect.currentIndex == 2) //Delayed
-                {
-                    var aimTable = localBase.getDelayedAims()
-                    var aimLine = aimTable[currentIndex]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
-
+                    aimTable = localBase.getDelayedAims()
             if (listTypeSelect.currentIndex == 3) //Future
-                {
-                    var aimTable = localBase.getFutureAims()
-                    var aimLine = aimTable[currentIndex]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
-
+                aimTable = localBase.getFutureAims()
             if (listTypeSelect.currentIndex == 4) //Running
-                {
-                    var aimTable = runningAims.getRunningAims()
-                    var aimLine = aimTable[currentIndex]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
-
+                aimTable = runningAims.getRunningAims()
             if (listTypeSelect.currentIndex == 5) //Stopped
-                {
-                    var aimTable = runningAims.getStoppedAims()
-                    var aimLine = aimTable[currentIndex]
-                    var aimId = aimLine[0]
-                    currentAimId = aimId;
-                }
+                    aimTable = runningAims.getStoppedAims()
+
+            if (aimTable != undefined && aimTable.length > currentIndex)
+            {
+                var aimLine = aimTable[currentIndex]
+                var aimId = aimLine[0]
+                currentAimId = aimId;
+            }
 
             //AND in the end perform actions on qml scene
             if (currentAimId.length > 0)

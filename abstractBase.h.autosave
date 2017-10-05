@@ -96,12 +96,6 @@ public:
     Q_INVOKABLE bool deleteAim(QString aimId);
 
 
-    //==================================
-    Q_INVOKABLE QVariantList getAllTags();
-    Q_INVOKABLE bool editTreeAims(TreeModel *aims);
-    Q_INVOKABLE bool fillTreeModelWithAims();
-    Q_INVOKABLE  bool fillTreeModelWithTags();
-
     //=====================================
 
     Q_INVOKABLE QVariantList getAims();
@@ -128,7 +122,15 @@ public:
     Q_INVOKABLE QStringList getDelayedAimsNames();
 
     //=====================================
-
+    
+   
+    Q_INVOKABLE QVariantList getAllTags();
+    Q_INVOKABLE bool editTreeAims(TreeModel *aims);
+    Q_INVOKABLE bool fillTreeModelWithAims();
+    Q_INVOKABLE  bool fillTreeModelWithTags();
+    
+     //==================================
+    
     Q_INVOKABLE bool addActivity(QString aimId, QString aimName,
                      QString operation, QString totalLength="");
 

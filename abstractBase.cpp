@@ -9,6 +9,8 @@
 #include <QDateTime>
 #include <QDate>
 
+#include "listoperations.h"
+
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
 
@@ -282,89 +284,6 @@ bool LocalSqlBase::updateAimProgress(QString aimId, QString progress, QString pr
         return request.value(0).toInt();
 }
 
-//=============!!!!!!!!!!!!!!!!!!!!!!!!!====================
-/////////HEY please move that function outside it could be used in many places
-/// nice to make file something like listoperations.h
-//=============!!!!!!!!!!!!!!!!!!!!!!!!!====================
-
-bool areLinesSame(const QStringList &firstLine, const QStringList &secondLine)
-{
-    for (int i = 0; i < firstLine.size(); ++i) // firstLine.size()
-    {
-        QString firstString = firstLine[i].trimmed();
-        QString secondString = secondLine[i].trimmed();
-
-        if (firstString != secondString)
-        {
-            qDebug() << "Lines don't fit: "<<firstString<<" "<<secondString;
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void compareLists(const QVariantList &firstList, const QVariantList &secondList,
-                  QVariantList &toInsert, QVariantList &toEdit, QVariantList &toDelete)
-{
-
-    for (int i =0; i < firstList.size(); ++i)
-    {
-        bool wasFound = false;
-
-        QStringList firstLine = firstList[i].toStringList();
-        QString firstCode = firstLine[0];
-
-        for (int j = 0; j < secondList.size(); ++j)
-        {
-            QStringList secondLine = secondList[j].toStringList();
-            QString secondCode = secondLine[0];
-
-            if (firstCode == secondCode)
-            {
-                wasFound = true;
-
-                if (areLinesSame(firstLine,secondLine) == false)
-                {
-                    toEdit << secondLine;
-                }
-
-                break;
-            }
-
-        }
-
-        if (wasFound == false)
-            toDelete << firstLine;
-
-    }
-
-     for (int i = 0; i < secondList.size(); ++i)
-     {
-         QStringList secondLine = secondList[i].toStringList();
-
-         QString secondCode = secondLine[0];
-
-         bool wasFound = false;
-
-         for (int j = 0; j < firstList.size(); ++j)
-         {
-                QStringList firstLine = firstList[j].toStringList();
-                QString firstCode = firstLine[0];
-
-                if (firstCode == secondCode)
-                {
-                    wasFound = true;
-                    break;
-                }
-         }
-
-         if (wasFound==false)
-             toInsert << secondLine;
-     }
-}
-
 
 bool LocalSqlBase::editTreeAims(TreeModel *aims) //actually here must be QObject
 {
@@ -436,24 +355,9 @@ bool LocalSqlBase::editTreeAims(TreeModel *aims) //actually here must be QObject
     }
 
     return true;
-        //1: should make from it another QVariantList
-        //this means - add field parent, and also contain all other fields
-        //as extra option there could be an exercise, for addin field parent, into table,
-        //and on edit of that field - reload model, if was changed parent one
-
-        //2: compare 2 Lists this could be done by something like void UsersLoader::compareLists
-        //also same thing was in rmp
-
-        //3: use 3 lists - to insert, to delete, to edit
-
-        //great if they can work just by QStringList, even if they would work slow first
 }
 
 
-///TO USE THIS FUNCTION WE MUST HAVE STORED VARIABLES IN CLASS LSB
-///
-///
-///
 
 
 inline uint qHash(const QVariant& varString)
@@ -508,31 +412,18 @@ QVariantList addTagPairs(QStringList aimLine)
 QVariantList LocalSqlBase::getAllTags()
 {
         QVariantList allAims = getAims();
-
         QVariantList allTags;
 
         for (int i = 0; i < allAims.size(); ++i)
         {
            QVariantList thisTag = addTagPairs(allAims[i].toStringList());
-           //Must be putted in set then
-           //OR can just first summ all of them,
-           //then put into set - deleting all the repeats
-
             allTags += thisTag;
         }
 
         QSet<QVariant> norepeats = allTags.toSet();
-
         QVariantList norepeatsList = norepeats.toList();
 
         return norepeatsList;
-
-        //1: get all aims, trace through them adding new tags to list
-
-        //2: make function that adds to set pairs (tag,parent), and creates as many as needed for dotted tags
-
-        //3: from that set of pairs we fill the TreeModel -
-            ///BUT here we can only make QVariantList yet - so we make it, with 2 QStrings tag, parent; and then make TreeModel outside
 }
 
 
@@ -541,33 +432,14 @@ bool LocalSqlBase::deleteAim(QString aimId)
     QString requestBody("DELETE FROM aims WHERE aimId='"+
                         aimId + "';");
 
-
     QSqlQuery request = executeRequest(requestBody);
 
     return request.next();
 }
 
-///ON REFACT THIS FUNCTION GOES TO LIST OPERATIONS AS COMPARE LISTS
-QStringList createListByField(QVariantList source, int fieldIndex)
-{
-    QStringList result;
-    for (int i = 0; i < source.size(); ++i)
-    {
-        QStringList fields = source[i].toStringList();
-        QString exactField = fields[fieldIndex];
-
-        result << exactField;
-    }
-    return result;
-}
-
 QStringList LocalSqlBase::getAimsNames()
 {
-    //later make a filter that not already done or something simmiliar
-
-   // QString requestBody = "SELECT * FROM aims";
-    //QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = getAims();// = fillList(request,2);  //no need too much mostly id + name, that are first 2
+    QVariantList aimsList = getAims();
 
     QStringList result;
     result << QString();
@@ -630,7 +502,7 @@ QVariantList LocalSqlBase::getFutureAims()
 QVariantList LocalSqlBase::getDelayedAims()
 {
     QDate today(QDate::currentDate());
-    //can refact to function getAimsWithDate()
+
     QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
 
     QSqlQuery request = executeRequest(requestBody);
@@ -669,8 +541,6 @@ QVariantList LocalSqlBase::getAims()
 
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimsList = fillList(request,13); //11 is fields amount
-
-    ///GOOD to scroll qml to add, if there are no aims
 
     return aimsList;
 }
@@ -711,8 +581,6 @@ QVariantList LocalSqlBase::getAimsByDateOnly(QString date)
 
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimsList = fillList(request,13); //11 is fields amount
-
-    ///GOOD to scroll qml to add, if there are no aims
 
     return aimsList;
 }
@@ -855,7 +723,6 @@ bool LocalSqlBase::addActivity(QString aimId, QString aimName,
     QString requestBody("INSERT INTO actions (aimName,aimId,operation,moment,totalLength) VALUES('"
                         +aimName + "','" + aimId  + "','" + operation + "','" + currentMoment + "','" + totalLength + "');");
 
-
     QSqlQuery request = executeRequest(requestBody);
     if (request.next())
         return request.value(0).toInt();
@@ -875,11 +742,6 @@ QVariantList LocalSqlBase::getActivityLog(QString aimId)
 QString LocalSqlBase::getActivitySummary(QString aimId)
 {
     QVariantList actLog = getActivityLog(aimId);
-
-    //count total length ower all
-    //count total times done
-    //count days since first action till today
-
     int countStarts=0,countStops=0;
 
     int totalSeconds = 0;
@@ -912,9 +774,6 @@ QString LocalSqlBase::getActivitySummary(QString aimId)
 
 bool LocalSqlBase::createTablesIfNeeded()
 {
-
-     //QLatin1String aimTableCreate("create table genres(id integer primary key, name varchar);");
-
     qDebug() << initDatabase();
 
     QString aimTableCreate("CREATE TABLE IF NOT EXISTS aims (" //
@@ -930,32 +789,24 @@ bool LocalSqlBase::createTablesIfNeeded()
                            "progress text,"
                            "progressText text,"
                            "parentAim text,"
-
-                           //OH looks like we didn't recreate everything
-                           //after deleting this field - so
-                           //now there are some errors in qml for repeatable
-                           //and privacy that are fine with old base, lol
-
                            "repeatable text,"
                            "privacy text,"
                            "duration text"
 
-                         ");"); //charset no used sorry
+                         ");");
 
     QSqlQuery request = executeRequest(aimTableCreate);
-
 
     QString activityTableCreate("CREATE TABLE IF NOT EXISTS actions (" //
                            "actId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
-                           "aimId text NOT NULL,"//"timeAndDate text,"
+                           "aimId text NOT NULL,"
                            "operation text,"
                            "moment text,"
                            "totalLength text" //helper for stops
-                         ");"); //charset no used sorry
+                         ");");
 
     QSqlQuery request2 = executeRequest(activityTableCreate);
-
 
     QString progressTableCreate("CREATE TABLE IF NOT EXISTS progress (" //
                            "recordId integer primary key autoincrement NOT NULL,"
@@ -967,25 +818,14 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request3 = executeRequest(progressTableCreate);
 
-
-     return request.isValid() && request2.isValid();
-    //return request.next();
+     return request.isValid() && request2.isValid() && request3.isValid();
 }
 
 
 bool LocalSqlBase::fillTreeModelWithAims()
 {
     aimsTree.fillWithAimList(getAims());
-
     return false;
-
-    //function moved into void TreeModel::fillWithAimList(QVariantList allAims)
-
-    //1: get with no parent
-    //a: make list of them b: delete them from the main list
-    //2: try to find from the rest those whose parent are in list
-    //a: make list of them b: delete them from the main list
-    //3: if list of them != 0 and if main list != 0 jump to 2
 }
 
 bool  LocalSqlBase::fillTreeModelWithTags()

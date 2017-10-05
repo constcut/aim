@@ -103,11 +103,6 @@ public:
 
     QVariantList getFullList();
 
-    Q_INVOKABLE QVariantList getStructureList() //delete on refact
-    {
-        QVariantList list =  getFullList();
-        return list;
-    }
 
     bool setValueOnCondition(int conditionIndex, QString conditionText,
                              int settingIndex, QString settingText);

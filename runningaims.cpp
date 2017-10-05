@@ -1,5 +1,7 @@
 #include "runningaims.h"
 
+#include "listoperations.h"t
+
 #include <QDebug>
 
 RunningAims::RunningAims(LocalSqlBase *base,QObject *parent) : QObject(parent),localBase(base)
@@ -7,30 +9,16 @@ RunningAims::RunningAims(LocalSqlBase *base,QObject *parent) : QObject(parent),l
 
 }
 
-///ON REFACT THIS FUNCTION GOES TO LIST OPERATIONS AS COMPARE LISTS
-//example on refact
-QStringList createListByField2(QVariantList source, int fieldIndex)
-{
-    QStringList result;
-    for (int i = 0; i < source.size(); ++i)
-    {
-        QStringList fields = source[i].toStringList();
-        QString exactField = fields[fieldIndex];
-
-        result << exactField;
-    }
-    return result;
-}
 
 
 QStringList RunningAims::getRunningAimsNames()
 {
-    return createListByField2(getRunningAims(),1);
+    return createListByField(getRunningAims(),1);
 }
 
 QStringList RunningAims::getStoppedAimsNames()
 {
-    return createListByField2(getStoppedAims(),1);
+    return createListByField(getStoppedAims(),1);
 }
 
 void RunningAims::start(QString aimId)
