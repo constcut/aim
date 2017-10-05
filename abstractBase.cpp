@@ -735,8 +735,11 @@ QStringList LocalSqlBase::getSingleAim(QString aimId)
     QString requestBody = "SELECT * FROM aims WHERE aimId='" + aimId + "';";
     QSqlQuery request = executeRequest(requestBody);
 
-    QVariantList oneLine = fillList(request,13); //11 is fields amount
-    QStringList result = oneLine[0].toStringList();
+    QVariantList allLines = fillList(request,13); //11 is fields amount
+    QStringList result;
+
+    if (allLines.size() > 0)
+        result = allLines[0].toStringList(); //taking only first line
 
     return result;
 }

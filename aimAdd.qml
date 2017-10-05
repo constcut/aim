@@ -167,20 +167,25 @@ Item {
             if (priorityText == "Priority:")
                 priorityText = ""
 
-            var parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
             var parentId = ""
-
-            if (parentPossibleList.length > 0)
+            if (parentAimName.currentText.length > 0)
             {
-                var firstLine = parentPossibleList[0]
-                if (firstLine.length > 1)
-                    parentId = firstLine[0]
-            }
+                   var  parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
+
+                if (parentPossibleList.length > 0)
+                {
+                    var firstLine = parentPossibleList[0]
+                    if (firstLine.length > 1)
+                        parentId = firstLine[0]
+                }
+           }
 
 
             var insertedIndex =//missing "" is progress
             localBase.addAim(aimName.text,timeAndDate.text, commentText.text, tags.text,
                                                  assignToText, priorityText,parentId,"",repeatPeriod.text);
+
+            console.log("aim added")
 
             aimName.text = timeAndDate.text = commentText.text = tags.text = repeatPeriod.text = ""
             assignTo.currentIndex = -1
@@ -268,11 +273,18 @@ Item {
             if (priorityText == "Priority:")
                 priorityText = ""
 
-            var parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
-            var firstLine = parentPossibleList[0]
-            var parentId = firstLine[0]
+            var parentId = ""
+            if (parentAimName.currentText.length > 0)
+            {
+                    var parentPossibleList = localBase.searchAimsByName(parentAimName.currentText)
 
-
+                if (parentPossibleList.length > 0)
+                {
+                    var firstLine = parentPossibleList[0]
+                    if (firstLine.length > 1)
+                        parentId = firstLine[0]
+                }
+           }
 
 
             var insertedIndex = //missing "" field is progress

@@ -234,9 +234,13 @@ Item {
         visible : text.length > 0
 
         onClicked: {
-            var parentPossibleList = localBase.searchAimsByName(aimParent.text)
-            var firstLine = parentPossibleList[0]
-            singleAimWindow.requestOpenSingleAim(firstLine[0])
+
+            if (aimParent.text.length > 0)
+            {
+                var parentPossibleList = localBase.searchAimsByName(aimParent.text)
+                var firstLine = parentPossibleList[0]
+                singleAimWindow.requestOpenSingleAim(firstLine[0])
+            }
         }
     }
 

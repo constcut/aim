@@ -594,11 +594,11 @@ void TreeModel::fillWithAimList(QVariantList allAims)
     for (int i = 0 ; i < allAims.size(); ++i)
     {
         QStringList aimList = allAims[i].toStringList();
-        QString parent = aimList[10];
+        QString parentId = aimList[10];
 
       //  qDebug() << "Trace #"<<i<<" pa:"<<parent<<".";
 
-        if (parent.isEmpty())
+        if (parentId.isEmpty())
         {
             rootAims << aimList;
             allAims.removeAt(i);
@@ -631,14 +631,14 @@ void TreeModel::fillWithAimList(QVariantList allAims)
         for (int i = 0; i < rootAims.size(); ++i)
         {
             QStringList aimList = rootAims[i].toStringList();
-            QString aimName = aimList[1];
+            QString aimId = aimList[0];
 
             for (int j = 0; j < allAims.size(); ++j)
             {
                 QStringList nextAimList = allAims[j].toStringList();
-                QString parent = nextAimList[10];
+                QString parentId = nextAimList[10];
 
-                if (parent == aimName)
+                if (parentId == aimId)
                 {
                     nextRootAims << nextAimList;
                     allAims.removeAt(j);
