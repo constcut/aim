@@ -46,18 +46,15 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
 
-    TreeModel aimsTree(&app);
-    TreeModel tagsTree(&app);
-
-    localBase.fillTreeModelWithAims(&aimsTree);
-    tagsTree.fillWithTagList(localBase.getAllTags());
+    //TreeModel aimsTree(&app);  - moved into localBase
+   // TreeModel tagsTree(&app);
 
     context->setContextProperty("localBase",&localBase);
     context->setContextProperty("userSettings",&userSettings);
-    context->setContextProperty("screenGlobal22",&screen);
+    context->setContextProperty("screenGlobal",&screen);
 
-    context->setContextProperty("treeModel",&aimsTree);
-    context->setContextProperty("tagTree",&tagsTree);
+    context->setContextProperty("treeModel",&localBase.aimsTree);
+    context->setContextProperty("tagTree",&localBase.tagsTree);
 
     //SYSTEM tray actions
     SystemTray tray(&app);
@@ -75,11 +72,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("runningAims",&runningAims);
 
     //DEBUG
-    qDebug() << localBase.getActivityLog("1");
-    qDebug() << localBase.getActivityLog("2");
-    qDebug() << localBase.getActivityLog("3");
-    qDebug() << localBase.getActivityLog("4");
-    qDebug() << localBase.getActivityLog("5");
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

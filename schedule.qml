@@ -74,16 +74,16 @@ Item {
             var progress = aimList[i][8]
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
-            var childAim = aimList[i][11]
+            //var childAim = aimList[i][11]
 
-            var repeatable = aimList[i][12]
-            var privacy = aimList[i][13]
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
 
 
             listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                              "assignTo":assignTo,"priority":priority,
                              "progress":progress,"progressText":progressText,
-                             "parentAim":parentAim,"childAim":childAim,
+                             "parentAim":parentAim,
                              "repeatable":repeatable,"privacy":privacy})
         }
     }
@@ -115,16 +115,15 @@ Item {
             var progress = aimList[i][8]
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
-            var childAim = aimList[i][11]
 
-            var repeatable = aimList[i][12]
-            var privacy = aimList[i][13]
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
 
 
             listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                              "assignTo":assignTo,"priority":priority,
                              "progress":progress,"progressText":progressText,
-                             "parentAim":parentAim,"childAim":childAim,
+                             "parentAim":parentAim,
                              "repeatable":repeatable,"privacy":privacy})
         }
     }

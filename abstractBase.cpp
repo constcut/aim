@@ -261,6 +261,27 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
     return false;
 }
 
+bool LocalSqlBase::updateAimProgress(QString aimId, QString progress, QString progressText)
+{
+    QString requestBody = QString("UPDATE aims SET progress='%1',progressText='%2'")
+            .arg(progress).arg(progressText)
+            +  QString(" WHERE aimId='%1';").arg(aimId);
+    ///use this practice to replace all the bad code
+    ///
+    QSqlQuery request = executeRequest(requestBody);
+
+
+    QDateTime now = QDateTime::currentDateTime();
+    QString currentMoment = now.toString("yyyy-MM-ddTHH:mm:ss");
+
+    QString logRecord = QString("INSERT INTO progress (aimId,progress,progressText,moment) VALUES('%1','%2','%3','%4');")
+            .arg(aimId).arg(progress).arg(progressText).arg(currentMoment);
+
+
+    if (request.next())
+        return request.value(0).toInt();
+}
+
 //=============!!!!!!!!!!!!!!!!!!!!!!!!!====================
 /////////HEY please move that function outside it could be used in many places
 /// nice to make file something like listoperations.h
@@ -700,7 +721,7 @@ QVariantList LocalSqlBase::getPeriodHitAimsByDate(QString date)
         QStringList aimLine = aimsList[i].toStringList();
 
         QString originDate = aimLine[3];
-        QString period = aimLine[12]; //actually 11, but only after reboot of base.. terrible
+        QString period = aimLine[11]; //actually 11, but only after reboot of base.. terrible
 
         if (canDateHitPeriod(originDate,period,date))
             hittedPeriodAims << aimLine;
@@ -824,7 +845,29 @@ QString LocalSqlBase::getActivitySummary(QString aimId)
     //count total times done
     //count days since first action till today
 
-    QString result = "Summary: ";
+    int countStarts=0,countStops=0;
+
+    int totalSeconds = 0;
+
+    for (int i = 0; i < actLog.size(); ++i)
+    {
+       QStringList actionLine = actLog[i].toStringList();
+
+       if (actionLine[3] == "start")
+           ++countStarts;
+       if (actionLine[3] == "stop")
+       {
+           ++countStops;
+
+           QString actionLength = actionLine[5];
+           int secondsAmount = actionLength.toInt();
+           totalSeconds += secondsAmount;
+       }
+    }
+
+    QString result = "Summary: " + QString::number(countStarts)
+            + " starts\n" + QString::number(countStops) + " stops\n"
+            + "Total seconds spent: " + QString::number(totalSeconds);
 
     return result;
 }
@@ -859,14 +902,15 @@ bool LocalSqlBase::createTablesIfNeeded()
                            //and privacy that are fine with old base, lol
 
                            "repeatable text,"
-                           "privacy text"
+                           "privacy text,"
+                           "duration text"
 
                          ");"); //charset no used sorry
 
     QSqlQuery request = executeRequest(aimTableCreate);
 
 
-    QString activityableCreate("CREATE TABLE IF NOT EXISTS actions (" //
+    QString activityTableCreate("CREATE TABLE IF NOT EXISTS actions (" //
                            "actId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
                            "aimId text NOT NULL,"//"timeAndDate text,"
@@ -875,7 +919,18 @@ bool LocalSqlBase::createTablesIfNeeded()
                            "totalLength text" //helper for stops
                          ");"); //charset no used sorry
 
-    QSqlQuery request2 = executeRequest(activityableCreate);
+    QSqlQuery request2 = executeRequest(activityTableCreate);
+
+
+    QString progressTableCreate("CREATE TABLE IF NOT EXISTS progress (" //
+                           "recordId integer primary key autoincrement NOT NULL,"
+                           "aimId text NOT NULL,"
+                           "progress text,"
+                           "progressText text"
+                           "moment text"
+                         ");");
+
+    QSqlQuery request3 = executeRequest(progressTableCreate);
 
 
      return request.isValid() && request2.isValid();
@@ -883,9 +938,9 @@ bool LocalSqlBase::createTablesIfNeeded()
 }
 
 
-bool LocalSqlBase::fillTreeModelWithAims(TreeModel *treeModel)
+bool LocalSqlBase::fillTreeModelWithAims()
 {
-    treeModel->fillWithAimList(getAims());
+    aimsTree.fillWithAimList(getAims());
 
     return false;
 
@@ -896,4 +951,10 @@ bool LocalSqlBase::fillTreeModelWithAims(TreeModel *treeModel)
     //2: try to find from the rest those whose parent are in list
     //a: make list of them b: delete them from the main list
     //3: if list of them != 0 and if main list != 0 jump to 2
+}
+
+bool  LocalSqlBase::fillTreeModelWithTags()
+{
+    tagsTree.fillWithTagList(getAllTags());
+    return false;
 }

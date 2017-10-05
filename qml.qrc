@@ -8,5 +8,6 @@
         <file>aimTree.qml</file>
         <file>tagTree.qml</file>
         <file>runningAim.qml</file>
+        <file>singleAim.qml</file>
     </qresource>
 </RCC>

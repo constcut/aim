@@ -92,6 +92,8 @@ public:
                              QString assignTo, QString priority="", QString parent="", QString progress="",
                            QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
 
+    Q_INVOKABLE bool updateAimProgress(QString aimId, QString progress, QString progressText);
+
     Q_INVOKABLE bool editTreeAims(TreeModel *aims);
     Q_INVOKABLE QVariantList getAllTags();
 
@@ -107,7 +109,8 @@ public:
 
     Q_INVOKABLE QStringList getAimsNames();
 
-    bool fillTreeModelWithAims(TreeModel *treeModel);
+    Q_INVOKABLE bool fillTreeModelWithAims();
+    Q_INVOKABLE  bool fillTreeModelWithTags();
 
     Q_INVOKABLE QVariantList getCurrentMomementAims();
     Q_INVOKABLE QStringList getCurrentMomementAimsNames();
@@ -165,6 +168,11 @@ public:
 
     //Local tables creator
     bool createTablesIfNeeded();
+
+
+    //TreeModels - yet that stay here, as part of base structure, but accesable
+    TreeModel aimsTree;
+    TreeModel tagsTree;
 
 protected:
     QSqlQuery executeRequest(QString requestBody);

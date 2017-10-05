@@ -220,8 +220,8 @@ Item {
         var parentAimValue = aimList[10]
 
 
-        var repeatableValue = aimList[12]
-        var privacyValue = aimList[13]
+        var repeatableValue = aimList[11]
+        var privacyValue = aimList[12]
 
          parentAim.model = localBase.getAimsNames()
 

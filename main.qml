@@ -94,20 +94,18 @@ ApplicationWindow {
     Connections
     {
         target: mainLoader.item
-        onRequestOpenAddAim: {
 
+        onRequestOpenAddAim: {
             addLoader.item.loadForAddNew()
             drawerRight.open()
         }
         onRequestOpenEditAim: {
-            //LOAD ITEM IN DRAWER
-
-            //console.log("going to edit things " + aimId)
-
             addLoader.item.loadAimForEdit(aimId)
-
             drawerRight.open()
-
+        }
+        onRequestOpenSingleAim:
+        {
+            mainLoader.setSource("singleAim.qml",{aimId:aimId})
         }
     }
 

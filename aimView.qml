@@ -15,6 +15,7 @@ Item {
 
     signal requestOpenAddAim()
     signal requestOpenEditAim(var aimId)
+    signal requestOpenSingleAim(var aimId)
 
     property int elementHeight: 45
     property int widthOffset: 70
@@ -455,6 +456,18 @@ Item {
         id: aimMenu
 
         MenuItem {
+            text: "View"
+
+            onTriggered:
+            {
+                var index = aimList.currentIndex
+                var aimId = listModel.get(index).aimId
+                aimViewWindow.requestOpenSingleAim(aimId)
+            }
+        }
+
+
+        MenuItem {
             text: "Edit"
 
             onTriggered:
@@ -534,8 +547,8 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
-            var repeatable = aimList[i][12]
-            var privacy = aimList[i][13]
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
 
             //quick shower
             if (repeatable.length > 0)
@@ -580,8 +593,8 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
-            var repeatable = aimList[i][12]
-            var privacy = aimList[i][13]
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
 
             //quick shower
             if (repeatable.length > 0)
@@ -628,8 +641,8 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
-            var repeatable = aimList[i][12]
-            var privacy = aimList[i][13]
+            var repeatable = aimList[i][11]
+            var privacy = aimList[i][12]
             //also could run as set of filters making another list - first filter name, then tag etc
 
             //quick shower

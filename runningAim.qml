@@ -144,6 +144,31 @@ Item {
                 }
 
                 secondsCount.text = runningAims.getSecondsPassed(currentAimId)
+
+                summaryText.text = localBase.getActivitySummary(currentAimId)
+
+                var actLog = localBase.getActivityLog(currentAimId)
+
+                var fullLogText = ""
+
+                for (var i = actLog.length-1; i >=0; --i)
+                {
+                    var actLine = actLog[i]
+
+                    var operation = actLine[3]
+                    var moment = actLine[4]
+                    var totalLength = actLine[5]
+
+                    var fullLine = operation + " " + moment;
+                    if (totalLength.length > 0)
+                        fullLine += " duration " + totalLength;
+                    fullLine += "\n";
+
+                    fullLogText += fullLine
+                }
+
+                logOfActivity.text =   fullLogText
+
             }
         }
     }

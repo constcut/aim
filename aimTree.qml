@@ -15,6 +15,9 @@ Item {
     width: 480
     height: 800
 
+    Component.onCompleted:  {
+        localBase.fillTreeModelWithAims()
+    }
 
     Button{
 
