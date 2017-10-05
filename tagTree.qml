@@ -59,9 +59,8 @@ Item {
         onClicked:
         {
             //mainWindow.reloadPlaceList(firmTree.getFieldByIndex(index,1))
-            //console.log("Argument clicked 1 : " + tagTree.getFieldByIndex(index,1))
-            //console.log("Argument clicked 0 : " + tagTree.getFieldByIndex(index,0))
-
+           // console.log("Argument clicked 1 : " + tagTree.getFieldByIndex(index,1))
+//            console.log("Argument clicked 0 : " + tagTree.getFieldByIndex(index,0))
 
 
             searchModelTag(tagTree.getFieldByIndex(index,0)) //first argument must be tag name
@@ -76,6 +75,8 @@ Item {
     //ACTUAL FUNCTION FOR FUTURE
     function searchModelTag(searchTag)
     {
+        //console.log("Tag search model " + searchTag)
+
         listModel.clear()
         var aimList =  localBase.getAims()
 
@@ -113,8 +114,8 @@ Item {
             var privacy = aimList[i][12]
             //also could run as set of filters making another list - first filter name, then tag etc
 
-            //if (tag.search(regExpTag) !== -1) //MUST THEN MAKE TOTAL EQUAL!!
-            if (tag == searchTag)
+            if (tag.search(regExpTag) !== -1) //MUST THEN MAKE TOTAL EQUAL!!
+            //if (tag == searchTag)
                 listModel.append({"aimId":aimId,"name":aimName,"timeAndDate":timeAndDate,"comment":comment,"tag":tag,
                                       "assignTo":assignTo,"priority":priority,
                                       "progress":progress,"progressText":progressText,

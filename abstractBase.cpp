@@ -462,11 +462,9 @@ inline uint qHash(const QVariant& varString)
     return qHash(stringValue,0xa03f);
 }
 
-QVariantList addTagPairs(QStringList aimLine)
+QVariantList addTagPairs(QString tag)
 {
-    QString tag=aimLine[5]; //~ :)
     QVariantList result;
-
 if (tag.isEmpty())
     return result;
 
@@ -490,6 +488,21 @@ if (tag.isEmpty())
     result << tagsPair;
 
     return result;
+}
+
+QVariantList addTagPairs(QStringList aimLine)
+{
+    QString tag = aimLine[5];
+
+    //TO MAKE POSSIBLE MULTIPLE TAGS WE JUST NEED TO
+    QStringList tagParts = tag.split(" ");
+
+    QVariantList result;
+
+    for (int i = 0; i < tagParts.size(); ++i)
+        result += addTagPairs(tagParts[i]);
+
+                return result;
 }
 
 QVariantList LocalSqlBase::getAllTags()
@@ -661,6 +674,25 @@ QVariantList LocalSqlBase::getAims()
 
     return aimsList;
 }
+
+QVariantList LocalSqlBase::getChildAims(QString parentAimId)
+{
+    QString requestBody =
+            QString("SELECT * FROM aims WHERE parentAim='%1';")
+            .arg(parentAimId);
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimsList = fillList(request,13); //11 is fields amount
+
+    return aimsList;
+}
+
+QStringList LocalSqlBase::getChildAimsNames(QString parentAimId)
+{
+    QVariantList aimsList = getChildAims(parentAimId);
+    return createListByField(aimsList,1);
+}
+
 
 QVariantList LocalSqlBase::getAimsByDate(QString date)
 {

@@ -105,6 +105,9 @@ public:
     Q_INVOKABLE QVariantList getAimsByDateOnly(QString date);
     Q_INVOKABLE QVariantList getPeriodHitAimsByDate(QString date);
 
+    Q_INVOKABLE QVariantList getChildAims(QString parentAimId);
+    Q_INVOKABLE QStringList getChildAimsNames(QString parentAimId);
+
     Q_INVOKABLE QStringList getSingleAim(QString aimId);
 
     Q_INVOKABLE QStringList getAimsNames();

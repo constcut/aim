@@ -51,7 +51,20 @@ Item {
             aimAssignedTo.text = aimLine[6]
 
             aimPriority.text = aimLine[7]
-            aimParent.text = aimLine[10]
+
+            var parentAimId = aimLine[10]
+            var parentName = ""
+            viewParentButton.visible = false
+
+            var parentLine = localBase.getSingleAim(parentAimId)
+            if (parentLine.length > 1)
+            {
+                parentName = parentLine[1]
+                viewParentButton.visible = true
+            }
+
+
+            aimParent.text = parentName
             //MAYBE NEED TO HAVE FIELD PARENT AIM? ALSO? seamize once hadd to solve possible rename issue
 
             aimSummory.text = localBase.getActivitySummary(aimId)
@@ -71,6 +84,8 @@ Item {
             }
 
 
+            childList.model = localBase.getChildAimsNames(aimId);
+            childInfoText.text = "Has " + childList.model.length + " child";
         }
     }
 
@@ -227,6 +242,7 @@ Item {
 
     Button {
 
+        id: viewParentButton
         y: elementHeight*15
 
         text : "View parent"
@@ -245,8 +261,33 @@ Item {
     }
 
     Text {
-        y: elementHeight*15
-        text : "Child list needed here! Or even child tree"
+        id: childInfoText
+        y: elementHeight*4
+        x: parent.width/2
+        text : "Child list"
+    }
+
+    ComboBox
+    {
+        id: childList
+        y:elementHeight*5
+        x: parent.width/2
+        //model : localBase.getAimsNames()
+    }
+
+    Button
+    {
+        y: elementHeight*6
+        x: parent.width/2
+        text: "Open child"
+
+        onClicked:
+        {
+            var childIndex = childList.currentIndex
+            var childLines = localBase.getChildAims(aimId)
+            var requestedLine = childLines[childIndex]
+            singleAimWindow.requestOpenSingleAim(requestedLine[0])
+        }
     }
 
 
