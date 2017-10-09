@@ -547,7 +547,7 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
-            var parentName
+            var parentName = ""
             var parentLine = localBase.getSingleAim(parentAim)
             if (parentLine.length > 1)
                 parentName = parentLine[1]
@@ -599,7 +599,7 @@ Item {
             var progressText = aimList[i][9]
             var parentAim = aimList[i][10]
 
-            var parentName
+            var parentName = ""
                      var parentLine = localBase.getSingleAim(parentAim)
              if (parentLine.length > 1)
                      parentName = parentLine[1]

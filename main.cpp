@@ -14,6 +14,8 @@
 #include "wslib/systemtray.h"
 #include "wslib/popup.h"
 
+#include "wslib/loghandler.h"
+
 #include "aimnotifications.h"
 #include "runningaims.h"
 
@@ -71,10 +73,15 @@ int main(int argc, char *argv[])
     RunningAims runningAims(&localBase,&app);
     context->setContextProperty("runningAims",&runningAims);
 
-    //DEBUG
-    context->setContextProperty("androidNotify",&notifications.androidNotification);
+    LogHandler logHandler;
+
+    qDebug() << "TEST";
+
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }
+
+

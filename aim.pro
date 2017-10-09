@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     wslib/systemtray.cpp \
     wslib/tabelserialize.cpp \
     aimnotifications.cpp \
-    runningaims.cpp
+    runningaims.cpp \
+    wslib/loghandler.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -45,7 +46,8 @@ HEADERS += \
     wslib/systemtray.h \
     wslib/tabelserialize.h \
     aimnotifications.h \
-    runningaims.h
+    runningaims.h \
+    wslib/loghandler.h
 
 #dunno what is that
 INSTALLS += target

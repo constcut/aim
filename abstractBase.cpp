@@ -588,14 +588,17 @@ QVariantList LocalSqlBase::getAimsByDateOnly(QString date)
 
 bool canDateHitPeriod(QString originDate, QString period, QString searchDate)
 {
+    QString daysPeriod = period.mid(0,period.indexOf("d"));
+    qint64 daysAmount = daysPeriod.toInt();
+    if (daysAmount == 0)
+        return false;
+
     QDate originDateValue = QDate::fromString(originDate,"yyyy-MM-dd");
     QDate searchDateValue = QDate::fromString(searchDate,"yyyy-MM-dd");
 
     if (searchDateValue <= originDateValue)
         return false;
 
-    QString daysPeriod = period.mid(0,period.indexOf("d"));
-    qint64 daysAmount = daysPeriod.toInt();
     qint64 daysBetween = originDateValue.daysTo(searchDateValue);
 
     if (daysBetween%daysAmount==0)
