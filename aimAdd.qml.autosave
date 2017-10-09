@@ -14,9 +14,12 @@ Item {
     width:  480//x
     height: 800//y
 
+   
     signal requestOpenViewAims()
     //and other signals could be also here
 
+    //AutoGeometry { id: autoGeometry; }
+    
     property int elementHeight: 45 //y 45/800 - 0.05625
     property int widthOffset: 20 //x 20/480 - 0.041(6)
 

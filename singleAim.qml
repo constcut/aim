@@ -25,6 +25,12 @@ Item {
 
     property int yOffset: 50 //be aware of low screens try everywhere
 
+    property int microOffset: 10
+
+    property int bigFontSize : 35
+    property int middleFontSize : 25
+    property int smallFontSize : 15
+
     property string aimId : ""
 
     Component.onCompleted:
@@ -92,14 +98,14 @@ Item {
     Text {
         id: aimName
         text: "Name"
-        font.pointSize: 35
+        font.pointSize: bigFontSize
 
         y: elementHeight
     }
     Text {
         id: aimMoment
         text: "moment" //better with period
-        font.pointSize: 25
+        font.pointSize: middleFontSize
 
         y: elementHeight*2
     }
@@ -107,28 +113,28 @@ Item {
     Text {
         id: aimTag
         text: "Tag"
-        font.pointSize: 25
+        font.pointSize: middleFontSize
 
         y: elementHeight*3
     }
     Text {
         id: aimAssignedTo
         text: "AssignedTo"
-        font.pointSize: 25
+        font.pointSize: middleFontSize
 
         y: elementHeight*4
     }
     Text {
         id: aimPriority
         text: "Priority"
-        font.pointSize: 25
+        font.pointSize: middleFontSize
 
         y: elementHeight*5
     }
     Text {
         id: aimParent
         text: "Parent"
-        font.pointSize: 25
+        font.pointSize: middleFontSize
 
         y: elementHeight*6
     }
@@ -137,7 +143,7 @@ Item {
     Text {
         id: aimComment
         text: "Comment"
-        font.pointSize: 15
+        font.pointSize: smallFontSize
 
         y: elementHeight*7
     }
@@ -147,7 +153,7 @@ Item {
         id: progressText
         placeholderText: "Progress description"
 
-        font.pointSize: 15
+        font.pointSize: smallFontSize
 
         y: elementHeight*9
     }
@@ -159,7 +165,7 @@ Item {
     Button
     {
         y: elementHeight*12
-        x: parent.width - width - 10
+        x: parent.width - width - microOffset
         text : "Save progress"
 
         onClicked: {
@@ -170,7 +176,7 @@ Item {
     Text {
         id: aimSummory
         text: "Summory"
-        font.pointSize: 15
+        font.pointSize: smallFontSize
 
         y: elementHeight*13
     }
@@ -180,7 +186,7 @@ Item {
         text: "Running"
         x: parent.width/2
 
-        font.pointSize: 15
+        font.pointSize: smallFontSize
 
         y: elementHeight*13
     }
@@ -231,7 +237,7 @@ Item {
     Button {
 
         y: elementHeight*15
-        x: parent.width-width-10
+        x: parent.width-width-microOffset
 
         text : "Edit"
 

@@ -15,8 +15,31 @@ Item {
         loadViewSettings()
      }
 
-     property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
+    property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
 
+    property int contentMoveToSearch : -100
+    property int contentMoveToHideSearch : 300
+
+    property int listElementHeight : 110
+    property int firstSectionHeight : 30
+    property int secondSectionHeight : 25
+    property int thirdSectionHeight : 15
+    property int forthSectionHeight : 25
+
+    property int fontSizeSmall : 10
+    property int fontSizeMiddle : 15
+    property int fontSizeBig : 20
+
+    property int highlightWidth : 200
+    property int highlightHeight : 50
+
+    property int popupXOffset : 50
+    property int popupYOffset : 50
+
+    property int popupWidth : 230
+    property int popupHeight : 560
+
+    property int microOffset : 10
 
 
     ListView
@@ -24,7 +47,7 @@ Item {
         id:aimList
         clip: true
         width: parent.width
-        y: 0
+        //y: 0
         height: parent.height
 
         model: listModel
@@ -38,12 +61,12 @@ Item {
 
                    if (desktopClient == false) //android or ios
                    {
-                       if( contentY < -100 ) {
+                       if( contentY < contentMoveToSearch ) {
                            searchBox.visible = true
                            settingsBox.visible = true
                            searchTimer.running = true
                        }
-                       if (contentY > 300)
+                       if (contentY > contentMoveToHideSearch)
                        {
                             searchBox.visible = false
                             settingsBox.visible = false
@@ -104,46 +127,46 @@ Item {
         Item {
             id: wrapper //rename on refact
             width: aimList.width
-            height: 110  //means need to know fonts also
+            height: listElementHeight  //means need to know fonts also
 
             Column {
                 Row
                 {
-                    height: 30 //must look over here
-                    Text { id: aimNameText; color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: 20}
-                    rightPadding:  (aimList.width - aimNameText.width)/2 - 10
-                    leftPadding:  (aimList.width - aimNameText.width)/2 - 10
+                    height: firstSectionHeight //must look over here
+                    Text { id: aimNameText; color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: fontSizeBig}
+                    rightPadding:  (aimList.width - aimNameText.width)/2 - microOffset
+                    leftPadding:  (aimList.width - aimNameText.width)/2 - microOffset
                 }
                 RowLayout
                 {
-                    height: 25
+                    height: secondSectionHeight
                     width: aimList.width
 
-                    Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimListItem.tagShow && tag.length > 0   ; font.pointSize: 15}
+                    Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimListItem.tagShow && tag.length > 0   ; font.pointSize: fontSizeMiddle}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { rightPadding: 15; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: 15}
+                    Text { rightPadding: fontSizeMiddle; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: fontSizeMiddle}
                 }
                 RowLayout
                 {
-                    height: 15
+                    height: thirdSectionHeight
                     width: aimList.width
 
-                    Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimListItem.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pointSize: 10}
+                    Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimListItem.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pointSize: fontSizeSmall}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { rightPadding: 25; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pointSize: 10}
+                    Text { anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pointSize: fontSizeSmall}
                 }
                 Row
                 {
-                    height: 25
-                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pointSize: 10}
+                    height: forthSectionHeight
+                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pointSize: fontSizeSmall}
 
-                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pointSize: 10}
+                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pointSize: fontSizeSmall}
                 }
             }
             states: State { // indent the item if it is the current item
                 name: "Current"
                 when: wrapper.ListView.isCurrentItem
-                PropertyChanges { target: wrapper; x: 20 }
+                PropertyChanges { target: wrapper; x: fontSizeBig }
             }
             transitions: Transition {
                 NumberAnimation { properties: "x"; duration: 200 }
@@ -240,7 +263,7 @@ Item {
         id: highlightBar
         Rectangle {
             id: highlightBarRect
-            width: 200; height: 50
+            width: highlightWidth; height: highlightHeight
             color: highlightAimColor //"#FFFF88"
             y: aimList.currentItem.y;
             Behavior on y { SpringAnimation { spring: 2; damping: 0.3 } } //read about it
@@ -468,10 +491,10 @@ Item {
 
     Popup {
         id: viewSettingsPopup //make also time popup with tumbler
-        x: 50
-        y: 50
-        width: 230
-        height: 560 //ensure manual sizing
+        x: popupXOffset
+        y: popupYOffset
+        width: popupWidth
+        height: popupHeight //ensure manual sizing
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent

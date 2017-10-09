@@ -19,13 +19,16 @@ Item {
 
     property int yOffset: 50 //be aware of low screens try everywhere
 
+    property int veryBigFontSize : 50
+
+
     property string currentAimId : ""
 
     ComboBox
     {
         id: listTypeSelect
 
-        y:yOffset+elementHeight*1-45
+        y:yOffset
         width: parent.width-widthOffset*2
         x: widthOffset
 
@@ -70,7 +73,7 @@ Item {
     {
         id : aimSelect
 
-        y :yOffset+elementHeight*3-45
+        y :yOffset+elementHeight*2
         width : parent.width-widthOffset*2
         x : widthOffset
 
@@ -148,7 +151,7 @@ Item {
     Button
     {
         id:startButton
-        y :yOffset+elementHeight*5-45
+        y :yOffset+elementHeight*4
         x : widthOffset
         text : "Start"
 
@@ -164,7 +167,7 @@ Item {
     Button
     {
         id:stopButton
-        y: yOffset+elementHeight*5-45
+        y: yOffset+elementHeight*4
         x : parent.width - widthOffset - width
         text: "Stop"
         enabled: false
@@ -182,8 +185,8 @@ Item {
     {
         id:secondsCount
         x: widthOffset + (parent.width-width-widthOffset)/2 //WOULD LIKE to see it in center :)
-        y: yOffset+elementHeight*7-45
-        font.pointSize: 50
+        y: yOffset+elementHeight*6
+        font.pointSize: veryBigFontSize
         text: "14:31"
     }
 
@@ -201,7 +204,7 @@ Item {
     {
         id: logOfActivity
 
-        y: yOffset+elementHeight*10-45
+        y: yOffset+elementHeight*9
         width: parent.width-widthOffset*2
         height: elementHeight*3
 
@@ -214,7 +217,7 @@ Item {
     {
         id: summaryText
 
-        y: yOffset+elementHeight*14-45
+        y: yOffset+elementHeight*13
         width: parent.width-widthOffset*2
         height: elementHeight*3
 

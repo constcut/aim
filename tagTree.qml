@@ -15,6 +15,14 @@ Item {
     width: 480
     height: 800
 
+    property int treeViewHeight : 300
+    property int treeViewYOffset : 50
+    property int columntWidth : 300
+
+    property int aimListYOffset : 400
+    property int aimListHeight : 300
+
+
 
     signal requestOpenAddAim()
     signal requestOpenEditAim(var aimId)
@@ -30,11 +38,11 @@ Item {
         id: treeView
         model: tagTree
 
-        width: 480
-        height: 300
+        width: parent.width
+        height: treeViewHeight
 
         x: 0
-        y: 50
+        y: treeViewYOffset
 
         itemDelegate:   Item {
             id: treeDelegate
@@ -57,7 +65,7 @@ Item {
         QMLOld.TableViewColumn {
             role: tagTree.getColumnName(0)
             title: "tag"
-            width: 300
+            width: columntWidth
         }
 
 
@@ -77,17 +85,13 @@ Item {
 
     AimList
     {
-        y: 400
-        height: 300
+        y: aimListYOffset
+        height: aimListHeight
         width: parent.width
 
         id:aimList
-
-        Component.onCompleted:
-        {
-            //console.log("Tag aim list item loaded")
-        }
     }
+
     /*
     //ACTUAL FUNCTION FOR FUTURE
     function searchModelTag(searchTag)

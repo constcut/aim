@@ -21,12 +21,17 @@ Item {
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
-     property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
+    property int microOffset : 10
+
+    property int roundButtonFontSize : 20
+    property int aimListMicroOffset : 25
+
+    property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
 
     Item
     {
       y: yOffset
-      x: 10 //widthOffset
+      x: microOffset //widthOffset
 
       width: parent.width - widthOffset*2
 
@@ -97,10 +102,10 @@ Item {
     Item
     {
         //settings box
-        y: yOffset - 20
-        x: searchBox.width + widthOffset + 15
+        y: yOffset - microOffset*2
+        x: searchBox.width + widthOffset + microOffset*2//there was 15 oups
 
-        width: widthOffset-10
+        width: widthOffset-microOffset
 
         id: settingsBox
         visible: desktopClient //false
@@ -108,7 +113,7 @@ Item {
         RoundButton
         {
             text:  "*" // "\u2699"
-            font.pixelSize: 20
+            font.pixelSize: roundButtonFontSize
             onClicked:
             {
                 //HEY it should be called from the view item!
@@ -125,10 +130,10 @@ Item {
     Item
     {
         //settings box
-        y: yOffset + 50
-        x: searchBox.width + widthOffset + 15
+        y: yOffset*2
+        x: searchBox.width + widthOffset + microOffset*2
 
-        width: widthOffset-10
+        width: widthOffset-microOffset
 
         id: addBox
         visible: desktopClient //false
@@ -136,7 +141,7 @@ Item {
         RoundButton
         {
             text:  "+"
-            font.pixelSize: 20
+            font.pixelSize: roundButtonFontSize
             onClicked:
             {
                 aimViewWindow.requestOpenAddAim()
@@ -176,10 +181,10 @@ Item {
 
     Rectangle
     {
-         y: searchBox.visible ? searchBox.fullHeight + yOffset +10: yOffset+10
+         y: searchBox.visible ? searchBox.fullHeight + yOffset +microOffset: yOffset+microOffset
          x: 0
          width: parent.width
-         height:10
+         height:microOffset
 
          border.color: "black"
          color: "gray"
@@ -189,7 +194,7 @@ Item {
     {
         id: aimList
         width: parent.width
-        y: searchBox.visible ? searchBox.fullHeight + yOffset+25 : yOffset+25
+        y: searchBox.visible ? searchBox.fullHeight + yOffset+aimListMicroOffset : yOffset+aimListMicroOffset
         height: parent.height - yOffset*4 //if put someting down make it *4
 
         Component.onCompleted:

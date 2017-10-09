@@ -14,6 +14,8 @@ ApplicationWindow {
     visible: true
 
 
+    property int microYOffset : 5
+
     property bool desktopClient: true ///set somehow from cpp
 
     //fuck off user colors for a while
@@ -91,7 +93,7 @@ ApplicationWindow {
     }
 
     Loader {
-        y: toolBar.height + 5
+        y: toolBar.height + microYOffset
         anchors.centerIn: parent
         id: mainLoader
         source: "aimView.qml" //hello by default

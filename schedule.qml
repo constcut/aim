@@ -15,6 +15,8 @@ Item {
 
     anchors.fill: parent
 
+    property int widthOffset : 50
+    property int microOffset : 10
 
     signal requestOpenAddAim()
     signal requestOpenEditAim(var aimId)
@@ -24,10 +26,10 @@ Item {
     QMLOld.Calendar
     {
         y: 0
-        x: 50 //SHOULD BE REPLACE WITH SOME SCREEN VALUE
+        x: widthOffset //SHOULD BE REPLACE WITH SOME SCREEN VALUE
 
-        width: parent.width - x*2
-        height: parent.width - x*2 //special logic for always vertical Application
+        width: parent.width - widthOffset*2
+        height: parent.width - widthOffset*2 //special logic for always vertical Application
 
         id: calendar
 
@@ -43,17 +45,16 @@ Item {
     Text{
         y: calendar.height
         id: chosenDate
-        x: 50
+        x: widthOffset
     }
 
     AimList
     {
-        y: calendar.height + calendar.y + 10
-        height: parent.height - (calendar.height + calendar.y + 20)
+        y: calendar.height + calendar.y + microOffset
+        height: parent.height - (calendar.height + calendar.y + microOffset*2)
         width: parent.width
 
         id:aimList
-
     }
 
     /*

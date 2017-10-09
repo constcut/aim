@@ -19,10 +19,23 @@ Item {
         localBase.fillTreeModelWithAims()
     }
 
+    property int microOffset : 10
+    property int saveButtonOffset : 550 //y
+
+    property int treeOldButtonsOffset : 600
+
+    property int treeViewHeight : 500
+    property int yOffset : 50
+
+    property int column1Width : 150
+    property int column2Width : 70
+    property int column3Width : 70
+    property int column4Width : 250
+
     Button{
 
-        y: 550
-        x: parent.width - 10 - width
+        y: saveButtonOffset
+        x: parent.width - microOffset - width
 
         text: "Cохранить"
         onClicked:
@@ -51,8 +64,8 @@ Item {
 
     RowLayout
     {
-        y: 600
-        x: 10
+        y: treeOldButtonsOffset
+        x: microOffset
 
     Button{
         text: "Добавить узел"
@@ -76,11 +89,11 @@ Item {
         id: aimsTree
         model: treeModel //hierarchy
 
-        width: 480
-        height: 500
+        width: parent.width
+        height: treeViewHeight
 
         x: 0
-        y: 50
+        y: yOffset
 
         //y: 30
         //x: 5
@@ -134,22 +147,22 @@ Item {
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(0)
             title: "Имя цели"
-            width: 150
+            width: column1Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(1)
             title: "Время"
-            width: 70
+            width: column2Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(2)
             title: "Дата" //will autocalculate
-            width: 70
+            width: column3Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(3)
             title: "Комментарий" //will autocalculate
-            width: 250
+            width: column4Width
         }
 
         onClicked:
