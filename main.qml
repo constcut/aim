@@ -80,6 +80,12 @@ ApplicationWindow {
                 onClicked:  drawerRight.open()
             }
 
+            ToolButton
+            {
+                text: "notify"
+                onClicked: androidNotify.setNotification("Hello!")
+            }
+
             //http://doc.qt.io/qt-5/qml-qtquick-controls2-toolbar.html
         }
     }

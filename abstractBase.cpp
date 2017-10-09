@@ -91,7 +91,7 @@ QSqlQuery LocalSqlBase::executeRequest(QString requestBody)
 //Good to make auto creating bases for local one with SQL statements
 
 //==================first start on most simple things=======================
-
+/*
 int LocalSqlBase::addCategory(QString categoryName, QString categoryParent)
 {
     QString requestBody("INSERT OUTPUT INSERTED.categoryId INTO categories (categoryName,categoryParent) VALUES('%1','%2')");
@@ -207,6 +207,7 @@ QVariantList LocalSqlBase::getLists()
     QSqlQuery request = executeRequest(requestBody);
     return fillList(request,3);
 }
+*/
 ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //=============FINALY AIMS itself=======================
 ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -703,9 +704,6 @@ QSqlError  LocalSqlBase::initDatabase()
         return QSqlError();
 
     QSqlQuery q;
-
-    //ok migrate all the initiation here
-
 
     return QSqlError();
 }

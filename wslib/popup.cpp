@@ -58,7 +58,6 @@ void PopUp::setPopupText(const QString &text, const QString& color, const int se
     if (color == "red")
     {
         currentColor = QColor(255,10,10);
-        //refact
         label.setStyleSheet("QLabel { color : white; "
                             "margin-top: 6px;"
                             "margin-bottom: 6px;"

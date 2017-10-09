@@ -1,6 +1,6 @@
 #include "runningaims.h"
 
-#include "listoperations.h"t
+#include "listoperations.h"
 
 #include <QDebug>
 

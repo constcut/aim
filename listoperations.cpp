@@ -1,4 +1,6 @@
 #include "listoperations.h"
+#include <QDebug>
+
 
 QStringList createListByField(QVariantList source, int fieldIndex)
 {

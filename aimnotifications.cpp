@@ -2,6 +2,46 @@
 #include <QDebug>
 
 
+#ifdef ANDROID
+#include <QtAndroidExtras/QAndroidJniObject>
+#endif
+
+NotificationClient::NotificationClient(QObject *parent)
+    : QObject(parent)
+{
+    connect(this, SIGNAL(notificationChanged()), this, SLOT(updateAndroidNotification()));
+}
+
+void NotificationClient::setNotification(const QString &notification)
+{
+    if (m_notification == notification)
+        return;
+
+    m_notification = notification;
+    emit notificationChanged();
+}
+
+QString NotificationClient::notification() const
+{
+    return m_notification;
+}
+
+void NotificationClient::updateAndroidNotification()
+{
+    #ifdef ANDROID
+
+    qDebug() << "Running android notification attempt";
+
+    QAndroidJniObject javaNotification = QAndroidJniObject::fromString(m_notification);
+    QAndroidJniObject::callStaticMethod<void>("at/wavespl/apps/aim/NotificationClient",
+                                       "notify",
+                                       "(Ljava/lang/String;)V",
+                                       javaNotification.object<jstring>());
+    #endif
+}
+
+//EXAMPLE of android notifications
+
 AimNotifications::AimNotifications(LocalSqlBase *base,PopUp *popUp,QObject *parent):QObject(parent),localBase(base),popUp(popUp)
 {
 }
@@ -39,6 +79,10 @@ void AimNotifications::watchDogWoughf()
 
         popUp->setPopupText(messageText,"gray",10);
         popUp->show();
+
+#ifdef ANDROID
+        androidNotification.setNotification(messageText);
+#endif
    }
 }
 

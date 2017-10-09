@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("runningAims",&runningAims);
 
     //DEBUG
-
+    context->setContextProperty("androidNotify",&notifications.androidNotification);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
