@@ -10,5 +10,6 @@
         <file>runningAim.qml</file>
         <file>singleAim.qml</file>
         <file>AimList.qml</file>
+        <file>AutoGeometry.qml</file>
     </qresource>
 </RCC>

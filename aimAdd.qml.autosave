@@ -331,15 +331,9 @@ Item {
         onYes:
         {
             aimName.text=""
-            //listName.currentIndex = -1 //not sure
             timeAndDate.text=""
-            //categoryName.currentIndex  = -1
-            //reset repeatable
-            //privacy.currentIndex=0
             assignTo.currentIndex=0
             parentAimName.currentIndex=0
-            //childAimsList.currentIndex=0
-            //progress.currentIndex=0
         }
         onNo:
         {
@@ -391,7 +385,6 @@ Item {
 
                   width:  widthOffset*6
                 }
-
 
                 //ON CHOOSE TURN ON SWITCH
             }
@@ -525,8 +518,6 @@ Item {
             }
         }
         }
-
-
 
 }
 
