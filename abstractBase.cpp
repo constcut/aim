@@ -254,7 +254,7 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
             +  QString(" WHERE aimId='%1';").arg(aimId);
     ///use this practice to replace all the bad code
 
-    qDebug() << requestBody << " formed request";
+    //qDebug() << requestBody << " formed request";
 
     QSqlQuery request = executeRequest(requestBody);
 

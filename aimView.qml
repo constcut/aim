@@ -21,9 +21,7 @@ Item {
     property int widthOffset: 70
     property int yOffset: 50 //be aware of low screens try everywhere
 
-    property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
-
-    property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
+     property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
 
     Item
     {
@@ -53,17 +51,17 @@ Item {
                if (searchByName.checked)
                {
                    if (text.length > 0)
-                       searchModel(text)
+                       aimList.searchModel(text)
                    else
-                       loadModel()
+                       aimList.loadModel()
                }
 
                if (searchByTag.checked)
                {
                    if (text.length > 0)
-                       searchModelTag(text)
+                       aimList.searchModelTag(text)
                    else
-                       loadModel()
+                       aimList.loadModel()
                }
            }
        }
@@ -113,7 +111,9 @@ Item {
             font.pixelSize: 20
             onClicked:
             {
-                viewSettingsPopup.open()
+                //HEY it should be called from the view item!
+
+                aimList.requestSettingsPopup()
             }
 
             ToolTip.visible: hovered
@@ -149,109 +149,6 @@ Item {
 
 
 
-    Popup {
-        id: viewSettingsPopup //make also time popup with tumbler
-        x: 50
-        y: 50
-        width: 230
-        height: 560 //ensure manual sizing
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-        Component.onCompleted: //onOpened:
-        {
-            var settingList = userSettings.getViewAimSettings()
-
-            timeAndDateField.checked = settingList[0]
-            commentField.checked = settingList[1]
-            tagField.checked = settingList[2]
-            assignToField.checked = settingList[3]
-            priorityField.checked = settingList[4]
-            progressField.checked = settingList[5]
-            progressTextField.checked  = settingList[6]
-            parentField.checked  = settingList[7]
-            childField.checked  = settingList[8]
-        }
-
-        Item {
-            ColumnLayout
-            {
-            CheckBox
-            {
-                id: timeAndDateField
-                text: "Time and date"
-            }
-            CheckBox
-            {
-                id: commentField
-                text: "Comment"
-            }
-            CheckBox
-            {
-                id: tagField
-                text: "Tag"
-            }
-            CheckBox
-            {
-                id: assignToField
-                text: "Assign to"
-            }
-            CheckBox
-            {
-                id: priorityField
-                text: "Priority"
-            }
-            CheckBox
-            {
-                id: progressField
-                text: "Progress"
-            }
-            CheckBox
-            {
-                id: progressTextField
-                text: "Progress text"
-            }
-            CheckBox
-            {
-                id: parentField
-                text: "Parent"
-            }
-            CheckBox
-            {
-                id: childField
-                text: "Child"
-            }
-            Button
-            {
-                text:"Save settings"
-                onClicked:
-                {
-                    var viewAimList = [timeAndDateField.checked,commentField.checked,
-                            tagField.checked,assignToField.checked,
-                            priorityField.checked,progressField.checked,progressTextField.checked,
-                            parentField.checked,childField.checked]
-
-                    userSettings.setViewAimSettings(viewAimList)
-
-                    loadViewSettings()
-
-                    viewSettingsPopup.close()
-
-                }
-            }
-            }
-        }
-
-    }
-
-        ColorDialog {
-            id: colorDialog
-            title: "Please choose a color"
-            onAccepted: {
-                colorTester.color = colorDialog.color
-            }
-        }
 
     Timer{
 
@@ -288,6 +185,20 @@ Item {
          color: "gray"
     }
 
+    AimList
+    {
+        id: aimList
+        width: parent.width
+        y: searchBox.visible ? searchBox.fullHeight + yOffset+25 : yOffset+25
+        height: parent.height - yOffset*4 //if put someting down make it *4
+
+        Component.onCompleted:
+        {
+            aimList.loadModel()
+        }
+    }
+
+    /*
     ListView
     {
         id:aimList
@@ -682,5 +593,8 @@ Item {
             loadModel()
         }
     }
+
+
+    */
 
 }

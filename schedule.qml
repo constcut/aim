@@ -15,6 +15,12 @@ Item {
 
     anchors.fill: parent
 
+
+    signal requestOpenAddAim()
+    signal requestOpenEditAim(var aimId)
+    signal requestOpenSingleAim(var aimId)
+
+
     QMLOld.Calendar
     {
         y: 0
@@ -31,7 +37,7 @@ Item {
         {
             chosenDate.text = calendar.selectedDate
 
-            loadModelByDate(chosenDate.text)
+            aimList.loadModelByDate(chosenDate.text)
         }
     }
     Text{
@@ -40,6 +46,17 @@ Item {
         x: 50
     }
 
+    AimList
+    {
+        y: calendar.height + calendar.y + 10
+        height: parent.height - (calendar.height + calendar.y + 20)
+        width: parent.width
+
+        id:aimList
+
+    }
+
+    /*
     ListModel {
         id: listModel
         Component.onCompleted: {
@@ -250,6 +267,7 @@ Item {
         }
     }
 
+    */
 }
 
 

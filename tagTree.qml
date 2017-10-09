@@ -15,6 +15,11 @@ Item {
     width: 480
     height: 800
 
+
+    signal requestOpenAddAim()
+    signal requestOpenEditAim(var aimId)
+    signal requestOpenSingleAim(var aimId)
+
     Component.onCompleted:  {
         localBase.fillTreeModelWithTags()
     }
@@ -60,18 +65,30 @@ Item {
         {
             //mainWindow.reloadPlaceList(firmTree.getFieldByIndex(index,1))
            // console.log("Argument clicked 1 : " + tagTree.getFieldByIndex(index,1))
-//            console.log("Argument clicked 0 : " + tagTree.getFieldByIndex(index,0))
+            console.log("Argument clicked 0 : " + tagTree.getFieldByIndex(index,0))
 
 
-            searchModelTag(tagTree.getFieldByIndex(index,0)) //first argument must be tag name
+            aimList.searchModelTag(tagTree.getFieldByIndex(index,0)) //first argument must be tag name
         }
     }
 
 
     //ViewSection
 
+    AimList
+    {
+        y: 400
+        height: 300
+        width: parent.width
 
+        id:aimList
 
+        Component.onCompleted:
+        {
+            //console.log("Tag aim list item loaded")
+        }
+    }
+    /*
     //ACTUAL FUNCTION FOR FUTURE
     function searchModelTag(searchTag)
     {
@@ -229,5 +246,6 @@ Item {
 
         ScrollBar.vertical: ScrollBar {}
     }
+    */
 
 }
