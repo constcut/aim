@@ -9,12 +9,12 @@ import QtQuick.Controls.Material 2.1
 ApplicationWindow {
     id: window
     title: qsTr("Aim")
-    width: 480 //screenGlobal.getScreenWidth();
-    height: 800 //screenGlobal.getScreenHeight();
+    width: screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
     visible: true
 
 
-    property int microYOffset : 5
+    property int microYOffset : screenGlobal.adaptYSize( 5 )
 
     property bool desktopClient: true ///set somehow from cpp
 

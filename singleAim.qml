@@ -11,8 +11,8 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 Item {
 
     id: singleAimWindow
-    width: 480
-    height: 800
+    width: screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
 
     //signal to edit!
 
@@ -20,16 +20,16 @@ Item {
     signal requestOpenEditAim(var aimId)
     signal requestOpenSingleAim(var aimId)
 
-    property int elementHeight: 45 //apply to every one
-    property int widthOffset: 20 //70
+    property int elementHeight: screenGlobal.adaptYSize(45) //apply to every one
+    property int widthOffset: screenGlobal.adaptXSize(20) //70
 
-    property int yOffset: 50 //be aware of low screens try everywhere
+    property int yOffset: screenGlobal.adaptYSize(50) //be aware of low screens try everywhere
 
-    property int microOffset: 10
+    property int microOffset: screenGlobal.adaptXSize(10)
 
-    property int bigFontSize : 35
-    property int middleFontSize : 25
-    property int smallFontSize : 15
+    property int bigFontSize : screenGlobal.adaptYSize(35)
+    property int middleFontSize : screenGlobal.adaptYSize(25)
+    property int smallFontSize : screenGlobal.adaptYSize(15)
 
     property string aimId : ""
 

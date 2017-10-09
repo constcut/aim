@@ -11,15 +11,13 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
     id: runningAimWindow
-    width: 480
-    height: 800
+    width: screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
 
-    property int elementHeight: 45 //apply to every one
-    property int widthOffset: 20 //70
-
-    property int yOffset: 50 //be aware of low screens try everywhere
-
-    property int veryBigFontSize : 50
+    property int elementHeight: screenGlobal.adaptYSize(45) //apply to every one
+    property int widthOffset: screenGlobal.adaptXSize(20) //70
+    property int yOffset: screenGlobal.adaptYSize(50) //be aware of low screens try everywhere
+    property int veryBigFontSize : screenGlobal.adaptYSize(50)
 
 
     property string currentAimId : ""

@@ -12,15 +12,15 @@ Item {
 
     id: structureItem
 
-    width: 480
-    height: 800
+    width: screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
 
-    property int treeViewHeight : 300
-    property int treeViewYOffset : 50
-    property int columntWidth : 300
+    property int treeViewHeight : screenGlobal.adaptYSize(300)
+    property int treeViewYOffset : screenGlobal.adaptYSize(50)
+    property int columntWidth : screenGlobal.adaptXSize(300)
 
-    property int aimListYOffset : 400
-    property int aimListHeight : 300
+    property int aimListYOffset : screenGlobal.adaptYSize(400)
+    property int aimListHeight : screenGlobal.adaptXSize(300)
 
 
 

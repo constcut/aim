@@ -17,29 +17,29 @@ Item {
 
     property string highlightAimColor : userSettings.getColor("ListHightlight") //to settings please
 
-    property int contentMoveToSearch : -100
-    property int contentMoveToHideSearch : 300
+    property int contentMoveToSearch : screenGlobal.adaptYSize(-100)
+    property int contentMoveToHideSearch : screenGlobal.adaptYSize(300)
 
-    property int listElementHeight : 110
-    property int firstSectionHeight : 30
-    property int secondSectionHeight : 25
-    property int thirdSectionHeight : 15
-    property int forthSectionHeight : 25
+    property int listElementHeight : screenGlobal.adaptYSize(110)
+    property int firstSectionHeight : screenGlobal.adaptYSize(30)
+    property int secondSectionHeight : screenGlobal.adaptYSize(25)
+    property int thirdSectionHeight : screenGlobal.adaptYSize(150)
+    property int forthSectionHeight : screenGlobal.adaptYSize(25)
 
-    property int fontSizeSmall : 10
-    property int fontSizeMiddle : 15
-    property int fontSizeBig : 20
+    property int fontSizeSmall : screenGlobal.adaptYSize(10)
+    property int fontSizeMiddle : screenGlobal.adaptYSize(15)
+    property int fontSizeBig : screenGlobal.adaptYSize(20)
 
-    property int highlightWidth : 200
-    property int highlightHeight : 50
+    property int highlightWidth : screenGlobal.adaptXSize(200)
+    property int highlightHeight : screenGlobal.adaptYSize(50)
 
-    property int popupXOffset : 50
-    property int popupYOffset : 50
+    property int popupXOffset : screenGlobal.adaptXSize(50)
+    property int popupYOffset : screenGlobal.adaptYSize(50)
 
-    property int popupWidth : 230
-    property int popupHeight : 560
+    property int popupWidth : screenGlobal.adaptXSize(230)
+    property int popupHeight : screenGlobal.adaptYSize(560)
 
-    property int microOffset : 10
+    property int microOffset : screenGlobal.adaptXSize(10)
 
 
     ListView
@@ -103,9 +103,7 @@ Item {
         aimListItem.parentAimShow = settingsList[7]
         aimListItem.childAimShow = settingsList[8]
 
-        //aimViewWindow.repeatableShow = settingsList[9] //not yet
-        //aimViewWindow.privacyShow = settingsList[10] //not yet
-    }
+      }
 
     property bool timeAndDateShow: true
     property bool commentShow: true
@@ -133,7 +131,7 @@ Item {
                 Row
                 {
                     height: firstSectionHeight //must look over here
-                    Text { id: aimNameText; color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pointSize: fontSizeBig}
+                    Text { id: aimNameText; color:userSettings.getColor("Text");   text: '<b>' + name + '</b>' ; font.pixelSize: fontSizeBig}
                     rightPadding:  (aimList.width - aimNameText.width)/2 - microOffset
                     leftPadding:  (aimList.width - aimNameText.width)/2 - microOffset
                 }
@@ -142,25 +140,25 @@ Item {
                     height: secondSectionHeight
                     width: aimList.width
 
-                    Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimListItem.tagShow && tag.length > 0   ; font.pointSize: fontSizeMiddle}
+                    Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimListItem.tagShow && tag.length > 0   ; font.pixelSize: fontSizeMiddle}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { rightPadding: fontSizeMiddle; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pointSize: fontSizeMiddle}
+                    Text { rightPadding: fontSizeMiddle; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pixelSize: fontSizeMiddle}
                 }
                 RowLayout
                 {
                     height: thirdSectionHeight
                     width: aimList.width
 
-                    Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimListItem.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pointSize: fontSizeSmall}
+                    Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimListItem.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pixelSize: fontSizeSmall}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pointSize: fontSizeSmall}
+                    Text { anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pixelSize: fontSizeSmall}
                 }
                 Row
                 {
                     height: forthSectionHeight
-                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pointSize: fontSizeSmall}
+                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pixelSize: fontSizeSmall}
 
-                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pointSize: fontSizeSmall}
+                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pixelSize: fontSizeSmall}
                 }
             }
             states: State { // indent the item if it is the current item
@@ -209,6 +207,8 @@ Item {
         MenuItem {
             text: "View"
 
+            font.pixelSize: fontSizeBig
+
             onTriggered:
             {
                 var index = aimList.currentIndex
@@ -221,6 +221,8 @@ Item {
         MenuItem {
             text: "Edit"
 
+             font.pixelSize: fontSizeBig
+
             onTriggered:
             {
                // console.log("edit triggered")
@@ -231,6 +233,8 @@ Item {
         }
         MenuItem {
             text: "Delete"
+
+             font.pixelSize: fontSizeBig
 
             onTriggered:
             {
@@ -244,6 +248,7 @@ Item {
         MenuItem {
             text: "Send"
 
+
             onTriggered:
             {
                 console.log("send triggered")
@@ -251,6 +256,7 @@ Item {
         }
         MenuItem {
             text: "Add child"
+
 
             onTriggered:
             {
@@ -266,7 +272,7 @@ Item {
             width: highlightWidth; height: highlightHeight
             color: highlightAimColor //"#FFFF88"
             y: aimList.currentItem.y;
-            Behavior on y { SpringAnimation { spring: 2; damping: 0.3 } } //read about it
+            Behavior on y { SpringAnimation { spring: 2*screenGlobal.adaptXSize(1); damping: 0.3*screenGlobal.adaptXSize(1) } } //read about it
         }
     }
 

@@ -12,25 +12,25 @@ Item {
 
     id: structureItem
 
-    width: 480
-    height: 800
+    width: screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
 
     Component.onCompleted:  {
         localBase.fillTreeModelWithAims()
     }
 
-    property int microOffset : 10
-    property int saveButtonOffset : 550 //y
+    property int microOffset : screenGlobal.adaptXSize(10)
+    property int saveButtonOffset : screenGlobal.adaptYSize(550) //y
 
-    property int treeOldButtonsOffset : 600
+    property int treeOldButtonsOffset : screenGlobal.adaptYSize(600)
 
-    property int treeViewHeight : 500
-    property int yOffset : 50
+    property int treeViewHeight : screenGlobal.adaptYSize(500)
+    property int yOffset : screenGlobal.adaptYSize(50)
 
-    property int column1Width : 150
-    property int column2Width : 70
-    property int column3Width : 70
-    property int column4Width : 250
+    property int column1Width : screenGlobal.adaptXSize(150)
+    property int column2Width : screenGlobal.adaptXSize(70)
+    property int column3Width : screenGlobal.adaptXSize(70)
+    property int column4Width : screenGlobal.adaptXSize(250)
 
     Button{
 

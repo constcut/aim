@@ -11,22 +11,27 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
     id: aimAddWindow
-    width:  480//x
-    height: 800//y
+    width:  screenGlobal.getScreenWidth()//480
+    height: screenGlobal.getScreenHeight()//800
+
 
     signal requestOpenViewAims()
     //and other signals could be also here
 
-    property int elementHeight: 45 //y 45/800 - 0.05625
-    property int widthOffset: 20 //x 20/480 - 0.041(6)
+    //AutoGeometry { id: autoGeometry; }
 
-    property int buttonWidth : 50//x - 0,1041(6)
-    property int yOffset: 50 //y - 0.0625
-    property int microOffset : 5//x+- 0.01041(6)
+    property int elementHeight: screenGlobal.adaptYSize(45) //y 45/800 - 0.05625
+    property int widthOffset: screenGlobal.adaptXSize(20) //x 20/480 - 0.041(6)
 
-    property int periopPopupWidth : 360 //x - 0.75
-    property int periopPopupHeight : 300 //y    - 0.375          RENAME PROPERTY
-    property int calendarLength : 260 //xy - 0.325
+    property int buttonWidth : screenGlobal.adaptXSize(50)//x - 0,1041(6)
+    property int yOffset: screenGlobal.adaptYSize(50) //y - 0.0625
+    property int microOffset : screenGlobal.adaptXSize(5)//x+- 0.01041(6)
+
+    property int periopPopupWidth : screenGlobal.adaptXSize(360) //x - 0.75
+    property int periopPopupHeight : screenGlobal.adaptYSize(300) //y    - 0.375          RENAME PROPERTY
+    property int calendarLength : screenGlobal.adaptXSize(260) //xy - 0.325
+
+    property int fontNormalSize : screenGlobal.adaptYSize(15)
 
     property bool editMode : false
     property string editingAimId : ""
@@ -38,6 +43,9 @@ Item {
         y:yOffset-elementHeight //strange formula because of shift
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         placeholderText: "Aim name"
     }
@@ -52,6 +60,9 @@ Item {
 
         placeholderText: "Time / date"
         //format { hh:mm[:ss] dd.MM[.yyyy] } //can have also buttons for dialogs
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
     }
     Button
     {
@@ -60,6 +71,9 @@ Item {
         x: widthOffset  + timeAndDate.width + microOffset
         width: buttonWidth
         text: "Pick"
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         onClicked:
         {
@@ -77,6 +91,7 @@ Item {
         height: elementHeight*2
 
         x: widthOffset
+        font.pixelSize: fontNormalSize
 
         placeholderText: "Place for comment\nMany lines"
     }
@@ -90,6 +105,9 @@ Item {
         width: parent.width-widthOffset*2
         x: widthOffset
 
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
+
         placeholderText: "#tags"
     }
 
@@ -100,6 +118,9 @@ Item {
         y:yOffset+elementHeight*7
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         model : ["Assign to:","myself","friend1","friend2"]
     }
@@ -113,6 +134,9 @@ Item {
         width: parent.width-widthOffset*2
         x: widthOffset
 
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
+
         model : ["Priority:","0-none","25-low","50-mid","75-high","100-critical"]
     }
 
@@ -124,6 +148,9 @@ Item {
         y:yOffset+elementHeight*11
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         model : localBase.getAimsNames()
     }
@@ -137,6 +164,9 @@ Item {
         width: parent.width-widthOffset*2-widthOffset*2//also small offset
         x: widthOffset
 
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
+
         placeholderText: "Repeat period"
         //format { hh:mm[:ss] dd.MM[.yyyy] } //can have also buttons for dialogs
     }
@@ -147,6 +177,9 @@ Item {
         x: widthOffset  + timeAndDate.width + microOffset
         width: 50
         text: "Set"
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         onClicked:
         {
@@ -160,6 +193,9 @@ Item {
         text: "Create aim"
         y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
+
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
 
         visible: !editMode
 
@@ -267,6 +303,9 @@ Item {
         y: yOffset+elementHeight*15 //+ linkRepeater.model * elementHeight
         x: parent.width - width - widthOffset
 
+        height: elementHeight-microOffset
+        font.pixelSize: fontNormalSize
+
         visible: editMode
 
         onClicked: {
@@ -328,15 +367,9 @@ Item {
         onYes:
         {
             aimName.text=""
-            //listName.currentIndex = -1 //not sure
             timeAndDate.text=""
-            //categoryName.currentIndex  = -1
-            //reset repeatable
-            //privacy.currentIndex=0
             assignTo.currentIndex=0
             parentAimName.currentIndex=0
-            //childAimsList.currentIndex=0
-            //progress.currentIndex=0
         }
         onNo:
         {
@@ -389,7 +422,6 @@ Item {
                   width:  widthOffset*6
                 }
 
-
                 //ON CHOOSE TURN ON SWITCH
             }
 
@@ -399,6 +431,9 @@ Item {
                 text: "Choose days period"
 
                 x: buttonWidth*5-width
+
+                height: elementHeight-microOffset
+                font.pixelSize: fontNormalSize
 
                 onClicked: {
                     console.log("done")
@@ -415,6 +450,10 @@ Item {
             {
                 y: yOffset*4 + microOffset*6 //230
                 text: "Cancel"
+
+                height: elementHeight-microOffset
+                font.pixelSize: fontNormalSize
+
                 x: microOffset*2
                 onClicked: {
                     periodPopup.close()
@@ -489,12 +528,17 @@ Item {
                 y: timeTumbler.y + timeTumbler.height + microOffset
                 id: useTime
                 checked: false
+
+                height: elementHeight-microOffset
             }
 
             Button
             {
                 y: useTime.y + useTime.height
                 text: "Choose"
+
+                height: elementHeight-microOffset
+                font.pixelSize: fontNormalSize
 
                 x: buttonWidth*5-width
 
@@ -522,8 +566,6 @@ Item {
             }
         }
         }
-
-
 
 }
 
