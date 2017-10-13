@@ -98,14 +98,14 @@ Item {
     Text {
         id: aimName
         text: "Name"
-        font.pointSize: bigFontSize
+        font.pixelSize: bigFontSize
 
         y: elementHeight
     }
     Text {
         id: aimMoment
         text: "moment" //better with period
-        font.pointSize: middleFontSize
+        font.pixelSize: middleFontSize
 
         y: elementHeight*2
     }
@@ -113,28 +113,28 @@ Item {
     Text {
         id: aimTag
         text: "Tag"
-        font.pointSize: middleFontSize
+        font.pixelSize: middleFontSize
 
         y: elementHeight*3
     }
     Text {
         id: aimAssignedTo
         text: "AssignedTo"
-        font.pointSize: middleFontSize
+        font.pixelSize: middleFontSize
 
         y: elementHeight*4
     }
     Text {
         id: aimPriority
         text: "Priority"
-        font.pointSize: middleFontSize
+        font.pixelSize: middleFontSize
 
         y: elementHeight*5
     }
     Text {
         id: aimParent
         text: "Parent"
-        font.pointSize: middleFontSize
+        font.pixelSize: middleFontSize
 
         y: elementHeight*6
     }
@@ -143,7 +143,7 @@ Item {
     Text {
         id: aimComment
         text: "Comment"
-        font.pointSize: smallFontSize
+        font.pixelSize: smallFontSize
 
         y: elementHeight*7
     }
@@ -153,7 +153,7 @@ Item {
         id: progressText
         placeholderText: "Progress description"
 
-        font.pointSize: smallFontSize
+        font.pixelSize: smallFontSize
 
         y: elementHeight*9
     }
@@ -176,7 +176,7 @@ Item {
     Text {
         id: aimSummory
         text: "Summory"
-        font.pointSize: smallFontSize
+        font.pixelSize: smallFontSize
 
         y: elementHeight*13
     }
@@ -186,7 +186,7 @@ Item {
         text: "Running"
         x: parent.width/2
 
-        font.pointSize: smallFontSize
+        font.pixelSize: smallFontSize
 
         y: elementHeight*13
     }

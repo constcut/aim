@@ -13,7 +13,10 @@ class AbstractSqlBase : public QObject
 public:
     explicit AbstractSqlBase(QObject *parent = 0);
 
+    //as we start to move it into server
+
     //Aims
+    /*
     Q_INVOKABLE virtual int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
                                    QString assignTo, QString priority="",  QString parent="", QString progress="",
                                   QString repeatable="", QString privacy="")=0;
@@ -32,6 +35,7 @@ public:
 
     Q_INVOKABLE virtual QStringList getAimLinks(QString aimName)=0; //aim id
     Q_INVOKABLE virtual bool setAimLinks(QString aimName, QStringList aimLinks)=0; //aim id
+    */
 
     /*
     //Category
