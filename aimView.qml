@@ -47,6 +47,7 @@ Item {
            placeholderText: "Input here search request"
            visible: true
            width: parent.width
+           font.pixelSize: roundButtonFontSize
 
            onTextChanged:
            {
@@ -77,6 +78,7 @@ Item {
             id: searchByName
             checked: true
             text: "name"
+            font.pixelSize: roundButtonFontSize
             onCheckedChanged: //cover under function
             {
                 //only for android
@@ -90,6 +92,7 @@ Item {
             x: parent.width - width
             id: searchByTag
             text: "tag"
+            font.pixelSize: roundButtonFontSize
 
             onCheckedChanged: //cover under function
             {
@@ -154,26 +157,24 @@ Item {
 
 
 
-    Timer{
-
-        //should avoid it for desktop
-
+    Timer{ //should avoid it for desktop
             id: searchTimer; running: false; interval: 10000; repeat: false
             onTriggered: {
-
                 //THIS timer now broken - should repair it later
-
                 if (desktopClient == false)
                 {
-                    if (listModel.count == 0)
-                    {
-                        running = true
-                    }
+                    searchBox.visible = false
+                    settingsBox.visible = false
+
+                    //seams we miss good animation here
+
+                    //probably later we would make it the same as desktop
+
+                    /*
+                    if (listModel.count == 0){
+                        running = true }
                     else
-                    {
-                        searchBox.visible = false
-                        settingsBox.visible = false
-                    }
+                    {}*/
                 }
             }
         }

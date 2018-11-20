@@ -915,6 +915,12 @@ bool TreeModel::addChildItem(const QModelIndex &index)
     return true;
 }
 
+QString TreeModel::getAimId(const QModelIndex &index)
+{
+    TreeItem *item = getItem(index);
+    return item->data(12).toString(); //PLEASE INSURE THE INDEX and ENUMERATE
+}
+
 bool TreeModel::setItemText(const QModelIndex &index, const QString text, int column)
 {
     setDataSpecial(index,text,column);

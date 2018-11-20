@@ -12,6 +12,8 @@ Item {
 
     id: structureItem
 
+    signal requestOpenSingleAim(var aimId)
+
     width: screenGlobal.getScreenWidth()//480
     height: screenGlobal.getScreenHeight()//800
 
@@ -34,32 +36,33 @@ Item {
     property int column4Width : screenGlobal.adaptXSize(250)
 
     Button{
-
         y: saveButtonOffset
-        x: parent.width - microOffset - width
-
-        text: "Cохранить"
-        onClicked:
-        {
+        x: 10//parent.width - microOffset - width
+        text: "Save"
+        onClicked:{
             localBase.editTreeAims(treeModel)
         }
-
-        onDoubleClicked:
-        {
-            if (text == "Сохранить")
-            {
-                text = "Сохранять";
+        onDoubleClicked:{
+            if (text == "Save"){
+                text = "Keep save";
                 highlighted = true
             }
-            else
-            {
-                text = "Сохранить";
+            else{
+                text = "Save";
                 highlighted = false
             }
-
-
         }
+        highlighted: false
+    }
 
+    Button{
+        y: saveButtonOffset
+        x: parent.width - microOffset - width //10
+        text: "Open aim"
+        onClicked:{
+            //console.log("Aim " + )
+             structureItem.requestOpenSingleAim(treeModel.getAimId(aimsTree.currentIndex))
+        }
         highlighted: false
     }
 
@@ -67,22 +70,21 @@ Item {
     {
         y: treeOldButtonsOffset
         x: microOffset
-
-    Button{
-        text: "Добавить узел"
-        onClicked: treeModel.addTopItem(aimsTree.currentIndex)
-        highlighted: true
-    }
-    Button{
-        text: "Добавить под-узел"
-        onClicked:  treeModel.addChildItem(aimsTree.currentIndex)
-        highlighted: true
-    }
-    Button{
-        text: "Удалить узел"
-        onClicked: treeModel.removeItem(aimsTree.currentIndex)
-        highlighted: true
-    }
+        Button{
+            text: "New top aim"
+            onClicked: treeModel.addTopItem(aimsTree.currentIndex)
+            highlighted: true
+        }
+        Button{
+            text: "New child aim"
+            onClicked:  treeModel.addChildItem(aimsTree.currentIndex)
+            highlighted: true
+        }
+        Button{
+            text: "Delete aim"
+            onClicked: treeModel.removeItem(aimsTree.currentIndex)
+            highlighted: true
+        }
     }
 
     QMLOld.TreeView
@@ -92,14 +94,13 @@ Item {
 
         Component.onCompleted: {
             aimsTree.expandAll()
-            aimsTree.expandAll()
         }
 
         function expandAll() {
             var none = true
             for(var i = 0; i < treeModel.rowCount(); ++i)
-            for (var j = 0; j < treeModel.columnCount(); ++j){
-                var index = treeModel.index(i,j)
+            {
+                var index = treeModel.index(i,0)
                 if(!aimsTree.isExpanded(index)) {
                     aimsTree.expand(index)
                     none = false

@@ -113,6 +113,11 @@ public:
 
     //=======================================
 
+    Q_INVOKABLE QString secondsTranslate(quint64 seconds);
+
+    Q_INVOKABLE quint64 getDoneActionsLength(QString date);
+    Q_INVOKABLE QStringList getDoneActionsList(QString date);
+
     Q_INVOKABLE QVariantList getAimsByDate(QString date);
     Q_INVOKABLE QVariantList getAimsByDateOnly(QString date);
     Q_INVOKABLE QVariantList getPeriodHitAimsByDate(QString date);

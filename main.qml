@@ -18,23 +18,21 @@ ApplicationWindow {
 
     property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
 
-
-    //fuck off user colors for a while
     Material.accent: userSettings.getColor("Accent");
     Material.primary: userSettings.getColor("Primary");
     //Material.foreground: userSettings.getColor("Foreground");
     //Material.background: userSettings.getColor("Background");
     Material.theme: Material.Dark
 
-    //Theme - for a while not supported because then we had to change everything
-    //Material elevation
-
     Component.onCompleted: {
-        console.log (window.Material.foreground)
+        //console.log (window.Material.foreground)
     }
 
     onClosing: {
-        window.hide();
+        if (userSettings.isDebugBuild())
+                Qt.quit()
+            else
+                window.hide();
     }
 
    header:  ToolBar
@@ -56,35 +54,28 @@ ApplicationWindow {
                 onClicked:  mainLoader.source = "aimTree.qml"
                 font.pixelSize: fontNormalSize
             }
-
             ToolButton {
                 text: "tags"
                 onClicked:  mainLoader.source = "tagTree.qml"
                 font.pixelSize: fontNormalSize
             }
-
             ToolButton {
                 text: "run"
                 onClicked:  mainLoader.source = "runningAim.qml"
                 font.pixelSize: fontNormalSize
             }
-
-            ToolSeparator {}
-
+            //ToolSeparator {} (on small phone gets out)
             ToolButton {
                 text: "Menu"
                 onClicked: toolMenu.open()
                 font.pixelSize: fontNormalSize
             }
-
             ToolSeparator {}
-
             ToolButton {
                 text: "add"
                 onClicked:  drawerRight.open()
                 font.pixelSize: fontNormalSize
             }
-
             //http://doc.qt.io/qt-5/qml-qtquick-controls2-toolbar.html
         }
     }
@@ -98,6 +89,11 @@ ApplicationWindow {
            text: "Schedule"
            font.pixelSize: fontNormalSize
            onTriggered:  mainLoader.source = "schedule.qml"
+       }
+       MenuItem {
+           text: "Done acts"
+           font.pixelSize: fontNormalSize
+           onTriggered:  mainLoader.source = "actionsDone.qml"
        }
        MenuItem {
            text: "Notify"
@@ -130,8 +126,7 @@ ApplicationWindow {
             addLoader.item.loadAimForEdit(aimId)
             drawerRight.open()
         }
-        onRequestOpenSingleAim:
-        {
+        onRequestOpenSingleAim:{
             mainLoader.setSource("singleAim.qml",{aimId:aimId})
         }
     }
@@ -195,8 +190,7 @@ ApplicationWindow {
            width: 0.66 * window.width
            height: window.height
 
-           ColumnLayout
-           {
+           ColumnLayout{
                Button{
                    text: "Check button"
                }
@@ -205,7 +199,6 @@ ApplicationWindow {
                }
            }
        }
-
 
 
     Drawer {
@@ -223,8 +216,7 @@ ApplicationWindow {
                source: "aimAdd.qml"
            }
 
-           Connections
-           {
+           Connections{
                target: addLoader.item
                onRequestOpenViewAims: {
                    drawerRight.close()
@@ -233,7 +225,6 @@ ApplicationWindow {
                    mainLoader.item.loadModel()
                }
            }
-
        }
 
     Drawer {
@@ -251,5 +242,4 @@ ApplicationWindow {
                source: "chat.qml"
            }
        }
-
 }

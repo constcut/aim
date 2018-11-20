@@ -80,6 +80,8 @@ public:
 
     Q_INVOKABLE bool printTopValues();
 
+    Q_INVOKABLE QString getAimId(const QModelIndex &index);
+
     Q_INVOKABLE bool addTopItem(const QModelIndex &index);
     Q_INVOKABLE bool addChildItem(const QModelIndex &index);
     Q_INVOKABLE bool setItemText(const QModelIndex &index, const QString text, int column=0);

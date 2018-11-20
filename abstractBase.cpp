@@ -597,6 +597,77 @@ QVariantList LocalSqlBase::getAimsByDateOnly(QString date)
     return aimsList;
 }
 
+quint64 LocalSqlBase::getDoneActionsLength(QString date){ //this is finally goodbye to old style and request on refactoring
+
+    if (date.indexOf("T") != -1)
+        date = date.mid(0,date.indexOf("T"));
+
+    QString requestBody = "SELECT totalLength FROM actions WHERE moment LIKE '" + date + "%';";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList lengthList = fillList(request,1); //1 is fields amount
+    //qDebug() << lengthList;
+
+    quint64 totalSecondsSpent=0;
+
+    for (auto i = 0; i < lengthList.size(); ++i){
+        QStringList l = lengthList[i].toStringList();
+        QString secondsSpent = l[0];
+        totalSecondsSpent += secondsSpent.toUInt();
+    }
+
+    return totalSecondsSpent;
+}
+
+QString LocalSqlBase::secondsTranslate(quint64 seconds)
+{
+    quint64 minutes = seconds / 60;
+    quint64 leftSec = seconds % 60;
+    quint64 hours = minutes / 60;
+    quint64 leftMinutes = minutes % 60;
+
+    return QString::number(hours) + QString("h ") + QString::number(leftMinutes) + QString("m ") +
+            QString::number(leftSec) + QString("s");
+}
+
+QStringList LocalSqlBase::getDoneActionsList(QString date){
+    if (date.indexOf("T") != -1)
+        date = date.mid(0,date.indexOf("T"));
+
+    QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList allActionsList = fillList(request,6); //6 is fields amount
+    //we can do here with map
+    //qDebug() << allActionsList;
+
+    QMap<QString,quint32> counts;
+
+    for (auto i = 0; i < allActionsList.size(); ++i){
+        QStringList actionLine = allActionsList[i].toStringList();
+        if (counts.contains(actionLine[2]))
+            counts[actionLine[2]] += actionLine[5].toUInt();
+        else
+            counts.insert(actionLine[2],actionLine[5].toUInt());
+    }
+
+    QStringList allStringLines;
+
+    for (auto i = 0; i < counts.size(); ++i){
+       QString anotherKey =  (counts.begin()+i).key();
+       QStringList aim = getSingleAim(anotherKey);
+
+       QString fullLine = QString("<style>a:link { color:#11FF33; }</style>") +
+               QString("<br>On <b><big>") + QString("  <a color='11FF22' href=\"") +anotherKey+
+                                                QString("\">")+aim[1]+QString("</a>") +
+               QString("</big></b>       ") + secondsTranslate(counts[anotherKey]);
+
+       allStringLines<<fullLine;
+    }
+
+    return allStringLines;
+}
+
 bool canDateHitPeriod(QString originDate, QString period, QString searchDate)
 {
     QString daysPeriod = period.mid(0,period.indexOf("d"));
@@ -829,7 +900,7 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request3 = executeRequest(progressTableCreate);
 
-     return request.isValid() && request2.isValid() && request3.isValid();
+    return request.isValid() && request2.isValid() && request3.isValid();
 }
 
 

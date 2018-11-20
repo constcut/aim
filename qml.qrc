@@ -12,5 +12,6 @@
         <file>AutoGeometry.qml</file>
         <file>chat.qml</file>
         <file>qwebchannel.js</file>
+        <file>actionsDone.qml</file>
     </qresource>
 </RCC>
