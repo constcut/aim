@@ -17,14 +17,15 @@ Item {
 
     Component.onCompleted:  {
         localBase.fillTreeModelWithAims()
+
     }
 
     property int microOffset : screenGlobal.adaptXSize(10)
-    property int saveButtonOffset : screenGlobal.adaptYSize(550) //y
+    property int saveButtonOffset : screenGlobal.adaptYSize(650) //y
 
-    property int treeOldButtonsOffset : screenGlobal.adaptYSize(600)
+    property int treeOldButtonsOffset : screenGlobal.adaptYSize(700)
 
-    property int treeViewHeight : screenGlobal.adaptYSize(500)
+    property int treeViewHeight : screenGlobal.adaptYSize(600)
     property int yOffset : screenGlobal.adaptYSize(50)
 
     property int column1Width : screenGlobal.adaptXSize(150)
@@ -89,6 +90,24 @@ Item {
         id: aimsTree
         model: treeModel //hierarchy
 
+        Component.onCompleted: {
+            aimsTree.expandAll()
+            aimsTree.expandAll()
+        }
+
+        function expandAll() {
+            var none = true
+            for(var i = 0; i < treeModel.rowCount(); ++i)
+            for (var j = 0; j < treeModel.columnCount(); ++j){
+                var index = treeModel.index(i,j)
+                if(!aimsTree.isExpanded(index)) {
+                    aimsTree.expand(index)
+                    none = false
+                }
+            }
+            return none
+        }
+
         width: parent.width
         height: treeViewHeight
 
@@ -137,8 +156,6 @@ Item {
             Connections {
                 target: editingField
                 onEditingFinished: {
-
-
                     treeModel.setItemText(aimsTree.currentIndex,editingField.text, treeModel.getColumnIndex(styleData.role))
                 }
             }

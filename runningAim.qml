@@ -14,10 +14,14 @@ Item {
     width: screenGlobal.getScreenWidth()//480
     height: screenGlobal.getScreenHeight()//800
 
+    signal requestOpenSingleAim(var aimId)
+
     property int elementHeight: screenGlobal.adaptYSize(45) //apply to every one
     property int widthOffset: screenGlobal.adaptXSize(20) //70
     property int yOffset: screenGlobal.adaptYSize(50) //be aware of low screens try everywhere
+
     property int veryBigFontSize : screenGlobal.adaptYSize(50)
+    property int fontNormalSize : screenGlobal.adaptYSize(15)
 
 
     property string currentAimId : ""
@@ -29,6 +33,10 @@ Item {
         y:yOffset
         width: parent.width-widthOffset*2
         x: widthOffset
+
+        font.pixelSize: fontNormalSize
+
+        //PROBABLY will need to make another deligate to change font size
 
         model : ["All aims","This moment(+5min?)","Delayed","In future","Running","Last stopped"]
 
@@ -75,33 +83,12 @@ Item {
         width : parent.width-widthOffset*2
         x : widthOffset
 
+        font.pixelSize: fontNormalSize
+
         model : localBase.getAimsNames()
 
-        onCurrentIndexChanged: {
-
-            var aimTable
-
-            if (listTypeSelect.currentIndex == 0) //ALL
-                if (currentIndex >=1)
-                    aimTable = localBase.getAims()
-            if (listTypeSelect.currentIndex == 1) //CurrentMoment
-                    aimTable = localBase.getCurrentMomementAims()
-            if (listTypeSelect.currentIndex == 2) //Delayed
-                    aimTable = localBase.getDelayedAims()
-            if (listTypeSelect.currentIndex == 3) //Future
-                aimTable = localBase.getFutureAims()
-            if (listTypeSelect.currentIndex == 4) //Running
-                aimTable = runningAims.getRunningAims()
-            if (listTypeSelect.currentIndex == 5) //Stopped
-                    aimTable = runningAims.getStoppedAims()
-
-            if (aimTable != undefined && aimTable.length > currentIndex)
-            {
-                var aimLine = aimTable[currentIndex]
-                var aimId = aimLine[0]
-                currentAimId = aimId;
-            }
-
+        function loadSelectedAim()
+        {
             //AND in the end perform actions on qml scene
             if (currentAimId.length > 0)
             {
@@ -144,6 +131,42 @@ Item {
 
             }
         }
+
+        onCurrentIndexChanged: {
+
+            var aimTable
+
+            if (listTypeSelect.currentIndex == 0) //ALL
+                if (currentIndex >=1)
+                    aimTable = localBase.getAims()
+            if (listTypeSelect.currentIndex == 1) //CurrentMoment
+                    aimTable = localBase.getCurrentMomementAims()
+            if (listTypeSelect.currentIndex == 2) //Delayed
+                    aimTable = localBase.getDelayedAims()
+            if (listTypeSelect.currentIndex == 3) //Future
+                aimTable = localBase.getFutureAims()
+
+            if (listTypeSelect.currentIndex == 4) //Running
+                aimTable = runningAims.getRunningAims()
+            if (listTypeSelect.currentIndex == 5) //Stopped
+                    aimTable = runningAims.getStoppedAims()
+
+            if (aimTable != undefined && aimTable.length >= currentIndex)
+            {
+                var localMiniShift = 0
+                if (listTypeSelect.currentIndex == 0)
+                    localMiniShift = 1
+
+                var aimLine = aimTable[currentIndex-localMiniShift]
+                var aimId = aimLine[0]
+                currentAimId = aimId;
+                //console.log("Chosen " + aimLine)
+            }
+            else
+                console.log("else case..") //should check with care
+
+            loadSelectedAim()
+        }
     }
 
     Button
@@ -152,6 +175,7 @@ Item {
         y :yOffset+elementHeight*4
         x : widthOffset
         text : "Start"
+        font.pixelSize: fontNormalSize
 
         onClicked: {
             stopButton.enabled = true
@@ -164,10 +188,25 @@ Item {
 
     Button
     {
+        id:showButton
+        y: yOffset+elementHeight*4
+        x : (parent.width - widthOffset - width)/2
+        enabled: currentAimId != ""
+        text: "Open view"
+        font.pixelSize: fontNormalSize
+        onClicked: {
+            console.log("Opening " + currentAimId)
+            runningAimWindow.requestOpenSingleAim(currentAimId)
+        }
+    }
+
+    Button
+    {
         id:stopButton
         y: yOffset+elementHeight*4
         x : parent.width - widthOffset - width
         text: "Stop"
+        font.pixelSize: fontNormalSize
         enabled: false
 
         onClicked: {
@@ -176,6 +215,8 @@ Item {
 
             if (currentAimId.length > 0)
                 runningAims.stop(currentAimId)
+
+            aimSelect.loadSelectedAim()
         }
     }
 
@@ -185,7 +226,7 @@ Item {
         x: widthOffset + (parent.width-width-widthOffset)/2 //WOULD LIKE to see it in center :)
         y: yOffset+elementHeight*6
         font.pointSize: veryBigFontSize
-        text: "14:31"
+        text: "0:0"
     }
 
     Timer{
@@ -207,6 +248,7 @@ Item {
         height: elementHeight*3
 
         x: widthOffset
+        font.pixelSize: fontNormalSize
 
         placeholderText: "Simple log of activity,\ncan be replaced with ListView"
     }
@@ -220,6 +262,7 @@ Item {
         height: elementHeight*3
 
         x: widthOffset
+        font.pixelSize: fontNormalSize
 
         placeholderText: "Some summory about this aim, like total hours, times runned\nand in the end - time line!"
     }

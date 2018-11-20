@@ -6,11 +6,12 @@ QT += sql qml quick widgets quickcontrols2
 
 android {
     QT += androidextras
+    LIBS += -LC:/Qt592/5.9.2/android_armv7/qml/QtWebSockets
 }
 
 SOURCES += main.cpp \
     abstractBase.cpp \
-    userSettings.cpp \
+    usersettings.cpp \
     screenglobal.cpp \
     wslib/treemodel.cpp \
     wslib/notifications.cpp \
@@ -19,10 +20,15 @@ SOURCES += main.cpp \
     wslib/tabelserialize.cpp \
     aimnotifications.cpp \
     runningaims.cpp \
-    wslib/loghandler.cpp
+    wslib/loghandler.cpp \
+    usertoken.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
+#\
+#    icons.qrc
+
+jslib = $$PWD
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -34,7 +40,8 @@ DISTFILES += \
     general_notes \
     android-sources/AndroidManifest.xml \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
-    TODO
+    TODO \
+    qwebchannel.js
 
 HEADERS += \
     abstractBase.h \
@@ -47,7 +54,8 @@ HEADERS += \
     wslib/tabelserialize.h \
     aimnotifications.h \
     runningaims.h \
-    wslib/loghandler.h
+    wslib/loghandler.h \
+    usertoken.h
 
 #dunno what is that
 INSTALLS += target

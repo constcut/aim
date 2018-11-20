@@ -26,6 +26,15 @@ public:
     Q_INVOKABLE bool setColor(QString colorType, QString colorValue);
     Q_INVOKABLE QString getColor(QString colorType);
 
+    Q_INVOKABLE bool isDebugBuild()
+    {
+        #ifdef QT_DEBUG
+            return true;
+        #else
+                return false;
+        #endif
+    }
+
 protected:
 
     QMap<QString,bool> viewAimSettings;

@@ -37,6 +37,10 @@ void NotificationClient::updateAndroidNotification()
                                        "notify",
                                        "(Ljava/lang/String;)V",
                                        javaNotification.object<jstring>());
+
+
+
+
     #endif
 }
 
@@ -77,11 +81,12 @@ void AimNotifications::watchDogWoughf()
        else
            messageText = QString::number(currentAims.size()) + " aims start now!";
 
-        popUp->setPopupText(messageText,"gray",10);
-        popUp->show();
-
 #ifdef ANDROID
         androidNotification.setNotification(messageText);
+        //later show popup too, but it should have another shape
+#else
+       popUp->setPopupText(messageText,"gray",10);
+       popUp->show();
 #endif
    }
 }

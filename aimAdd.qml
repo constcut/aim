@@ -152,7 +152,7 @@ Item {
         height: elementHeight-microOffset
         font.pixelSize: fontNormalSize
 
-        model : localBase.getAimsNames()
+        model : localBase.getAimsNamesBackwards()
     }
 
 
@@ -280,7 +280,7 @@ Item {
         var repeatableValue = aimList[11]
         var privacyValue = aimList[12]
 
-         parentAimName.model = localBase.getAimsNames()
+         parentAimName.model = localBase.getAimsNamesBackwards()
 
         editMode = true
     }
@@ -293,7 +293,7 @@ Item {
 
         editMode = false //to prepare for next time
 
-        parentAimName.model = localBase.getAimsNames()
+        parentAimName.model = localBase.getAimsNamesBackwards()
     }
 
     Button
@@ -345,10 +345,6 @@ Item {
             aimAddWindow.requestOpenViewAims()
         }
     }
-
-
-
-
 
 
     //TODO:
@@ -501,8 +497,6 @@ Item {
                 y: calendar.height + microOffset*2
                 x: microOffset
 
-
-
                 Tumbler {
                   id: hoursTumbler
                   model: 24
@@ -543,8 +537,6 @@ Item {
                 x: buttonWidth*5-width
 
                 onClicked: {
-                    console.log("done") //output values
-
                     timeAndDate.text = calendar.selectedDate
 
                     var datePart = timeAndDate.text.substring(0,10)

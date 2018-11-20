@@ -6,11 +6,9 @@ UserSettings::UserSettings(QObject *parent):QObject(parent)
 
     setColor("Accent","#4CAF50"); //Material.Green
     setColor("Primary","#3F51B5"); //Material.Ingido
-    setColor("Foreground","#111111"); // #795548or Material.Brown
-    setColor("Background","#111111"); //or Material.Grey#607D8B
+    setColor("Foreground","#444444"); // #795548or Material.Brown
+    setColor("Background","#333333"); //or Material.Grey#607D8B
     setColor("ListHightlight","#263E26"); //#98FB98
-
-
     setColor("Text","#CCCCCC");
     ///maybe better store as propeties to be able to update asap
 
@@ -103,6 +101,7 @@ void UserSettings::setViewAimSettings(QList<bool> newSettings)
 //colors functions
 void UserSettings::setStyle(QString styleName, QString themeName)
 {
+    //Will need just to reload all the colors
 
 }
 

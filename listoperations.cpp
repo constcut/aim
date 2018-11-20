@@ -15,6 +15,28 @@ QStringList createListByField(QVariantList source, int fieldIndex)
     return result;
 }
 
+//yet used only for showing back aims
+QStringList createListByFieldBackwards(QVariantList source, int fieldIndex, int secondField)
+{
+    QStringList result;
+    for (int i = source.size()-1; i >= 0; --i)
+    {
+        QStringList fields = source[i].toStringList();
+        QString totalRecord = fields[fieldIndex];
+
+        if (secondField != -1)
+        {
+            if (fields[secondField].isEmpty() == false)
+            {
+                QStringList paFields = source[ fields[secondField].toUInt() ].toStringList();
+                totalRecord += QString(" [") + paFields[fieldIndex] + QString("]") + fields[secondField] ;
+            }
+        }
+
+        result << totalRecord;
+    }
+    return result;
+}
 
 bool areLinesSame(const QStringList &firstLine, const QStringList &secondLine)
 {

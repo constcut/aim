@@ -5,6 +5,8 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
 
+import Qt.labs.handlers 1.0
+
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
@@ -23,10 +25,10 @@ Item {
     property int listElementHeight : screenGlobal.adaptYSize(110)
     property int firstSectionHeight : screenGlobal.adaptYSize(30)
     property int secondSectionHeight : screenGlobal.adaptYSize(25)
-    property int thirdSectionHeight : screenGlobal.adaptYSize(150)
+    property int thirdSectionHeight : screenGlobal.adaptYSize(25)
     property int forthSectionHeight : screenGlobal.adaptYSize(25)
 
-    property int fontSizeSmall : screenGlobal.adaptYSize(10)
+    property int fontSizeSmall : screenGlobal.adaptYSize(10) //here some names are swapped
     property int fontSizeMiddle : screenGlobal.adaptYSize(15)
     property int fontSizeBig : screenGlobal.adaptYSize(20)
 
@@ -34,7 +36,7 @@ Item {
     property int highlightHeight : screenGlobal.adaptYSize(50)
 
     property int popupXOffset : screenGlobal.adaptXSize(50)
-    property int popupYOffset : screenGlobal.adaptYSize(50)
+    property int popupYOffset : screenGlobal.adaptYSize(0)
 
     property int popupWidth : screenGlobal.adaptXSize(230)
     property int popupHeight : screenGlobal.adaptYSize(560)
@@ -139,39 +141,46 @@ Item {
                 {
                     height: secondSectionHeight
                     width: aimList.width
-
                     Text { color:userSettings.getColor("Text");text: 'Tag: ' + tag; visible: aimListItem.tagShow && tag.length > 0   ; font.pixelSize: fontSizeMiddle}
-                    //spacing: 50 //later can make it just like left\right padding
-                    Text { rightPadding: fontSizeMiddle; anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pixelSize: fontSizeMiddle}
+                    //+20 is for transition animation - check it better later please
+                    Text { rightPadding: fontSizeMiddle+20; Layout.alignment: Qt.AlignRight; color:userSettings.getColor("Text");text: 'Moment: ' + timeAndDate; visible: aimListItem.timeAndDateShow && timeAndDate.length > 0   ; font.pixelSize: fontSizeMiddle}
                 }
                 RowLayout
                 {
                     height: thirdSectionHeight
-                    width: aimList.width
+                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pixelSize: fontSizeSmall}
+                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pixelSize: fontSizeSmall}
+                }
+                RowLayout
+                {
+                    height: forthSectionHeight
+                    //width: aimList.width //it was on upper one
 
                     Text {  color:userSettings.getColor("Text");text: 'AssignTo: ' + assignTo; visible: aimListItem.assignToShow && assignTo.length > 0 && assignTo != "Assign to:"  ; font.pixelSize: fontSizeSmall}
                     //spacing: 50 //later can make it just like left\right padding
-                    Text { anchors.right: parent.right; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pixelSize: fontSizeSmall}
+                    Text { Layout.alignment: Qt.AlignRight; color:userSettings.getColor("Text");text: 'Priority: ' + priority; visible: aimListItem.priorityShow && priority.length > 0; font.pixelSize: fontSizeSmall}
                 }
-                Row
-                {
-                    height: forthSectionHeight
-                    Text { color:userSettings.getColor("Text");text: 'Comment: ' + comment; visible: aimListItem.commentShow  && comment.length > 0 ; font.pixelSize: fontSizeSmall}
 
-                    Text { color:userSettings.getColor("Text");text: 'Parent: ' + parentName; visible: aimListItem.parentAimShow  && parentName.length > 0 ; font.pixelSize: fontSizeSmall}
-                }
             }
             states: State { // indent the item if it is the current item
                 name: "Current"
                 when: wrapper.ListView.isCurrentItem
                 PropertyChanges { target: wrapper; x: fontSizeBig }
             }
+
             transitions: Transition {
                 NumberAnimation { properties: "x"; duration: 200 }
             }
+
             MouseArea {
                 anchors.fill: parent
                 onClicked: wrapper.ListView.view.currentIndex = index
+
+                onDoubleClicked: {
+                    var index = aimList.currentIndex
+                    var aimId = listModel.get(index).aimId
+                    aimListItem.parent.requestOpenSingleAim(aimId) //aimViewWindow
+                }
 
                 onPressAndHold: {
                     wrapper.ListView.view.currentIndex = index
@@ -179,6 +188,20 @@ Item {
                     aimMenu.y = parent.y + mouse.y //works on item
                     aimMenu.open()
                 }
+            }
+
+            TapHandler{ //failed to use because of index, and cannot get focuse while mouse area
+                 onTapped:
+                 {
+                     if (tapCount == 3)
+                     {
+                         console.log("tap 3")
+
+                         var index = aimList.currentIndex
+                         var aimId = listModel.get(index).aimId
+                         aimListItem.parent.requestOpenSingleAim(aimId) //aimViewWindow
+                     }
+                 }
             }
         }
     }
@@ -203,28 +226,19 @@ Item {
 
     Menu {
         id: aimMenu
-
         MenuItem {
             text: "View"
-
             font.pixelSize: fontSizeBig
-
-            onTriggered:
-            {
+            onTriggered:{
                 var index = aimList.currentIndex
                 var aimId = listModel.get(index).aimId
                 aimListItem.parent.requestOpenSingleAim(aimId) //aimViewWindow
             }
         }
-
-
         MenuItem {
             text: "Edit"
-
-             font.pixelSize: fontSizeBig
-
-            onTriggered:
-            {
+            font.pixelSize: fontSizeBig
+            onTriggered:{
                // console.log("edit triggered")
                 var index = aimList.currentIndex
                 var aimId = listModel.get(index).aimId
@@ -233,33 +247,22 @@ Item {
         }
         MenuItem {
             text: "Delete"
-
-             font.pixelSize: fontSizeBig
-
-            onTriggered:
-            {
+            font.pixelSize: fontSizeBig
+            onTriggered:{
                 console.log("delete triggered")
-
                 //aimList.currentIndex
                 deleteConfirmDialog.open()
-
             }
         }
         MenuItem {
             text: "Send"
-
-
-            onTriggered:
-            {
+            onTriggered:{
                 console.log("send triggered")
             }
         }
         MenuItem {
             text: "Add child"
-
-
-            onTriggered:
-            {
+            onTriggered:{
                 console.log("add child triggered")
             }
         }
@@ -523,69 +526,69 @@ Item {
         Item {
             ColumnLayout
             {
-            CheckBox
-            {
-                id: timeAndDateField
-                text: "Time and date"
-            }
-            CheckBox
-            {
-                id: commentField
-                text: "Comment"
-            }
-            CheckBox
-            {
-                id: tagField
-                text: "Tag"
-            }
-            CheckBox
-            {
-                id: assignToField
-                text: "Assign to"
-            }
-            CheckBox
-            {
-                id: priorityField
-                text: "Priority"
-            }
-            CheckBox
-            {
-                id: progressField
-                text: "Progress"
-            }
-            CheckBox
-            {
-                id: progressTextField
-                text: "Progress text"
-            }
-            CheckBox
-            {
-                id: parentField
-                text: "Parent"
-            }
-            CheckBox
-            {
-                id: childField
-                text: "Child"
-            }
-            Button
-            {
-                text:"Save settings"
-                onClicked:
-                {
-                    var viewAimList = [timeAndDateField.checked,commentField.checked,
-                            tagField.checked,assignToField.checked,
-                            priorityField.checked,progressField.checked,progressTextField.checked,
-                            parentField.checked,childField.checked]
-
-                    userSettings.setViewAimSettings(viewAimList)
-
-                    loadViewSettings()
-
-                    viewSettingsPopup.close()
-
+                CheckBox{
+                    id: timeAndDateField
+                    text: "Time and date"
+                    font.pixelSize: fontSizeSmall
                 }
-            }
+                CheckBox{
+                    id: commentField
+                    text: "Comment"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox{
+                    id: tagField
+                    text: "Tag"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox{
+                    id: assignToField
+                    text: "Assign to"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox {
+                    id: priorityField
+                    text: "Priority"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox{
+                    id: progressField
+                    text: "Progress"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox {
+                    id: progressTextField
+                    text: "Progress text"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox {
+                    id: parentField
+                    text: "Parent"
+                    font.pixelSize: fontSizeSmall
+                }
+                CheckBox {
+                    id: childField
+                    text: "Child"
+                    font.pixelSize: fontSizeSmall
+                }
+                Button {
+                    text:"Save settings"
+                    font.pixelSize: fontSizeSmall
+                    onClicked:
+                    {
+                        var viewAimList = [timeAndDateField.checked,commentField.checked,
+                                tagField.checked,assignToField.checked,
+                                priorityField.checked,progressField.checked,progressTextField.checked,
+                                parentField.checked,childField.checked]
+
+                        userSettings.setViewAimSettings(viewAimList)
+
+                        loadViewSettings()
+
+                        viewSettingsPopup.close()
+
+                    }
+                }
             }
         }
 

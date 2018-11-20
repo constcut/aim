@@ -7,7 +7,7 @@ void SystemTray::switchIcon(QString iconName)
 {
     if (iconName == "Aim")
     {
-         trayIcon->setIcon(QIcon(":/icons/settings.png")); //aimIcon
+         trayIcon->setIcon(QIcon(":/icons/tray.png")); //aimIcon
          trayIcon->setToolTip("Wavesplat aim");
     }
     if (iconName == "Recipe")

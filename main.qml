@@ -13,10 +13,11 @@ ApplicationWindow {
     height: screenGlobal.getScreenHeight()//800
     visible: true
 
+    property int microYOffset : screenGlobal.adaptYSize(5)
+    property int fontNormalSize : screenGlobal.adaptYSize(15)*1.5
 
-    property int microYOffset : screenGlobal.adaptYSize( 5 )
+    property bool desktopClient: Qt.platform.os != "android" && Qt.platform.os != "ios"
 
-    property bool desktopClient: true ///set somehow from cpp
 
     //fuck off user colors for a while
     Material.accent: userSettings.getColor("Accent");
@@ -26,71 +27,89 @@ ApplicationWindow {
     Material.theme: Material.Dark
 
     //Theme - for a while not supported because then we had to change everything
-
     //Material elevation
 
     Component.onCompleted: {
         console.log (window.Material.foreground)
-
     }
-
 
     onClosing: {
         window.hide();
     }
 
-
    header:  ToolBar
    {
-            id: toolBar
-        RowLayout
-        {
+       Material.background: userSettings.getColor("Background");
+       //Material.foreground: userSettings.getColor("Foreground");
+       //Material.accent: userSettings.getColor("Accent");
+       //Material.primary: userSettings.getColor("Primary");
 
-            ToolButton
-            {
+        id: toolBar
+        RowLayout {
+            ToolButton {
                 text: "view"
                 onClicked: mainLoader.source = "aimView.qml"
+                font.pixelSize: fontNormalSize
             }
-
-            ToolButton
-            {
-                text: "sched"
-                onClicked:  mainLoader.source = "schedule.qml"
-            }
-
-            ToolButton
-            {
+            ToolButton {
                 text: "tree"
                 onClicked:  mainLoader.source = "aimTree.qml"
+                font.pixelSize: fontNormalSize
             }
 
-            ToolButton
-            {
+            ToolButton {
                 text: "tags"
                 onClicked:  mainLoader.source = "tagTree.qml"
+                font.pixelSize: fontNormalSize
             }
 
-            ToolButton
-            {
+            ToolButton {
                 text: "run"
                 onClicked:  mainLoader.source = "runningAim.qml"
+                font.pixelSize: fontNormalSize
             }
 
-            ToolButton
-            {
+            ToolSeparator {}
+
+            ToolButton {
+                text: "Menu"
+                onClicked: toolMenu.open()
+                font.pixelSize: fontNormalSize
+            }
+
+            ToolSeparator {}
+
+            ToolButton {
                 text: "add"
                 onClicked:  drawerRight.open()
-            }
-
-            ToolButton
-            {
-                text: "notify"
-                onClicked: androidNotify.setNotification("Hello!")
+                font.pixelSize: fontNormalSize
             }
 
             //http://doc.qt.io/qt-5/qml-qtquick-controls2-toolbar.html
         }
     }
+
+   Menu {
+       id: toolMenu
+       x: window.width - width - 10
+       width: screenGlobal.adaptXSize(150)
+
+       MenuItem {
+           text: "Schedule"
+           font.pixelSize: fontNormalSize
+           onTriggered:  mainLoader.source = "schedule.qml"
+       }
+       MenuItem {
+           text: "Notify"
+           font.pixelSize: fontNormalSize
+           onTriggered: androidNotify.setNotification("Hello!")
+       }
+       MenuItem {
+           text: "Chat"
+           font.pixelSize: fontNormalSize
+           onTriggered: drawerDown.open()
+       }
+   }
 
     Loader {
         y: toolBar.height + microYOffset
@@ -133,24 +152,28 @@ ApplicationWindow {
         }
     }
 
-
     Connections {
          target: systemTray
 
          onSignalShow: {
+             window.hide();
              window.show();
          }
-
+         //HIDE
          onSignalAdd: {
-             if(window.visibility === Window.Hidden)
-                 window.show()
+             window.hide();
+             window.show();
             drawerRight.open()
          }
-
+         //AND notifications test may lay here so
          onSignalQuit: {
-             confirmExitDialog.open();
-         }
 
+             if (userSettings.isDebugBuild() === false)
+                confirmExitDialog.open()
+             else
+                Qt.quit()
+         }
+         //AND just one more test button for anything we need to test...
          onSignalIconActivated: {
               if(window.visibility === Window.Hidden) {
                   window.show()
@@ -161,12 +184,10 @@ ApplicationWindow {
     Connections {
          target: popUpItem
 
-         onRequestNotificationsViewFromCpp:
-         {
+         onRequestNotificationsViewFromCpp:{
              window.show();
              mainLoader.source = "runningAim.qml"
          }
-
      }
 
     Drawer {
@@ -176,14 +197,12 @@ ApplicationWindow {
 
            ColumnLayout
            {
-           Button
-           {
-               text: "Check button"
-           }
-           TextEdit
-           {
-               text: "Sometext"
-           }
+               Button{
+                   text: "Check button"
+               }
+               TextEdit{
+                   text: "Sometext"
+               }
            }
        }
 
@@ -209,8 +228,9 @@ ApplicationWindow {
                target: addLoader.item
                onRequestOpenViewAims: {
                    drawerRight.close()
+                   console.log("Reloading aims..")
+                   mainLoader.setSource("aimView.qml")
                    mainLoader.item.loadModel()
-
                }
            }
 
@@ -223,16 +243,12 @@ ApplicationWindow {
 
            edge: Qt.BottomEdge
 
-           ColumnLayout
-           {
-           Button
-           {
-               text: "Check button1"
-           }
-           TextEdit
-           {
-               text: "Sometext1"
-           }
+           Loader {
+               y: 0
+               anchors.centerIn: parent
+               anchors.fill:  parent
+               id: chatLoader
+               source: "chat.qml"
            }
        }
 

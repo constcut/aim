@@ -41,7 +41,6 @@ Item {
       property int fullHeight: elementHeight*2
 
 
-
        TextField
        {
            id: aimNameSearch

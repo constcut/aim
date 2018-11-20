@@ -9,8 +9,6 @@ RunningAims::RunningAims(LocalSqlBase *base,QObject *parent) : QObject(parent),l
 
 }
 
-
-
 QStringList RunningAims::getRunningAimsNames()
 {
     return createListByField(getRunningAims(),1);

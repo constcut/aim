@@ -104,6 +104,7 @@ public:
 
     Q_INVOKABLE QVariantList getAims();
     Q_INVOKABLE QStringList getAimsNames();
+    Q_INVOKABLE QStringList getAimsNamesBackwards(); //and with parent
 
     Q_INVOKABLE QStringList getSingleAim(QString aimId);
 

@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Item {
 
+    /*
     //greate to make in future it somplitly sepparated
     //but yet its just template
 
@@ -44,7 +45,7 @@ Item {
 
     //AIM Tree
 
-    property int microOffset : 10
+    //property int microOffset : 10
     property int saveButtonOffset : 550 //y
 
     property int treeOldButtonsOffset : 600
@@ -99,5 +100,5 @@ Item {
 
     property int aimListYOffset : 400
     property int aimListHeight : 300
-
+    */
 }

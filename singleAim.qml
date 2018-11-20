@@ -167,6 +167,7 @@ Item {
         y: elementHeight*12
         x: parent.width - width - microOffset
         text : "Save progress"
+        font.pixelSize: smallFontSize //its normal size verywhere
 
         onClicked: {
             localBase.updateAimProgress(aimId,progressSlider.value,progressText.text)
@@ -195,6 +196,8 @@ Item {
 
         y: elementHeight*14
         x: parent.width/2
+
+        font.pixelSize: smallFontSize //its normal size verywhere
 
         id: stopStartButton
         text: "stop|start"
@@ -238,6 +241,7 @@ Item {
 
         y: elementHeight*15
         x: parent.width-width-microOffset
+        font.pixelSize: smallFontSize //its normal size verywhere
 
         text : "Edit"
 
@@ -276,9 +280,11 @@ Item {
     ComboBox
     {
         id: childList
-        y:elementHeight*5
+        y: elementHeight*5
         x: parent.width/2
         //model : localBase.getAimsNames()
+
+        font.pixelSize: smallFontSize //its normal size verywhere
     }
 
     Button
@@ -286,6 +292,8 @@ Item {
         y: elementHeight*6
         x: parent.width/2
         text: "Open child"
+
+        font.pixelSize: smallFontSize //its normal size verywhere
 
         onClicked:
         {

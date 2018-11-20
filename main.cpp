@@ -19,13 +19,21 @@
 #include "aimnotifications.h"
 #include "runningaims.h"
 
+#include "usertoken.h"
+
 #include <QDebug>
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     ScreenGlobal screen;
+
+    //QPixmap pixmap("C:/dev/projects/aim/aim/wsplash.png");
+    //QSplashScreen splash(pixmap);
+    //splash.show();
+    //splash.showMessage("Loading libraries");
 
     LocalSqlBase localBase(&app);
     localBase.createTablesIfNeeded();
@@ -43,13 +51,12 @@ int main(int argc, char *argv[])
 
     QQuickStyle::setStyle("Material"); //Universal  + Material
 
+    //splash.showMessage("Loading libraries: local base loaded");
     //SO in settings: Default, Un Dark or Light, Material Dark or Light + main colors
-
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
-
     //TreeModel aimsTree(&app);  - moved into localBase
-   // TreeModel tagsTree(&app);
+    //TreeModel tagsTree(&app);
 
     context->setContextProperty("localBase",&localBase);
     context->setContextProperty("userSettings",&userSettings);
@@ -58,28 +65,39 @@ int main(int argc, char *argv[])
     context->setContextProperty("treeModel",&localBase.aimsTree);
     context->setContextProperty("tagTree",&localBase.tagsTree);
 
+
     //SYSTEM tray actions
     SystemTray tray(&app);
+
+
     tray.switchIcon("Aim");
+
     context->setContextProperty("systemTray",&tray);
 
     //Notifications
     PopUp popUp;
+    context->setContextProperty("popUpItem",&popUp);
+
     AimNotifications notifications(&localBase,&popUp,&app);
     notifications.startWatchDog(30);
-    context->setContextProperty("popUpItem",&popUp);
+    engine.rootContext()->setContextProperty("androidNotify",&notifications.androidNotification);
 
     //Running aims
     RunningAims runningAims(&localBase,&app);
     context->setContextProperty("runningAims",&runningAims);
 
+    //Log handler
     LogHandler logHandler;
 
-    qDebug() << "TEST";
-
+    //User token
+    UserToken token;
+    engine.rootContext()->setContextProperty("userToken",&token);
 
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    //splash.hide();
+    popUp.setPopupText("hello","red",10);
 
     return app.exec();
 }

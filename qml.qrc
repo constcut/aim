@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>aimAdd.qml</file>
         <file>aimView.qml</file>
-        <file>aims.qml</file>
         <file>schedule.qml</file>
         <file>aimTree.qml</file>
         <file>tagTree.qml</file>
@@ -11,5 +10,7 @@
         <file>singleAim.qml</file>
         <file>AimList.qml</file>
         <file>AutoGeometry.qml</file>
+        <file>chat.qml</file>
+        <file>qwebchannel.js</file>
     </qresource>
 </RCC>

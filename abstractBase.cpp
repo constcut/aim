@@ -449,6 +449,17 @@ QStringList LocalSqlBase::getAimsNames()
     return result;
 }
 
+QStringList LocalSqlBase::getAimsNamesBackwards()
+{
+    QVariantList aimsList = getAims();
+
+    QStringList result;
+    result << QString();
+    result += createListByFieldBackwards(aimsList,1); //10 but i yet ruins too much of done..
+
+    return result;
+}
+
 QVariantList LocalSqlBase::getCurrentMomementAims()
 {
     QDateTime now(QDateTime::currentDateTime());
@@ -706,7 +717,6 @@ QSqlError  LocalSqlBase::initDatabase()
         && tables.contains("categories", Qt::CaseInsensitive))
         return QSqlError();
 
-    QSqlQuery q;
 
     return QSqlError();
 }

@@ -48,13 +48,29 @@
 **
 ****************************************************************************/
 
-package at.wavespl.apps.aim;
+package at.wavespl.apps.aim; //later make it as it planned
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-//rename activity on some refactoring
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
+
+import android.util.Log;
+
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+
+//PREVENT SLEEPING https://stackoverflow.com/questions/34179653/how-do-i-prevent-an-android-device-from-going-to-sleep-from-qt-application
+
+//waking up https://developer.android.com/reference/android/app/AlarmManager
+//next is connected too ..https://github.com/JoeMerten/Android/blob/master/Eclipse-Demos/Support4Demos/src/com/example/android/supportv4/content/SimpleWakefulReceiver.java
+
+//probably have to create a servise and call a C++ from it https://github.com/FenixVoltres/QtAndroidJava2Cpp
+
+//also about the service http://doc.qt.io/qt-5/androidservices.html
 
 public class NotificationClient extends org.qtproject.qt5.android.bindings.QtActivity
 {
@@ -67,6 +83,16 @@ public class NotificationClient extends org.qtproject.qt5.android.bindings.QtAct
         m_instance = this;
     }
 
+    public void onPause() {
+        Log.v("Android", "paused");
+        super.onPause();  // Always call the superclass method first
+    }
+
+    public void onResume() {
+         Log.v("Android", "resumed");
+         super.onResume();
+    }
+
     public static void notify(String s)
     {
         if (m_notificationManager == null) {
@@ -76,7 +102,44 @@ public class NotificationClient extends org.qtproject.qt5.android.bindings.QtAct
             m_builder.setContentTitle("Aim notification");
         }
 
+        Log.v("Android", "notification is calling");
+
         m_builder.setContentText(s);
         m_notificationManager.notify(1, m_builder.build());
+    }
+
+    public static String getWifiMac()
+    {
+        WifiManager manager = (WifiManager) m_instance.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = manager.getConnectionInfo();
+        String address = info.getMacAddress();
+        notify(address);
+        return address;
+    }
+
+    public static String getMacAddr() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
     }
 }
