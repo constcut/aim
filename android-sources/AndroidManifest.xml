@@ -32,6 +32,14 @@
             -->
             <!-- Splash screen -->
         </activity>
+        <service android:process=":qt" android:name=".NotificationService">
+          <!-- android:process=":qt" is needed to force the service to run on a separate
+                                                                process than the Activity -->
+            <!-- .... -->
+            <!-- Background running -->
+            <meta-data android:name="android.app.background_running" android:value="true"/>
+            <!-- Background running -->
+          </service>
     </application>
     <uses-sdk android:minSdkVersion="16"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>

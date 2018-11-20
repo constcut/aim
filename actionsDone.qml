@@ -14,6 +14,8 @@ Item {
 
     anchors.fill: parent
 
+       property int fontSizeMiddle : screenGlobal.adaptYSize(15)
+
     property int widthOffset : screenGlobal.adaptXSize( 50 )
     property int microOffset : screenGlobal.adaptXSize( 10 )
 
@@ -41,8 +43,8 @@ Item {
                 summaryText.text += "\n" + singleLine;
             }
 
-            summaryText.height = parent.width * lists.length / 16;
-            flick.contentHeight = parent.width *  lists.length / 16;
+            summaryText.height = screenGlobal.adaptYSize( parent.width * lists.length / 16 );
+            flick.contentHeight = screenGlobal.adaptYSize(  parent.width *  lists.length / 16 );
 
             //nice to calculate contentWidth also ok later
         }
@@ -69,7 +71,7 @@ Item {
         height: parent.height - y - screenGlobal.adaptYSize( 30 )
 
         contentWidth: parent.width * 1.2
-        contentHeight: parent.height - y - screenGlobal.adaptYSize( 30 )
+        contentHeight: screenGlobal.adaptYSize(parent.height - y) //android dislike- screenGlobal.adaptYSize( 30 )
 
         ScrollBar.horizontal: ScrollBar { id: hbar; active: vbar.active }
         ScrollBar.vertical: ScrollBar { id: vbar; active: hbar.active }
@@ -78,8 +80,10 @@ Item {
             textFormat: "RichText"
             id: summaryText
             width: parent.width * 2
-            height: parent.height * 2
+            height: screenGlobal.adaptYSize( actionsItem.height )
             readOnly:  true
+
+            font.pixelSize: fontSizeMiddle
 
             onLinkActivated:{
                 console.log("Aim link:" + link)

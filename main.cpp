@@ -23,10 +23,19 @@
 
 #include <QDebug>
 
+#ifdef Q_OS_ANDROID
+#include <QtAndroidExtras>
+#include <QAndroidService>
+#endif
+
 
 int main(int argc, char *argv[])
 {
+    #ifdef Q_OS_ANDROID
+    QAndroidService service(argc, argv);
+    #endif
     QApplication app(argc, argv);
+
 
     ScreenGlobal screen;
 
@@ -97,7 +106,12 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     //splash.hide();
-    popUp.setPopupText("hello","red",10);
+    //popUp.setPopupText("hello","red",10);
+
+    #ifdef Q_OS_ANDROID
+        //try to bind
+        ///https://doc-snapshots.qt.io/qt5-5.12/qandroidservice.html
+    #endif
 
     return app.exec();
 }

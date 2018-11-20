@@ -41,7 +41,8 @@ DISTFILES += \
     android-sources/AndroidManifest.xml \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
     TODO \
-    qwebchannel.js
+    qwebchannel.js \
+    android-sources/src/at/wavespl/apps/aim/NotificationService.java
 
 HEADERS += \
     abstractBase.h \

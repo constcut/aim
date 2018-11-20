@@ -621,6 +621,9 @@ quint64 LocalSqlBase::getDoneActionsLength(QString date){ //this is finally good
 
 QString LocalSqlBase::secondsTranslate(quint64 seconds)
 {
+    if (seconds == 0)
+        return QString("is not finished");
+
     quint64 minutes = seconds / 60;
     quint64 leftSec = seconds % 60;
     quint64 hours = minutes / 60;

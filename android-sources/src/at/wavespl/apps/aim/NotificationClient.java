@@ -70,7 +70,7 @@ import java.util.List;
 
 //probably have to create a servise and call a C++ from it https://github.com/FenixVoltres/QtAndroidJava2Cpp
 
-//also about the service http://doc.qt.io/qt-5/androidservices.html
+//also about the service http://doc.qt.io/qt-5/androidservices.html https://www.kdab.com/qt-android-create-android-service-using-qt/
 
 public class NotificationClient extends org.qtproject.qt5.android.bindings.QtActivity
 {
