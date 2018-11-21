@@ -294,9 +294,9 @@ Item {
         //2,3,4 is missing yet
 
         //console.log("Sorting order type: " + sortingOrderType)
-
         for (var i = 0; i < aimList.length; ++i)
         {
+            //PLACE OF FUTE REFACTORING:
             var aimId = aimList[i][0]
             var aimName = aimList[i][1]
             var timeAndDate //= aimList[i][2]
@@ -337,6 +337,7 @@ Item {
                              "progress":progress,"progressText":progressText,
                              "parentAim":parentAim,
                              "repeatable":repeatable,"privacy":privacy,"parentName":parentName})
+            //END OF FUTER REFACTORING
         }
     }
 
