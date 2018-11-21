@@ -26,8 +26,10 @@ public:
     Q_INVOKABLE bool setColor(QString colorType, QString colorValue);
     Q_INVOKABLE QString getColor(QString colorType);
 
-    Q_INVOKABLE bool isDebugBuild()
-    {
+    Q_INVOKABLE quint8 getSortingOrderType(){return orderType;}
+    Q_INVOKABLE void setSortingOrderType(quint8 newOrderType){orderType=newOrderType;}
+
+    Q_INVOKABLE bool isDebugBuild(){
         #ifdef QT_DEBUG
             return true;
         #else
@@ -35,7 +37,7 @@ public:
         #endif
     }
 
-protected:
+protected: //best idea is make QMap <QString, QVariable> to store all the parameters, and easy expend them
 
     QMap<QString,bool> viewAimSettings;
     QMap<QString,bool> addAimSettings;
@@ -43,6 +45,8 @@ protected:
     QString currentStyle;
     QString currentTheme;
     QMap<QString,QString> colors;
+
+    quint8 orderType;
 };
 
 #endif // USERSETTINGS_H

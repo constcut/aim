@@ -1,4 +1,4 @@
-import QtQuick 2.8
+﻿import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -35,8 +35,8 @@ Item {
     property int highlightWidth : screenGlobal.adaptXSize(200)
     property int highlightHeight : screenGlobal.adaptYSize(50)
 
-    property int popupXOffset : screenGlobal.adaptXSize(50)
-    property int popupYOffset : screenGlobal.adaptYSize(0)
+    property int popupXOffset : screenGlobal.adaptXSize(1)
+    property int popupYOffset : screenGlobal.adaptYSize(1)
 
     property int popupWidth : screenGlobal.adaptXSize(230)
     property int popupHeight : screenGlobal.adaptYSize(560)
@@ -282,7 +282,18 @@ Item {
     function loadModel()
     {
         listModel.clear()
-        var aimList =  localBase.getAims()
+
+        var aimList
+        var sortingOrderType = userSettings.getSortingOrderType()
+
+        if (sortingOrderType === 0)
+          aimList  =  localBase.getAims()
+        else if (sortingOrderType === 1)
+            aimList  =  localBase.getAimsBackwards()
+
+        //2,3,4 is missing yet
+
+        //console.log("Sorting order type: " + sortingOrderType)
 
         for (var i = 0; i < aimList.length; ++i)
         {
@@ -498,12 +509,14 @@ Item {
         viewSettingsPopup.open()
     }
 
+
+
     Popup {
         id: viewSettingsPopup //make also time popup with tumbler
         x: popupXOffset
         y: popupYOffset
-        width: popupWidth
-        height: popupHeight //ensure manual sizing
+        width:  parent.width//popupWidth
+        height: parent.height//popupHeight //ensure manual sizing
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -521,59 +534,128 @@ Item {
             progressTextField.checked  = settingList[6]
             parentField.checked  = settingList[7]
             childField.checked  = settingList[8]
+
+            sortingOrder.currentIndex = userSettings.getSortingOrderType()
         }
 
         Item {
-            ColumnLayout
-            {
+            RowLayout{
+                spacing: 35
+            ColumnLayout{
                 CheckBox{
                     id: timeAndDateField
                     text: "Time and date"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox{
                     id: commentField
                     text: "Comment"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox{
                     id: tagField
                     text: "Tag"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox{
                     id: assignToField
                     text: "Assign to"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox {
                     id: priorityField
                     text: "Priority"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox{
                     id: progressField
                     text: "Progress"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox {
                     id: progressTextField
                     text: "Progress text"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox {
                     id: parentField
                     text: "Parent"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
                 CheckBox {
                     id: childField
                     text: "Child"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                 }
+
+            }
+            ColumnLayout{
+                RowLayout{
+                    Text{text:"Sorting order: ";color:"lightgray"}
+                    ComboBox{
+                    id: sortingOrder
+                    model:["from first","from last","as tree","last acts","sequencial"]
+                    //In tree like there should be also calculated total depth to make offset 20*totalDepth
+                    //and in search while tree like there must be checkbox "show children of found"
+                    font.pixelSize: fontSizeMiddle
+                    }
+                }
+                CheckBox{
+                    text: "Show children in search"
+                    enabled: false //start enabling it only when tree like is done
+                    font.pixelSize: fontSizeMiddle
+                }
+                CheckBox{
+                    text: "Hide search bar when unused"
+                    enabled: false
+                    //but yet not implemented
+                    font.pixelSize: fontSizeMiddle
+                }
+                //Here we imagine some other options
+                CheckBox{
+                    text: "Store aims online"
+                    enabled: false
+                    font.pixelSize: fontSizeMiddle
+                }
+                CheckBox{
+                    text: "Let unknown people add me"
+                    enabled: false
+                    font.pixelSize: fontSizeMiddle
+                }
+                RowLayout{
+                    TextField{
+                       placeholderText: "nickname"
+                       enabled: false
+                       font.pixelSize: fontSizeMiddle
+                    }
+                    Button{
+                        text:"Change nick"
+                        enabled: false
+                        font.pixelSize: fontSizeMiddle
+                    }
+                }
+                Button{
+                    id: changePasswordButton
+                    text:"Create or change password"
+                    enabled: false
+                    font.pixelSize: fontSizeMiddle
+                }
+                RowLayout{
+                    Button{
+                        text:"Login"
+                        enabled: false
+                        font.pixelSize: fontSizeMiddle
+                    }
+                    CheckBox{
+                        text:"Don't autologin"
+                        font.pixelSize: fontSizeMiddle
+                    }
+                }
+
                 Button {
+                    Layout.fillWidth: true
                     text:"Save settings"
-                    font.pixelSize: fontSizeSmall
+                    font.pixelSize: fontSizeMiddle
                     onClicked:
                     {
                         var viewAimList = [timeAndDateField.checked,commentField.checked,
@@ -582,13 +664,20 @@ Item {
                                 parentField.checked,childField.checked]
 
                         userSettings.setViewAimSettings(viewAimList)
-
+                        userSettings.setSortingOrderType(sortingOrder.currentIndex)
                         loadViewSettings()
-
                         viewSettingsPopup.close()
 
+                        //need to reload last type of loading - to apply sorting model
+                        aimListItem.loadModel()
+                        //it means we need to store the last type of loading an repeat it
+
+                        //also NOTE THAT WE CAN REFACT ALL THE LOAD funcions
+                        //BY taking outside loadFromSingleLine( )
+                        //so the different code will become so much smaller
                     }
                 }
+            }
             }
         }
 

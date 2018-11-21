@@ -103,6 +103,8 @@ public:
     //=====================================
 
     Q_INVOKABLE QVariantList getAims();
+    Q_INVOKABLE QVariantList getAimsBackwards();
+
     Q_INVOKABLE QStringList getAimsNames();
     Q_INVOKABLE QStringList getAimsNamesBackwards(); //and with parent
 

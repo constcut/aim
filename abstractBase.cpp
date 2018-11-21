@@ -557,6 +557,16 @@ QVariantList LocalSqlBase::getAims()
     return aimsList;
 }
 
+QVariantList LocalSqlBase::getAimsBackwards(){ //all new functions shoud have new style, old would be refactored
+    QVariantList result;
+    QVariantList aims = getAims();
+
+    for (auto i = aims.size()-1; i >= 0; --i)
+        result << aims[i];
+
+    return result;
+}
+
 QVariantList LocalSqlBase::getChildAims(QString parentAimId)
 {
     QString requestBody =

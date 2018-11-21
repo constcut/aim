@@ -4,6 +4,10 @@ UserSettings::UserSettings(QObject *parent):QObject(parent)
 {
     //here now lay defaults but later save them to base and load from there
 
+    orderType = 0; //enumerate them later 0 - from first
+    //1 - from last; 2 - like a tree
+    //4 - last acts; 5 - sequence (soones, unmarked, lated)
+
     setColor("Accent","#4CAF50"); //Material.Green
     setColor("Primary","#3F51B5"); //Material.Ingido
     setColor("Foreground","#444444"); // #795548or Material.Brown
