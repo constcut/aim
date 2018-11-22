@@ -43,8 +43,11 @@ Item {
                 summaryText.text += "\n" + singleLine;
             }
 
-            summaryText.height = screenGlobal.adaptYSize( parent.width * lists.length / 16 );
-            flick.contentHeight = screenGlobal.adaptYSize(  parent.width *  lists.length / 16 );
+            summaryText.height = screen
+
+            //ON refactoring rewrite those lines they are wiered
+            Global.adaptYSize( parent.width * (lists.length+4) / 16 );
+            flick.contentHeight = screenGlobal.adaptYSize(  parent.width *  (lists.length+4) / 16 );
 
             //nice to calculate contentWidth also ok later
         }
