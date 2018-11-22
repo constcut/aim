@@ -91,7 +91,7 @@ Item {
             }
 
 
-
+            linksRepeater.loadLinks()
         }
     }
 
@@ -311,7 +311,155 @@ Item {
          id: borderBeforeLinks
     }
 
+    Flickable { //or flickable
+        id: flickLinks
 
+        y: borderBeforeLinks.y + screenGlobal.adaptYSize(20)
+        x: screenGlobal.adaptXSize( 5 )
+
+        width: parent.width - screenGlobal.adaptYSize( 10 )
+        height: elementHeight*4
+
+        contentWidth: parent.width - screenGlobal.adaptYSize( 10 )
+        contentHeight: elementHeight*(linksRepeater.model + 1)
+
+        ScrollBar.vertical: ScrollBar { active: true }
+        //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+
+        function reloadModel(){
+            //flickLinks.contentHeight = elementHeight*(linksRepeater.model+1);
+        }
+
+        property real span : contentY + height
+
+        //LIST VIEW CAN HELP
+        //OR JUST TURN OFF VISIVLE OUSIDE THE VISIBLE AREA
+
+        //https://stackoverflow.com/questions/43502421/culling-items-that-are-outside-the-visible-area
+
+        Repeater{
+            id: linksRepeater
+
+            function saveLinks(){
+
+            }
+            function loadLinks(){
+
+                var links = localBase.getAimLinks(singleAimWindow.aimId)
+
+                if (linksRepeater.model<links.length)
+                    linksRepeater.model = links.length
+
+                for (var i =0 ; i < links.length; ++i){
+                    linksRepeater.itemAt(i).valueOfLink = links[i][2].toString()
+                    linksRepeater.itemAt(i).nameOfLink = links[i][3].toString()
+                }
+                flickLinks.reloadModel()
+            }
+            function saveSingleLink(link, name){
+                if (localBase.isThereAimLink(singleAimWindow.aimId,link))
+                    localBase.changeAimLink(singleAimWindow.aimId,link,link,name)
+                else
+                    localBase.addAimLink(singleAimWindow.aimId,link,name)
+
+                linksRepeater.loadLinks() //to avoid seeing repeat after save
+            }
+
+            model: 1
+            Item{
+                y: index * elementHeight
+                x: screenGlobal.adaptXSize( 5 )
+                width:  flickLinks.width - screenGlobal.adaptYSize( 20 )
+                height: elementHeight
+                property bool inView:  (y+elementHeight) > (flickLinks.contentY) && (y+elementHeight) < (flickLinks.span + elementHeight)
+                visible: inView
+
+                property string valueOfLink : ""
+                property string nameOfLink : ""
+
+                RowLayout{
+                    anchors.fill: parent
+                    id:layout
+
+                    TextField{ //spread width a bit for better look take a round button in calculations
+                        placeholderText: "link"
+                        Layout.fillWidth: true
+                        id: linkValue
+                        text: valueOfLink
+                    }
+                    TextField{
+                        placeholderText: "link name"
+                        Layout.fillWidth: true
+                        id: linkName
+                        text: nameOfLink
+                    }
+                    RoundButton{
+                       id: linkButton
+                       onPressed: { linkMenu.y = linkButton.y; linkMenu.open() }
+                       text: "..."
+                       Menu{
+                           id: linkMenu
+                           MenuItem {
+                               text: "Open"
+                               //font.pixelSize:
+                               onTriggered: Qt.openUrlExternally(linkValue.text)
+                           }
+                           MenuItem {
+                               text: "Copy to clipboard"
+                               onTriggered:;
+                           }
+                           MenuItem {
+                               text: "Save only this"
+                               //font.pixelSize:
+                               onTriggered:linksRepeater.saveSingleLink(linkValue.text,linkName.text)
+                           }
+                           MenuItem {
+                               text: "Save all" //later get rid of it, by autoediting, when finished editing in 3 seconds - send to sql
+                               //font.pixelSize:
+                               onTriggered:;
+                           }
+                           MenuItem {
+                               text: "Copy to other aim"
+                               onTriggered:;
+                           }
+                           MenuItem {
+                               text: "Move to other aim"
+                               onTriggered:;
+                           }
+                           MenuItem {
+                               text: "Delete"
+                               onTriggered:;
+                           }
+                       }
+                    }
+                }
+            }
+        }
+    }
+
+
+    RoundButton{
+        text: "+"
+        y: parent.height-height-screenGlobal.adaptYSize(15)
+        x: (parent.width-width)/2
+        onPressed:{
+            if (linksRepeater.itemAt(linksRepeater.model-1).valueOfLink == "")
+                ;
+            else{
+            //DONT ADD WHEN LAST IS EMPTY
+                linksRepeater.model++;
+                linksRepeater.loadLinks(true) //true means add new
+            }
+
+        }
+    }
+    RoundButton{
+        text: "Restore"
+        y: parent.height-height-screenGlobal.adaptYSize(15)
+        x: screenGlobal.adaptXSize(10)
+        onPressed: ;
+        enabled: false
+    }
 
 
     /*Text {
@@ -327,7 +475,6 @@ Item {
         font.pixelSize: middleFontSize
         y: elementHeight*3
     }*/
-
     /*
     Text {
         id: aimAssignedTo
@@ -351,11 +498,5 @@ Item {
         y: elementHeight*6
     }*/
     //COOL TO MAKE ALSO CHILD LIST!
-
     //transform to textarea
-
-
-
-
-
 }

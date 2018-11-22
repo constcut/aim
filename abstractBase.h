@@ -153,8 +153,11 @@ public:
 
     //=========================
 
-    Q_INVOKABLE QStringList getAimLinks(QString aimName);
-    Q_INVOKABLE bool setAimLinks(QString aimName, QStringList aimLinks);
+    Q_INVOKABLE QVariantList getAimLinks(QString aimId);
+    Q_INVOKABLE bool addAimLink(QString aimId, QString link, QString linkName);
+    Q_INVOKABLE bool delAimLink(QString aimId, QString link);
+    Q_INVOKABLE bool changeAimLink(QString aimId, QString link, QString newLink, QString newName);
+    Q_INVOKABLE bool isThereAimLink(QString aimId, QString link);
 
     //===================================
 

@@ -768,18 +768,56 @@ QVariantList LocalSqlBase::searchAimsByName(QString searchText)
 }
 
 
-QStringList LocalSqlBase::getAimLinks(QString aimName)
-{
-    QStringList filledList;
+//=============the links section=========================
 
-    return filledList;
+
+QVariantList LocalSqlBase::getAimLinks(QString aimId){
+    QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "';");
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimLinks = fillList(request,4);
+    return aimLinks;
 }
 
-bool LocalSqlBase::setAimLinks(QString aimName, QStringList aimLinks)
-{
+bool LocalSqlBase::addAimLink(QString aimId, QString link, QString linkName){
 
-    return true;
+    QString requestBody("INSERT INTO links (aimId,link,name) VALUES('"
+                        + aimId  + "','" + link + "','" + linkName + "');");
+
+    QSqlQuery request = executeRequest(requestBody);
+    if (request.next())
+        return request.value(0).toInt();
+
+    return false;
 }
+
+bool LocalSqlBase::isThereAimLink(QString aimId, QString link)
+{
+    QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "' AND link='"+link +"';");
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimLink = fillList(request,4);
+    return aimLink.size();
+}
+
+bool LocalSqlBase::delAimLink(QString aimId, QString link){
+    QString requestBody("DELETE FROM aims WHERE aimId='"+
+                        aimId + "' AND link='"+ link +"';");
+    QSqlQuery request = executeRequest(requestBody);
+    return request.next();
+}
+
+bool LocalSqlBase::changeAimLink(QString aimId, QString link, QString newLink, QString newName)
+{
+    QString requestBody = QString("UPDATE links SET link='%1',name='%2'")
+            .arg(newLink).arg(newName)
+            +  QString(" WHERE aimId='%1' AND link='%2';").arg(aimId).arg(link);
+
+    QSqlQuery request = executeRequest(requestBody);
+    if (request.next())
+        return request.value(0).toInt(); //no sure it works..
+    return false;
+}
+
+
 
 //=================Here must be create functions - to be able start from very begining========
 
@@ -830,7 +868,7 @@ QVariantList LocalSqlBase::getActivityLog(QString aimId)
     //only last 100 records - make limit in future pay attention!
     QString requestBody("SELECT * FROM actions WHERE aimId='" + aimId + "';");
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList activityLogResult = fillList(request,13);
+    QVariantList activityLogResult = fillList(request,13); //are there really 13?
     return activityLogResult;
 }
 
@@ -913,7 +951,17 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request3 = executeRequest(progressTableCreate);
 
-    return request.isValid() && request2.isValid() && request3.isValid();
+    QString linksTableCreate("CREATE TABLE IF NOT EXISTS links (" //
+                           "linkId integer primary key autoincrement NOT NULL,"
+                           "aimId text NOT NULL,"
+                           "link text,"
+                           "name text"
+                         ");");
+
+    QSqlQuery request4 = executeRequest(linksTableCreate);
+
+    return request.isValid() && request2.isValid()
+            && request3.isValid() && request4.isValid();
 }
 
 
