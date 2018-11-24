@@ -345,11 +345,14 @@ Item {
             function saveLinks(){
 
             }
-            function loadLinks(){
+            function loadLinks(skipCheck){
 
                 var links = localBase.getAimLinks(singleAimWindow.aimId)
 
-                if (linksRepeater.model<links.length)
+                if (skipCheck !== true){ //skip check only when deleting aim
+                    if (linksRepeater.model<links.length)
+                        linksRepeater.model = links.length
+                }else
                     linksRepeater.model = links.length
 
                 for (var i =0 ; i < links.length; ++i){
@@ -430,7 +433,17 @@ Item {
                            }
                            MenuItem {
                                text: "Delete"
-                               onTriggered:;
+                               onTriggered:{
+                                   deletedLinks.append({"linkValue":linkValue.text,
+                                                           "linkName":linkName.text});
+
+                                   localBase.delAimLink(singleAimWindow.aimId,linkValue.text)
+
+                                   ++deletedLinks.counter;
+
+                                   restoreLinksButton.enabled = true
+                                   linksRepeater.loadLinks(true)
+                               }
                            }
                        }
                     }
@@ -439,6 +452,10 @@ Item {
         }
     }
 
+    ListModel{
+        id:deletedLinks
+        property int counter: 0
+    }
 
     RoundButton{
         text: "+"
@@ -450,16 +467,34 @@ Item {
             else{
             //DONT ADD WHEN LAST IS EMPTY
                 linksRepeater.model++;
-                linksRepeater.loadLinks(true) //true means add new
+                linksRepeater.loadLinks() //true means add new
             }
 
         }
     }
     RoundButton{
+        id:restoreLinksButton
         text: "Restore"
         y: parent.height-height-screenGlobal.adaptYSize(15)
         x: screenGlobal.adaptXSize(10)
-        onPressed: ;
+        onPressed: {
+            linksRepeater.model++;
+            linksRepeater.loadLinks()
+
+            linksRepeater.itemAt(linksRepeater.model - 1).valueOfLink = deletedLinks.get(0).linkValue;
+            linksRepeater.itemAt(linksRepeater.model - 1).nameOfLink = deletedLinks.get(0).linkName;
+            flickLinks.reloadModel()
+
+            deletedLinks.remove(0)
+
+            console.log("Deleted links " + deletedLinks.counter)
+
+            --deletedLinks.counter;
+
+            if (deletedLinks.count == 0)
+                restoreLinksButton.enabled = false
+        }
+
         enabled: false
     }
 

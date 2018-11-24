@@ -949,7 +949,7 @@ bool LocalSqlBase::isThereAimLink(QString aimId, QString link)
 }
 
 bool LocalSqlBase::delAimLink(QString aimId, QString link){
-    QString requestBody("DELETE FROM aims WHERE aimId='"+
+    QString requestBody("DELETE FROM links WHERE aimId='"+
                         aimId + "' AND link='"+ link +"';");
     QSqlQuery request = executeRequest(requestBody);
     return request.next();
