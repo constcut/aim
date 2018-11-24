@@ -776,28 +776,6 @@ QVariantList LocalSqlBase::searchAimsByName(QString searchText)
 
 //========================export import=======================
 
-bool LocalSqlBase::checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                                         QString assignTo, QString priority,  QString parent, QString progress,
-                                         QString repeatable, QString privacy)
-{
-    /*
-
-
-    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
-    QString timePart;
-
-    if (timeAndDate.indexOf("T") > 0)
-        timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
-    QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',datePart='%3',comment='%4',tag='%5',"
-                        "assignTo='%6',priority='%7',parentAim='%8',repeatable='%9'")
-            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(repeatable)
-            +  QString(" WHERE aimId='%1';").arg(aimId);
-    */
-
-    //QString requestBody = "SELECT * FROM aims WHERE aimName='" + aimId + "';";
-    return false;
-}
-
 void writeStringToFile(QFile &file, QString &string){
     quint32 stringLen = string.size();
     file.write((char*)&stringLen,sizeof (stringLen));
@@ -810,6 +788,78 @@ QString readStringFromFile(QFile &file){
     QByteArray bytes = file.read(stringLen);
     return QString(bytes);
 }
+
+int LocalSqlBase::checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                                         QString assignTo, QString priority,  QString parent, QString progress,
+                                         QString repeatable)
+{
+    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+    QString timePart;
+
+    if (timeAndDate.indexOf("T") > 0)
+        timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
+
+    QString requestBody = QString("SELECT * FROM aims WHERE aimName='%1' AND timePart='%2' AND datePart='%3' AND comment='%4' AND tag='%5'"
+                        "AND assignTo='%6' AND priority='%7' AND repeatable='%8';") //AND parentAim='%8'
+            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(repeatable); //.arg(parent)
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList allLines = fillList(request,13);
+
+    if (allLines.size() == 0)
+        return 0;
+
+    if (allLines.size() == 1){
+        //check progress values
+        //WE CAN CHECK IF THERE IS A PROGRESS UPDATE AND RECOGNIZE IT AS NOT SEPPARATED AIM BUT THE ONE WE HAVE AND UPDATE IT THEN
+        return 1;
+    }
+
+    if (allLines.size() > 1)
+        return 2;
+
+    return -1;
+}
+
+int LocalSqlBase::checkThereIsSameAim(QStringList aimLine){
+    QString fulldate = aimLine[3];
+    if (aimLine[2].isEmpty() == false)
+        fulldate += QString("T") + aimLine[2];
+
+    return checkThereIsSameAim(aimLine[1],fulldate,aimLine[4],aimLine[5],aimLine[6],aimLine[7],"",aimLine[8],aimLine[11]); //skipped is parent [10]
+    //Parent move back when export import with children would be allowed
+}
+
+int LocalSqlBase::checkThereIsSameImportAim(QString filename){
+    if (filename.indexOf("file://")!=-1)
+        filename.replace("file://","");
+
+    QFile importFile(filename);
+    importFile.open(QIODevice::ReadOnly);
+
+    if (importFile.isOpen()==false)
+        return false;
+
+    quint32 fieldsMask = 0;
+    importFile.read((char*)&fieldsMask,sizeof (fieldsMask));
+
+    const int totalFields = 13;
+
+    QStringList loadedAim;
+
+    for (auto i = 0; i < totalFields; ++i){
+        quint32 localMask = 1 << i;
+
+        if (fieldsMask & localMask){
+
+            loadedAim << readStringFromFile(importFile);
+        }
+        else
+            loadedAim << QString();
+    }
+    return checkThereIsSameAim(loadedAim);
+}
+
 
 bool LocalSqlBase::exportAim(QString aimId, QString filename){
     QStringList oneAim = getSingleAim(aimId);

@@ -121,9 +121,13 @@ public:
     Q_INVOKABLE bool importAim(QString filename);
 
     //helper not to add duplicate
-    Q_INVOKABLE bool checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+    Q_INVOKABLE int checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
                                          QString assignTo, QString priority="",  QString parent="", QString progress="",
-                                         QString repeatable="", QString privacy="");
+                                         QString repeatable="");
+
+    Q_INVOKABLE int checkThereIsSameAim(QStringList aimLine);
+
+    Q_INVOKABLE int checkThereIsSameImportAim(QString filename);
 
     //=======================================
 

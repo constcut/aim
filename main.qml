@@ -105,6 +105,11 @@ ApplicationWindow {
            font.pixelSize: fontNormalSize
            onTriggered: drawerDown.open()
        }
+       MenuItem {
+           text: "Console"
+           font.pixelSize: fontNormalSize
+           onTriggered: mainLoader.source = "ConsoleLog.qml"
+       }
        MenuItem{
            text: "Import"
            font.pixelSize: fontNormalSize
@@ -120,9 +125,19 @@ ApplicationWindow {
        selectMultiple: false
        selectExisting: true
        onAccepted: {
-           localBase.importAim(importFileDialog.fileUrl)
-           mainLoader.setSource("aimView.qml")
-           mainLoader.item.loadModel()
+
+           var check = localBase.checkThereIsSameImportAim(importFileDialog.fileUrl)
+           if (check !== 0)
+           {
+               console.log("Simmilar aim already exists: " + check)
+               //IF PROGRESS BIGGER - CAN UPDATE
+               //ELSE - ASK SHOULD ADD NEW
+           }
+           else{
+               localBase.importAim(importFileDialog.fileUrl)
+               mainLoader.setSource("aimView.qml")
+               mainLoader.item.loadModel()
+           }
        }
    }
 

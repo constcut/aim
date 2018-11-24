@@ -40,15 +40,43 @@ void LogHandler::addLine(QString anotherLine)
 {
     if (logFileName.isEmpty() == false)
     {
-        //Save line to file
+        //Better make in another thread
+        //+1 more thread could be done
+        //for server logging while connected to aim srv
+
+        QString closedLine = anotherLine + QString("\n\n");
+
+        QFile logFile(logFileName);
+        logFile.open(QIODevice::Append);
+        logFile.write(closedLine.toLocal8Bit());
+        logFile.close();
     }
     ///ALSO there can be network logging
 
     logLines << anotherLine;
-    if (logLines.size() > 1000) //make configurable
+    if (logLines.size() > 200) //make configurable
         logLines.removeAt(0);
 
-    QByteArray lineBytes = anotherLine.toLocal8Bit();
-
+    //QByteArray lineBytes = anotherLine.toLocal8Bit();
     //fprintf(stdout,"%s",lineBytes.constData()); //dublicate to stdout
+}
+
+
+//==============QML log components=========================
+
+
+void ConsoleLogQML::paint(QPainter* painter){
+  QStringList log = LogHandler::instance->getLines();
+
+  //can make a colored pen
+
+  int counter = 0;
+  for (int i = log.size()-1; i >= 0; i--)
+  {
+     ++counter;
+      if (counter > 100) break; //maybe 2000, but return only 200 from them
+
+     QString line =  log[i];
+     painter->drawText(20,counter*10,line);
+  }
 }

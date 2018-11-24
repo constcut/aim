@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
 
     //Log handler
     LogHandler logHandler;
+    logHandler.setFilename("log.txt");
 
     //User token
     UserToken token;
@@ -108,6 +109,9 @@ int main(int argc, char *argv[])
 
     Clipboard clip;
     engine.rootContext()->setContextProperty("clipboard",&clip);
+
+    qmlRegisterType<ConsoleLogQML>("wwav.es.app",1,0,"ConsoleLog");
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

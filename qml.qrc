@@ -13,5 +13,6 @@
         <file>chat.qml</file>
         <file>qwebchannel.js</file>
         <file>actionsDone.qml</file>
+        <file>ConsoleLog.qml</file>
     </qresource>
 </RCC>
