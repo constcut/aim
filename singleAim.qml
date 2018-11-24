@@ -33,11 +33,9 @@ Item {
 
     property string aimId : ""
 
-    Component.onCompleted:
-    {
-        //load single aim
+    function loadAim(){
 
-        if (aimId.length > 0)
+        if (aimId.length > 0) //cover under the function load aim
         {
             var aimLine = localBase.getSingleAim(aimId)
 
@@ -95,6 +93,10 @@ Item {
         }
     }
 
+    Component.onCompleted:{
+        loadAim()
+    }
+
 
     Flickable {
         id: flickName
@@ -132,6 +134,7 @@ Item {
 
          border.color: "black"
          color: "gray"
+         id:firstBorder
     }
 
     RowLayout{
@@ -260,14 +263,54 @@ Item {
     Text {
         id: aimRunningState
         text: "Running"
-        x: 3*parent.width/4
+        x: parent.width/2 //3*parent.width/4
         font.pixelSize: smallFontSize
         y: borderBeforeSummary.y + borderBeforeSummary.height*2
     }
 
+    Button{
+        id: stopAndReportButton
+        y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10) //screenGlobal.adaptYSize(30)
+        x: parent.width - width - screenGlobal.adaptXSize(10) //pa.wi / 2
+        text: "Stop + report"
+        onPressed: {
+            runningAims.stop(aimId)
+            stopStartButton.text = "Start";
+            stopAndReportButton.enabled = false
+
+            progressLoader.setSource("ProgressReport.qml",{"aimId":singleAimWindow.aimId});
+            reportProgressPopup.open()
+        }
+        enabled: false
+    }
+
+    Popup {
+        id: reportProgressPopup //make also time popup with tumbler
+        x: 0
+        y: borderBeforeProgress.y //or firstBorder.y
+        width:  parent.width//popupWidth
+        height: parent.height-y//popupHeight //ensure manual sizing
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Loader{
+            anchors.fill: parent
+            id: progressLoader
+        }
+        Connections{
+            target: progressLoader.item
+            onReportCanceled: reportProgressPopup.close()
+            onReportFinished: {
+                reportProgressPopup.close()
+                singleAimWindow.loadAim()
+            }
+        }
+    }
+
     Button {
         y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10) //screenGlobal.adaptYSize(30)
-        x: parent.width - width - screenGlobal.adaptXSize(10)
+        x: parent.width/2 //parent.width - width - screenGlobal.adaptXSize(10)
         font.pixelSize: smallFontSize //its normal size verywhere
         id: stopStartButton
         text: "stop|start"
@@ -275,10 +318,12 @@ Item {
             if (text == "Stop"){
                 runningAims.stop(aimId)
                 stopStartButton.text = "Start";
+                stopAndReportButton.enabled = false
             } else
             if (text == "Start"){
                 runningAims.start(aimId)
                 stopStartButton.text = "Stop";
+                stopAndReportButton.enabled = true
             }
         }
     }
