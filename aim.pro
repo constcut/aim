@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     aimnotifications.cpp \
     runningaims.cpp \
     wslib/loghandler.cpp \
-    usertoken.cpp
+    usertoken.cpp \
+    wslib/clipboard.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -56,7 +57,8 @@ HEADERS += \
     aimnotifications.h \
     runningaims.h \
     wslib/loghandler.h \
-    usertoken.h
+    usertoken.h \
+    wslib/clipboard.h
 
 #dunno what is that
 INSTALLS += target

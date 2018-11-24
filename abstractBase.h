@@ -89,7 +89,7 @@ public:
     ~LocalSqlBase();
 
     //Aims
-    Q_INVOKABLE int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+    Q_INVOKABLE QString addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
                            QString assignTo, QString priority="",  QString parent="", QString progress="",
                            QString repeatable="", QString privacy="");
 
@@ -102,6 +102,8 @@ public:
 
     //=====================================
 
+    Q_INVOKABLE QString getLastAimId();
+
     Q_INVOKABLE QVariantList getAims();
     Q_INVOKABLE QVariantList getAimsBackwards();
 
@@ -112,6 +114,16 @@ public:
 
     Q_INVOKABLE QVariantList getChildAims(QString parentAimId);
     Q_INVOKABLE QStringList getChildAimsNames(QString parentAimId);
+
+    //Serialization
+
+    Q_INVOKABLE bool exportAim(QString aimId, QString filename);
+    Q_INVOKABLE bool importAim(QString filename);
+
+    //helper not to add duplicate
+    Q_INVOKABLE bool checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                                         QString assignTo, QString priority="",  QString parent="", QString progress="",
+                                         QString repeatable="", QString privacy="");
 
     //=======================================
 

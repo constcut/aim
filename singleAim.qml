@@ -340,6 +340,8 @@ Item {
         Repeater{
             id: linksRepeater
 
+            //MARK THE LINKS THAY ARE THE SAME WITH DATE BASE OR ALREADY SAVED
+
             function saveLinks(){
 
             }
@@ -406,7 +408,7 @@ Item {
                            }
                            MenuItem {
                                text: "Copy to clipboard"
-                               onTriggered:;
+                               onTriggered:clipboard.copyText(linkValue.text)
                            }
                            MenuItem {
                                text: "Save only this"
@@ -459,6 +461,27 @@ Item {
         x: screenGlobal.adaptXSize(10)
         onPressed: ;
         enabled: false
+    }
+
+    FileDialog {
+        id: exportFileDialog
+        title: "Select aim export file name"
+        //folder:
+        nameFilters: [ "Aim files (*.aim)", "All files (*)" ]
+        selectMultiple: false
+        selectExisting: false
+        onAccepted: {
+            localBase.exportAim(singleAimWindow.aimId,exportFileDialog.fileUrl)
+        }
+    }
+
+    Button {
+        y: parent.height-height-screenGlobal.adaptYSize(15)
+        //y: elementHeight
+        x: parent.width - width - screenGlobal.adaptXSize(10)
+        font.pixelSize: smallFontSize //its normal size verywhere
+        text : "Export aim"
+        onClicked: exportFileDialog.open()
     }
 
 

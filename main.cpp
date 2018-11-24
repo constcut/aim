@@ -21,6 +21,8 @@
 
 #include "usertoken.h"
 
+#include "wslib/clipboard.h"
+
 #include <QDebug>
 
 #ifdef Q_OS_ANDROID
@@ -46,6 +48,8 @@ int main(int argc, char *argv[])
 
     LocalSqlBase localBase(&app);
     localBase.createTablesIfNeeded();
+
+
 
     UserSettings userSettings(&app);
 
@@ -102,6 +106,8 @@ int main(int argc, char *argv[])
     UserToken token;
     engine.rootContext()->setContextProperty("userToken",&token);
 
+    Clipboard clip;
+    engine.rootContext()->setContextProperty("clipboard",&clip);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

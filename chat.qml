@@ -12,9 +12,9 @@ Item {
 
     //LOOK WE MUST HANDLE THE MINIMZE or then we got error from web channel
 
-    /*
-    Timer
-    {
+    //on android activity pause
+
+    Timer{
         id: lateInitTimer
         interval: 2000
 
@@ -22,7 +22,7 @@ Item {
 
                 loginName = "U_" + userToken.getToken()
 
-                console.log(loginName + " ;ogin name")
+                console.log(loginName + " login name")
 
                 //call the login method
                 chatItem.channel.objects.aimserver.login(loginName, function(arg) {
@@ -128,27 +128,23 @@ Item {
     }
 
 
-    Text
-    {
+    Text{
         id: chatLog
     }
 
-    Text
-    {
+    Text{
         id: tokensList
         x: parent.width/2
     }
 
-    TextField
-    {
+    TextField{
         id: msg
         y: parent.height - parent.height/10
 
-        onEditingFinished:
-        {
+        onEditingFinished:{ //look for a way to save links
             pushSend("nonick")
         }
     }
-    */
+
 
 }

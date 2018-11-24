@@ -213,7 +213,7 @@ QVariantList LocalSqlBase::getLists()
 ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+QString LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
                          QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
                         QString repeatable, QString privacy)
 {
@@ -229,13 +229,16 @@ int LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, 
                         timePart + "','" + datePart  + "','" + comment + "','" + tag + "','" + assignTo + "','" + priority  +
                          "','" + parent +  "','" + repeatable + "');");
 
-
     QSqlQuery request = executeRequest(requestBody);
+    return getLastAimId(); //but doesn't help if were not added
+}
 
-    if (request.next())
-        return request.value(0).toInt();
-
-    return -1;
+QString LocalSqlBase::getLastAimId(){ //last added actually
+    QString requestBody = "SELECT last_insert_rowid() FROM aims";
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList aimIdList = fillList(request,1);
+    QStringList aimId = aimIdList[0].toStringList();
+    return aimId[0];
 }
 
 bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, QString comment, QString tag,
@@ -260,6 +263,8 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
 
     if (request.next())
         return request.value(0).toInt(); //no sure it works..
+
+
 
     return false;
 }
@@ -767,9 +772,154 @@ QVariantList LocalSqlBase::searchAimsByName(QString searchText)
     return searchResult;
 }
 
+//The serialization section
+
+//========================export import=======================
+
+bool LocalSqlBase::checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
+                                         QString assignTo, QString priority,  QString parent, QString progress,
+                                         QString repeatable, QString privacy)
+{
+    /*
+
+
+    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+    QString timePart;
+
+    if (timeAndDate.indexOf("T") > 0)
+        timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
+    QString requestBody = QString("UPDATE aims SET aimName='%1',timePart='%2',datePart='%3',comment='%4',tag='%5',"
+                        "assignTo='%6',priority='%7',parentAim='%8',repeatable='%9'")
+            .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(repeatable)
+            +  QString(" WHERE aimId='%1';").arg(aimId);
+    */
+
+    //QString requestBody = "SELECT * FROM aims WHERE aimName='" + aimId + "';";
+    return false;
+}
+
+void writeStringToFile(QFile &file, QString &string){
+    quint32 stringLen = string.size();
+    file.write((char*)&stringLen,sizeof (stringLen));
+    file.write(string.toLocal8Bit());
+}
+
+QString readStringFromFile(QFile &file){
+    quint32 stringLen = 0;
+    file.read((char*)&stringLen,sizeof(stringLen));
+    QByteArray bytes = file.read(stringLen);
+    return QString(bytes);
+}
+
+bool LocalSqlBase::exportAim(QString aimId, QString filename){
+    QStringList oneAim = getSingleAim(aimId);
+    quint32 fieldsMask = 0;
+
+
+    for (auto i = 0; i < oneAim.size(); ++i){
+        if (oneAim[i].isEmpty()==false)
+            fieldsMask |= 1 << i;
+    }
+
+    //qDebug() << "Saving aim is "<<oneAim;
+    //qDebug() << "Field mask on save "<<fieldsMask;
+
+    if (filename.indexOf("file://")!=-1)
+        filename.replace("file://","");
+
+    QFile exportFile(filename);
+    exportFile.open(QIODevice::WriteOnly);
+
+    if (exportFile.isOpen()==false)
+        return false;
+
+    exportFile.write((char*)&fieldsMask,sizeof (fieldsMask));
+
+    for (auto i = 0; i < oneAim.size(); ++i){
+       if (oneAim[i].isEmpty()==false){
+           writeStringToFile(exportFile,oneAim[i]);
+           //quint32 fieldLength = oneAim[i].size();
+           //exportFile.write((char*)&fieldLength,sizeof(fieldLength));
+           //exportFile.write(oneAim[i].toLocal8Bit()); //untill 0 char
+       }
+    }
+
+    QVariantList links = getAimLinks(oneAim[0]);
+    quint32 linksSize = links.size();
+    exportFile.write((char*)&linksSize,sizeof(linksSize));
+
+    for (auto i = 0; i < links.size(); ++i){
+        QStringList linkLine = links[i].toStringList();
+        QString linkValue = linkLine[2];
+        QString linkName = linkLine[3];
+        writeStringToFile(exportFile,linkValue);
+        writeStringToFile(exportFile,linkName);
+    }
+
+    exportFile.close();
+    return true;
+}
+
+bool LocalSqlBase::importAim(QString filename){
+
+    if (filename.indexOf("file://")!=-1)
+        filename.replace("file://","");
+
+    QFile importFile(filename);
+    importFile.open(QIODevice::ReadOnly);
+
+    if (importFile.isOpen()==false)
+        return false;
+
+    quint32 fieldsMask = 0;
+    importFile.read((char*)&fieldsMask,sizeof (fieldsMask));
+
+    const int totalFields = 13;
+
+    QStringList loadedAim;
+
+    for (auto i = 0; i < totalFields; ++i){
+        quint32 localMask = 1 << i;
+
+        if (fieldsMask & localMask){
+            //qDebug() << "So we add field "<<i<<" "<<(localMask);
+            //quint32 fieldLength = 0;
+            //importFile.read((char*)&fieldLength,sizeof(fieldLength));
+            //QByteArray bytes = importFile.read(fieldLength);
+            //loadedAim << QString(bytes);
+            loadedAim << readStringFromFile(importFile);
+        }
+        else
+            loadedAim << QString();
+    }
+
+    //qDebug() << "Imported aim is: "<<loadedAim;
+    //qDebug() << "Field mask on load "<<fieldsMask;
+    //id, name, time, date, comment, tag, assign, prio, progress, progressText, parent, repeat, privacy, duration
+    //addAim function fields
+
+            //name,          timeAndDate,                          comment, tag,             assignTo, prio,
+    QString aimId = addAim(loadedAim[1],loadedAim[3]+QString("T")+loadedAim[2],loadedAim[4],loadedAim[5],loadedAim[6],loadedAim[7],
+            loadedAim[10],loadedAim[8],loadedAim[11],loadedAim[12]);
+            //parent,      progress,                    repeatable, privacy
+
+    if (aimId != "0" && aimId != "")
+        updateAimProgress(aimId,loadedAim[8],loadedAim[9]);
+
+    //Links are missing
+    quint32 linksSize = 0;
+    importFile.read((char*)&linksSize,sizeof(linksSize));
+
+    for (auto i = 0; i < linksSize; ++i){
+        QString linkValue = readStringFromFile(importFile);
+        QString linkName = readStringFromFile(importFile);
+        addAimLink(aimId,linkValue,linkName);
+    }
+
+    return true;
+}
 
 //=============the links section=========================
-
 
 QVariantList LocalSqlBase::getAimLinks(QString aimId){
     QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "';");

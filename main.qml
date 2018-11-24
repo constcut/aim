@@ -105,7 +105,27 @@ ApplicationWindow {
            font.pixelSize: fontNormalSize
            onTriggered: drawerDown.open()
        }
+       MenuItem{
+           text: "Import"
+           font.pixelSize: fontNormalSize
+           onTriggered: importFileDialog.open()
+       }
    }
+
+   FileDialog {
+       id: importFileDialog
+       title: "Select aim export file name"
+       //folder:
+       nameFilters: [ "Aim files (*.aim)", "All files (*)" ]
+       selectMultiple: false
+       selectExisting: true
+       onAccepted: {
+           localBase.importAim(importFileDialog.fileUrl)
+           mainLoader.setSource("aimView.qml")
+           mainLoader.item.loadModel()
+       }
+   }
+
 
     Loader {
         y: toolBar.height + microYOffset
