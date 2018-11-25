@@ -11,8 +11,9 @@ Item {
     id: chatItem
 
     //LOOK WE MUST HANDLE THE MINIMZE or then we got error from web channel
-
     //on android activity pause
+
+    /*
 
     Timer{
         id: lateInitTimer
@@ -145,6 +146,6 @@ Item {
             pushSend("nonick")
         }
     }
-
+    */
 
 }

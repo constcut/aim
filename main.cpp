@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ConsoleLogQML>("wwav.es.app",1,0,"ConsoleLog");
 
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml"))); //of course qrc:/main.qml
 
     //splash.hide();
     //popUp.setPopupText("hello","red",10);

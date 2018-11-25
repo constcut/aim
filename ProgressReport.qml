@@ -10,6 +10,10 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
     id: reportProgressWindow
+
+    //I guess on popup loaders better to use -
+    //anchors.fill: parent
+
     width: screenGlobal.getScreenWidth()//480
     height: screenGlobal.getScreenHeight()//800
 

@@ -115,6 +115,12 @@ ApplicationWindow {
            font.pixelSize: fontNormalSize
            onTriggered: importFileDialog.open()
        }
+       /* //option for debug
+       MenuItem {
+           text: "Test AS"
+           font.pixelSize: fontNormalSize
+           onTriggered: mainLoader.source = "SelectAim.qml"
+       }*/
    }
 
    FileDialog {

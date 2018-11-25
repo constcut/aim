@@ -518,6 +518,8 @@ Item {
 
         property int operationType: 0 //0 is nothing
                                     //1 is copy; 2 is move
+        
+        property int linkIndex: 0 //must be set before open pop
 
         Loader{
             anchors.fill: parent
