@@ -406,13 +406,14 @@ Item {
                 }
                 flickLinks.reloadModel()
             }
-            function saveSingleLink(link, name){
-                if (localBase.isThereAimLink(singleAimWindow.aimId,link))
-                    localBase.changeAimLink(singleAimWindow.aimId,link,link,name)
+            function saveSingleLink(aim, link, name){
+                if (localBase.isThereAimLink(aim,link))
+                    localBase.changeAimLink(aim,link,link,name)
                 else
-                    localBase.addAimLink(singleAimWindow.aimId,link,name)
+                    localBase.addAimLink(aim,link,name)
 
-                linksRepeater.loadLinks() //to avoid seeing repeat after save
+                if (aim === singleAimWindow.aimId) //refresh only if its our aim
+                    linksRepeater.loadLinks()
             }
 
             model: 1
@@ -424,8 +425,12 @@ Item {
                 property bool inView:  (y+elementHeight) > (flickLinks.contentY) && (y+elementHeight) < (flickLinks.span + elementHeight)
                 visible: inView
 
+                id: linkItem
+
                 property string valueOfLink : ""
                 property string nameOfLink : ""
+
+                property int indexValue: index
 
                 RowLayout{
                     anchors.fill: parent
@@ -461,7 +466,7 @@ Item {
                            MenuItem {
                                text: "Save only this"
                                //font.pixelSize:
-                               onTriggered:linksRepeater.saveSingleLink(linkValue.text,linkName.text)
+                               onTriggered: linksRepeater.saveSingleLink(singleAimWindow.aimId, linkValue.text,linkName.text)
                            }
                            MenuItem {
                                text: "Save all" //later get rid of it, by autoediting, when finished editing in 3 seconds - send to sql
@@ -471,6 +476,7 @@ Item {
                            MenuItem {
                                text: "Copy to other aim"
                                onTriggered:{
+                                   aimSelectionPopup.linkIndex = linkItem.indexValue
                                    aimSelectionPopup.operationType = 1
                                    aimSelectLoader.setSource("SelectAim.qml") //{}
                                    aimSelectionPopup.open()
@@ -479,6 +485,7 @@ Item {
                            MenuItem {
                                text: "Move to other aim"
                                onTriggered:{
+                                   aimSelectionPopup.linkIndex = linkItem.indexValue
                                    aimSelectionPopup.operationType = 2
                                    aimSelectLoader.setSource("SelectAim.qml") //{}
                                    aimSelectionPopup.open()
@@ -519,6 +526,8 @@ Item {
         property int operationType: 0 //0 is nothing
                                     //1 is copy; 2 is move
 
+        property int linkIndex: 0 //must be set before open pop
+
         Loader{
             anchors.fill: parent
             id: aimSelectLoader
@@ -532,21 +541,23 @@ Item {
                 //console.log("We selected the aim: " + selectedAimId)
                 //console.log(localBase.getSingleAim(selectedAimId))
 
-                 if (aimSelectionPopup.operationType == 1){
-                    //same as insert on save
+                var linkValue = linksRepeater.itemAt(aimSelectionPopup.linkIndex).valueOfLink
+                var linkName = linksRepeater.itemAt(aimSelectionPopup.linkIndex).nameOfLink
 
-                    // linksRepeater.saveSingleLink(linkValue.text,linkName.text)
+                 if (aimSelectionPopup.operationType == 1){
+                    linksRepeater.saveSingleLink(selectedAimId,linkValue,linkName)
                  }
                  else if (aimSelectionPopup.operationType == 2){
-                    //perform as copy + delete
-                     /*
-                     deletedLinks.append({"linkValue":linkValue.text,
-                                             "linkName":linkName.text});
-                     localBase.delAimLink(singleAimWindow.aimId,linkValue.text)
+
+                     linksRepeater.saveSingleLink(selectedAimId,linkValue,linkName)
+
+                     deletedLinks.append({"linkValue":linkValue,
+                                             "linkName":linkName});
+
+                     localBase.delAimLink(singleAimWindow.aimId,linkValue)
                      ++deletedLinks.counter;
                      restoreLinksButton.enabled = true
-                     linksRepeater.loadLinks(true)
-                     */
+                     linksRepeater.loadLinks(true) //but here we must refresh
                  }
                  else
                      console.log("Something got strange operation type on select aim is " + aimSelectionPopup.operationType)
