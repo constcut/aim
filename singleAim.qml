@@ -125,12 +125,6 @@ Item {
                 text: "moment" //better with period
                 font.pixelSize: middleFontSize
                 y: aimName.height
-
-                ToolTip{
-                    parent: aimMoment
-                    visible: singleAimWindow.helpMode
-                    text: qsTr("Aim main params: name, parent, moment & tags")
-                }
             }
     }
 
@@ -157,11 +151,6 @@ Item {
             font.pixelSize: smallFontSize
             Layout.preferredWidth: parent.width/2 - screenGlobal.adaptXSize( 45 )
 
-            ToolTip{
-                parent: childList
-                visible: singleAimWindow.helpMode
-                text: qsTr("Child aims of a current one")
-            }
         }
         Button{
             id:openChildButton
@@ -225,11 +214,6 @@ Item {
         width: parent.width - saveProgressButton.width  - screenGlobal.adaptXSize(20)
         from: 1
         to: 100
-        ToolTip {
-              parent: progressSlider.handle
-              visible: progressSlider.pressed
-              text: progressSlider.value.toFixed(1) + "%"
-          }
     }
     Button{
         id: saveProgressButton
@@ -296,13 +280,6 @@ Item {
             reportProgressPopup.open()
         }
         enabled: false
-
-
-        ToolTip{
-            parent: stopAndReportButton
-            visible: singleAimWindow.helpMode
-            text: qsTr("Button stops running aim and helps input report")
-        }
     }
 
     Popup {
@@ -397,12 +374,6 @@ Item {
         }
 
         property real span : contentY + height
-
-        ToolTip{
-            parent: flickLinks
-            visible: singleAimWindow.helpMode
-            text: qsTr("Area used for links connected to aim")
-        }
 
         Repeater{
             id: linksRepeater
@@ -656,12 +627,6 @@ Item {
         text : "Export aim"
         onClicked: exportFileDialog.open()
         id: exportButton
-
-        ToolTip{
-            parent: exportButton
-            visible: singleAimWindow.helpMode
-            text: qsTr("Button used to save aim in file")
-        }
     }
 
     Button {
@@ -670,6 +635,42 @@ Item {
         font.pixelSize: smallFontSize //its normal size verywhere
         text : "?"
         onClicked: singleAimWindow.helpMode = !singleAimWindow.helpMode
+        //maybe we should use invisible items to better positions
+    }
+
+    //move all the help info down
+    ToolTip{
+        parent: aimMoment
+        visible: singleAimWindow.helpMode
+        text: qsTr("Aim main params: name, parent, moment & tags")
+    }
+    ToolTip{
+        parent: childList
+        visible: singleAimWindow.helpMode
+        text: qsTr("Child aims of a current one")
+    }
+    ToolTip{
+          parent: progressSlider.handle
+          visible: progressSlider.pressed
+          text: progressSlider.value.toFixed(1) + "%"
+    }
+    ToolTip{
+        parent: stopAndReportButton
+        visible: singleAimWindow.helpMode
+        text: qsTr("Button stops running aim and helps input report")
+    }
+    ToolTip{
+
+        parent: exportButton
+        visible: singleAimWindow.helpMode
+        text: qsTr("Button used to save aim in file")
+    }
+    ToolTip{
+        //y: flickLinks.y
+        parent: flickLinks
+        visible: singleAimWindow.helpMode
+        text: qsTr("Area used for links connected to aim")
+        Component.onCompleted: y += screenGlobal.adaptYSize(50) //trick used to make help notes where we want them
     }
 
 }
