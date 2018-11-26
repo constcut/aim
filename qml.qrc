@@ -16,5 +16,6 @@
         <file>ConsoleLog.qml</file>
         <file>ProgressReport.qml</file>
         <file>SelectAim.qml</file>
+        <file>doneActsChart.qml</file>
     </qresource>
 </RCC>

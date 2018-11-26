@@ -135,6 +135,7 @@ public:
 
     Q_INVOKABLE quint64 getDoneActionsLength(QString date);
     Q_INVOKABLE QStringList getDoneActionsList(QString date);
+    Q_INVOKABLE QVariantList getAllDoneActionsList(QString date);
 
     Q_INVOKABLE QVariantList getAimsByDate(QString date);
     Q_INVOKABLE QVariantList getAimsByDateOnly(QString date);

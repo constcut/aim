@@ -1,4 +1,9 @@
-        =======================================================================================================================================================================================
+Новые планы:
+
+
+
+Старые и частично имеющие ценность планы:
+=======================================================================================================================================================================================
         \       Общий план разработки блока модулей aim:
          \
           \     Паралельная разработка отдельных модулей с перечнем задач в каждом, однако разработка идет в одном проекте
@@ -60,25 +65,12 @@
            |
             ---------------------------------------------------------------------------
 
-            +1) pick the time - if it set, or cut it if there is no time there
-            +2) make 2 fields in the  sql - time and date - for better search
-            +3) schedule view (calendar + list view but with special loader - that also sorts)
-
-            +4) parent fields (delete child field)
-            +5) tree view parent aims
-
-            :leave comments later
-
-            +6) tag tree with aim list
-
             ==========================================================================
 
             :android
 
             +11) notifications - reminder on time - tray or android notifications
 
-            +14) periodical aims - update of schedule
-            +15) starting aim execution button, stopping button - measures of time (at first just to fill work time)
 
             ==========================================================================
 

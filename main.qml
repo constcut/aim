@@ -134,6 +134,11 @@ ApplicationWindow {
            onTriggered:  prevPages.pageChanged("actionsDone.qml")
        }
        MenuItem {
+           text: "Done chart"
+           font.pixelSize: fontNormalSize
+           onTriggered: prevPages.pageChanged("doneActsChart.qml")
+       }
+       MenuItem {
            text: "Notify"
            font.pixelSize: fontNormalSize
            onTriggered: androidNotify.setNotification("Hello!")
@@ -153,12 +158,6 @@ ApplicationWindow {
            font.pixelSize: fontNormalSize
            onTriggered: importFileDialog.open()
        }
-       /* //option for debug
-       MenuItem {
-           text: "Test AS"
-           font.pixelSize: fontNormalSize
-           onTriggered: mainLoader.source = "SelectAim.qml"
-       }*/
    }
 
    FileDialog {

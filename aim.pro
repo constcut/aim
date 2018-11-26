@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     runningaims.cpp \
     wslib/loghandler.cpp \
     usertoken.cpp \
-    wslib/clipboard.cpp
+    wslib/clipboard.cpp \
+    doneactschart.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -58,7 +59,8 @@ HEADERS += \
     runningaims.h \
     wslib/loghandler.h \
     usertoken.h \
-    wslib/clipboard.h
+    wslib/clipboard.h \
+    doneactschart.h
 
 #dunno what is that
 INSTALLS += target

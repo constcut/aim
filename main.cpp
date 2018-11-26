@@ -23,6 +23,8 @@
 
 #include "wslib/clipboard.h"
 
+#include "doneactschart.h"
+
 #include <QDebug>
 
 #ifdef Q_OS_ANDROID
@@ -111,6 +113,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("clipboard",&clip);
 
     qmlRegisterType<ConsoleLogQML>("wwav.es.app",1,0,"ConsoleLog");
+    qmlRegisterType<DoneActsChartQML>("wwav.es.app",1,0,"DoneActsChart");
 
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml"))); //of course qrc:/main.qml

@@ -686,6 +686,18 @@ QStringList LocalSqlBase::getDoneActionsList(QString date){
     return allStringLines;
 }
 
+QVariantList LocalSqlBase::getAllDoneActionsList(QString date){
+    if (date.indexOf("T") != -1)
+        date = date.mid(0,date.indexOf("T"));
+
+    QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
+
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList allActionsList = fillList(request,6); //6 is fields amount
+
+    return allActionsList;
+}
+
 bool canDateHitPeriod(QString originDate, QString period, QString searchDate)
 {
     QString daysPeriod = period.mid(0,period.indexOf("d"));
