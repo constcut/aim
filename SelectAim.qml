@@ -155,7 +155,8 @@ Item {
             id: highlightBarRect
             width: highlightWidth; height: highlightHeight
             color: highlightAimColor
-            y: aimList.currentItem.y;
+            y: aimList.currentItem.y; //warning clean out please
+
             Behavior on y {
                NumberAnimation{ duration: 200 } }
         }

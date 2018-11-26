@@ -25,7 +25,8 @@ ApplicationWindow {
     Material.theme: Material.Dark
 
     Component.onCompleted: {
-        //console.log (window.Material.foreground)
+        //add the first one view : aimView
+        prevPages.pageChanged("aimView.qml")
     }
 
     onClosing: {
@@ -34,6 +35,25 @@ ApplicationWindow {
             else
                 window.hide();
     }
+
+
+   ListModel{
+       id: prevPages
+
+       function pageChanged(qmlFile, params){ //maybe we can do param name + param value?
+
+                if (params !== undefined){
+                    prevPages.append({"pageFile":qmlFile,"params":params})
+                    mainLoader.setSource(qmlFile,params)
+                }
+                else{ //maybe we don't even need this else statement
+                    prevPages.append({"pageFile":qmlFile})
+                    mainLoader.setSource(qmlFile)
+                }
+
+                console.log("On page " + qmlFile  +" changed f() params " + params)
+       }
+   }
 
    header:  ToolBar
    {
@@ -45,23 +65,41 @@ ApplicationWindow {
         id: toolBar
         RowLayout {
             ToolButton {
+                text: "<"
+                font.pixelSize: fontNormalSize
+                onClicked: {
+                    if (prevPages.count > 1){
+                         var qmlFile = prevPages.get(prevPages.count-2).pageFile
+                         var params = prevPages.get(prevPages.count-2).params
+                         console.log("Moveing to prev page " + qmlFile + " with params " + params)
+                         if (params !== undefined)
+                            mainLoader.setSource(qmlFile,params)
+                         else
+                            mainLoader.setSource(qmlFile)
+                         prevPages.remove(prevPages.count-1)
+                    }
+                    else
+                        console.log("Prev pages are empty " + prevPages.count)
+                }
+            }
+            ToolButton {
                 text: "view"
-                onClicked: mainLoader.source = "aimView.qml"
+                onClicked: prevPages.pageChanged("aimView.qml")
                 font.pixelSize: fontNormalSize
             }
             ToolButton {
                 text: "tree"
-                onClicked:  mainLoader.source = "aimTree.qml"
+                onClicked:  prevPages.pageChanged("aimTree.qml")
                 font.pixelSize: fontNormalSize
             }
             ToolButton {
                 text: "tags"
-                onClicked:  mainLoader.source = "tagTree.qml"
+                onClicked:  prevPages.pageChanged("tagTree.qml")
                 font.pixelSize: fontNormalSize
             }
             ToolButton {
                 text: "run"
-                onClicked:  mainLoader.source = "runningAim.qml"
+                onClicked:  prevPages.pageChanged("runningAim.qml")
                 font.pixelSize: fontNormalSize
             }
             //ToolSeparator {} (on small phone gets out)
@@ -70,7 +108,7 @@ ApplicationWindow {
                 onClicked: toolMenu.open()
                 font.pixelSize: fontNormalSize
             }
-            ToolSeparator {}
+            //ToolSeparator {} //sepparators yet removed but will come back on images buttons
             ToolButton {
                 text: "add"
                 onClicked:  drawerRight.open()
@@ -88,12 +126,12 @@ ApplicationWindow {
        MenuItem {
            text: "Schedule"
            font.pixelSize: fontNormalSize
-           onTriggered:  mainLoader.source = "schedule.qml"
+           onTriggered:  prevPages.pageChanged("schedule.qml")
        }
        MenuItem {
            text: "Done acts"
            font.pixelSize: fontNormalSize
-           onTriggered:  mainLoader.source = "actionsDone.qml"
+           onTriggered:  prevPages.pageChanged("actionsDone.qml")
        }
        MenuItem {
            text: "Notify"
@@ -108,7 +146,7 @@ ApplicationWindow {
        MenuItem {
            text: "Console"
            font.pixelSize: fontNormalSize
-           onTriggered: mainLoader.source = "ConsoleLog.qml"
+           onTriggered: prevPages.pageChanged("ConsoleLog.qml")
        }
        MenuItem{
            text: "Import"
@@ -152,12 +190,30 @@ ApplicationWindow {
         y: toolBar.height + microYOffset
         anchors.centerIn: parent
         id: mainLoader
-        source: "aimView.qml" //hello by default
+
+        //we set it by pageChanged on Component.onCompleted
+        //source: "aimView.qml" //hello by default
     }
 
-    Connections
-    {
+    Connections{
         target: mainLoader.item
+
+        /*
+        onRequestUpdateParams: {
+            if (prevPages.count > 0){
+                prevPages.get(prevPages.count-1).params = params
+                console.log("Last page params updated to " + params)
+            }
+            else
+                console.log("Prev pages are empty")
+        }
+        */ //YET we don't use this feature, but later it should work very fine
+        //on schedule and done acts we should store data if it was chosen
+        //and load it if there was a special param set
+        //
+        //and on aimView we must store current list index and load in if it was set
+        //
+        //loading of special data should be applied in the Component.onCompleted()
 
         onRequestOpenAddAim: {
             addLoader.item.loadForAddNew()
@@ -168,7 +224,9 @@ ApplicationWindow {
             drawerRight.open()
         }
         onRequestOpenSingleAim:{
-            mainLoader.setSource("singleAim.qml",{aimId:aimId})
+            //mainLoader.setSource("singleAim.qml",{"aimId":aimId})
+            //updating:
+            prevPages.pageChanged("singleAim.qml",{"aimId":aimId})
         }
     }
 
@@ -221,8 +279,11 @@ ApplicationWindow {
          target: popUpItem
 
          onRequestNotificationsViewFromCpp:{
-             window.show();
-             mainLoader.source = "runningAim.qml"
+             window.show()
+             //mainLoader.source = "runningAim.qml"
+             //updating:
+             prevPages.pageChanged("runningAim.qml") //maybe also nice to find it
+             //or just open single aim
          }
      }
 
@@ -261,9 +322,12 @@ ApplicationWindow {
                target: addLoader.item
                onRequestOpenViewAims: {
                    drawerRight.close()
-                   console.log("Reloading aims..")
-                   mainLoader.setSource("aimView.qml")
-                   mainLoader.item.loadModel()
+                   //console.log("Reloading aims..")
+                   //mainLoader.setSource("aimView.qml")
+
+                   //updating:
+                   prevPages.pageChanged("aimView.qml")
+                   mainLoader.item.loadModel() //refresh it
                }
            }
        }
