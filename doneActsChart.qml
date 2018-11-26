@@ -13,6 +13,8 @@ import wwav.es.app 1.0
 // 2 : make possible click and recognize the aim (double to open)
 // 3 : zoom
 
+//Ok and also if parent and child running at same time at done sched must be no repeats - means calculate that time only once
+
 Item {
     id:doneChartItem
 
@@ -71,6 +73,26 @@ Item {
             calendar.selectedDateChanged()
         }
     }
+
+    Button{
+        text: "-"
+        y: calendar.height - height + screenGlobal.adaptXSize( 5 )
+        x: calendar.width + widthOffset
+        onClicked: {
+            if (text == "-"){
+                chosenDate.visible = calendar.visible = false
+                y = screenGlobal.adaptYSize( 10 )
+                flick.y = screenGlobal.adaptYSize( 50 )
+                text = "+"
+            }else if (text == "+"){
+                chosenDate.visible = calendar.visible = true
+                y = calendar.height - height + screenGlobal.adaptXSize( 5 )
+                flick.y = calendar.height + screenGlobal.adaptYSize( 30 )
+                text = "-"
+            }
+        }
+    }
+
     Text{
         y: calendar.height
         id: chosenDate
@@ -85,11 +107,11 @@ Item {
         x: screenGlobal.adaptYSize( 5 )
         y: calendar.height + screenGlobal.adaptYSize( 30 )
 
-        width: parent.width - widthOffset/2
+        width: parent.width - screenGlobal.adaptYSize( 10 )
         height: parent.height - y - screenGlobal.adaptYSize( 30 )
 
         contentWidth: parent.width * 2.1
-        contentHeight: screenGlobal.adaptYSize(parent.height - y) //android dislike- screenGlobal.adaptYSize( 30 )
+        contentHeight: doneChartItem.height //android dislike- screenGlobal.adaptYSize( 30 )
 
         ScrollBar.horizontal: ScrollBar { id: hbar; active: vbar.active }
         ScrollBar.vertical: ScrollBar { id: vbar; active: hbar.active }
