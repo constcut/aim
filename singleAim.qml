@@ -33,6 +33,8 @@ Item {
 
     property string aimId : ""
 
+    property bool helpMode: false
+
     function loadAim(){
 
         if (aimId.length > 0) //cover under the function load aim
@@ -123,6 +125,12 @@ Item {
                 text: "moment" //better with period
                 font.pixelSize: middleFontSize
                 y: aimName.height
+
+                ToolTip{
+                    parent: aimMoment
+                    visible: singleAimWindow.helpMode
+                    text: qsTr("Aim main params: name, parent, moment & tags")
+                }
             }
     }
 
@@ -148,6 +156,12 @@ Item {
             id: childList
             font.pixelSize: smallFontSize
             Layout.preferredWidth: parent.width/2 - screenGlobal.adaptXSize( 45 )
+
+            ToolTip{
+                parent: childList
+                visible: singleAimWindow.helpMode
+                text: qsTr("Child aims of a current one")
+            }
         }
         Button{
             id:openChildButton
@@ -282,6 +296,13 @@ Item {
             reportProgressPopup.open()
         }
         enabled: false
+
+
+        ToolTip{
+            parent: stopAndReportButton
+            visible: singleAimWindow.helpMode
+            text: qsTr("Button stops running aim and helps input report")
+        }
     }
 
     Popup {
@@ -377,10 +398,11 @@ Item {
 
         property real span : contentY + height
 
-        //LIST VIEW CAN HELP
-        //OR JUST TURN OFF VISIVLE OUSIDE THE VISIBLE AREA
-
-        //https://stackoverflow.com/questions/43502421/culling-items-that-are-outside-the-visible-area
+        ToolTip{
+            parent: flickLinks
+            visible: singleAimWindow.helpMode
+            text: qsTr("Area used for links connected to aim")
+        }
 
         Repeater{
             id: linksRepeater
@@ -633,44 +655,21 @@ Item {
         font.pixelSize: smallFontSize //its normal size verywhere
         text : "Export aim"
         onClicked: exportFileDialog.open()
+        id: exportButton
+
+        ToolTip{
+            parent: exportButton
+            visible: singleAimWindow.helpMode
+            text: qsTr("Button used to save aim in file")
+        }
     }
 
-
-    /*Text {
-        id: aimName
-        text: "Name"
-        font.pixelSize: bigFontSize
+    Button {
         y: elementHeight
-    }*/
-    /*
-    Text {
-        id: aimTag
-        text: "Tag"
-        font.pixelSize: middleFontSize
-        y: elementHeight*3
-    }*/
-    /*
-    Text {
-        id: aimAssignedTo
-        text: "AssignedTo"
-        font.pixelSize: middleFontSize
-
-        y: elementHeight*4
+        x: parent.width - width - screenGlobal.adaptXSize(10)
+        font.pixelSize: smallFontSize //its normal size verywhere
+        text : "?"
+        onClicked: singleAimWindow.helpMode = !singleAimWindow.helpMode
     }
-    Text {
-        id: aimPriority
-        text: "Priority"
-        font.pixelSize: middleFontSize
 
-        y: elementHeight*5
-    }
-    Text {
-        id: aimParent
-        text: "Parent"
-        font.pixelSize: middleFontSize
-
-        y: elementHeight*6
-    }*/
-    //COOL TO MAKE ALSO CHILD LIST!
-    //transform to textarea
 }
