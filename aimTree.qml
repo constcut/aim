@@ -9,7 +9,6 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 
 Item {
-
     id: structureItem
 
     signal requestOpenSingleAim(var aimId)
@@ -19,8 +18,19 @@ Item {
 
     Component.onCompleted:  {
         localBase.fillTreeModelWithAims()
-
     }
+
+    //Ok we leave some comments here to document future changes
+    //1: change the scale, all the sizes
+    //2: chane the icon open/close
+    //3: open all / close all ways
+    //4: no add or so, if there is need to add comment or read it - double click and popup
+    //5: the only field but name is done, if progress == 100 or more then its done
+
+    //and by the way there must be a way to sort aims in order to tree like way
+    //means first go 1s top item, and then its children
+    //good to calculate depth of tree while sorting
+    //so we can add special offset in ListView
 
     property int microOffset : screenGlobal.adaptXSize(10)
     property int saveButtonOffset : screenGlobal.adaptYSize(650) //y
