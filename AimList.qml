@@ -287,11 +287,16 @@ Item {
         var sortingOrderType = userSettings.getSortingOrderType()
 
         if (sortingOrderType === 0)
-          aimList  =  localBase.getAims()
+            aimList  =  localBase.getAims()
         else if (sortingOrderType === 1)
             aimList  =  localBase.getAimsBackwards()
+        else if (sortingOrderType === 2)
+            ; //tree like mode
+        else if (sortingOrderType === 3)
+            aimList = localBase.getLastActsAims()
+        else if (sortingOrderType === 4)
+            aimList = localBase.getFutureAims() //no only got future aims, later can then have no date aims, and in the end delayed(expired)
 
-        //2,3,4 is missing yet
 
         //console.log("Sorting order type: " + sortingOrderType)
         for (var i = 0; i < aimList.length; ++i)

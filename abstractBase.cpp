@@ -491,6 +491,19 @@ QStringList LocalSqlBase::getCurrentMomementAimsNames()
 }
 
 
+bool sortingCondition(const QVariant &v1, const QVariant &v2){
+    QStringList line1 = v1.toStringList();
+    QStringList line2 = v2.toStringList();
+
+    QString dateString1 = line1[3];
+    QString dateString2 = line2[3];
+
+    QDate date1 = QDate::fromString(dateString1,"yyyy-MM-dd");
+    QDate date2 = QDate::fromString(dateString2,"yyyy-MM-dd");
+
+    return date1 < date2;
+}
+
 QVariantList LocalSqlBase::getFutureAims()
 {
     QDate today(QDate::currentDate());
@@ -502,8 +515,7 @@ QVariantList LocalSqlBase::getFutureAims()
 
     QVariantList futureAims;
 
-    for (int i = 0; i < aimsList.size(); ++i)
-    {
+    for (int i = 0; i < aimsList.size(); ++i){
         QStringList aimLine = aimsList[i].toStringList();
         QString dateValue = aimLine[3];
 
@@ -512,6 +524,8 @@ QVariantList LocalSqlBase::getFutureAims()
         if (date > today)
             futureAims << aimLine;
     }
+
+    qSort(futureAims.begin(),futureAims.end(), sortingCondition);
 
     return futureAims;
 }
@@ -1080,8 +1094,36 @@ QVariantList LocalSqlBase::getActivityLog(QString aimId)
     //only last 100 records - make limit in future pay attention!
     QString requestBody("SELECT * FROM actions WHERE aimId='" + aimId + "';");
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList activityLogResult = fillList(request,13); //are there really 13?
+    QVariantList activityLogResult = fillList(request,6); //there was 13 but must be 6
     return activityLogResult;
+}
+
+QVariantList LocalSqlBase::getLastActivities(){
+    //maybe make limit as param? 100
+    QString requestBody("SELECT * FROM actions ORDER BY actId DESC LIMIT 100;");
+    QSqlQuery request = executeRequest(requestBody);
+    QVariantList activityLogResult = fillList(request,6); //there was 13 but must be 6
+    return activityLogResult;
+}
+
+QVariantList LocalSqlBase::getLastActsAims(){
+    QVariantList lastActs = getLastActivities();
+
+    QSet<QString> aimsId;
+
+    for (auto i = 0; i < lastActs.size(); ++i){
+        QStringList act = lastActs[i].toStringList();
+        aimsId.insert(act[2]);
+    }
+
+    QVariantList collectedAims;
+
+    for (auto it = aimsId.begin(); it != aimsId.end(); it++){
+        QString oneAimId = (*it);
+        QStringList singleAim = getSingleAim(oneAimId);
+        collectedAims << singleAim;
+    }
+    return collectedAims;
 }
 
 QString LocalSqlBase::getActivitySummary(QString aimId)

@@ -166,7 +166,10 @@ public:
     Q_INVOKABLE QVariantList getActivityLog(QString aimId); //all records
     Q_INVOKABLE QString getActivitySummary(QString aimId);
 
-     Q_INVOKABLE bool updateAimProgress(QString aimId, QString progress, QString progressText);
+    Q_INVOKABLE bool updateAimProgress(QString aimId, QString progress, QString progressText);
+
+    Q_INVOKABLE QVariantList getLastActivities(); //returns last 100 acts of all aims
+    Q_INVOKABLE QVariantList getLastActsAims();
 
     //=========================
 

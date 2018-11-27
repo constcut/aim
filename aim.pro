@@ -6,7 +6,7 @@ QT += sql qml quick widgets quickcontrols2
 
 android {
     QT += androidextras
-    LIBS += -LC:/Qt592/5.9.2/android_armv7/qml/QtWebSockets
+#    LIBS += -LC:/Qt592/5.9.2/android_armv7/qml/QtWebSockets
 }
 
 SOURCES += main.cpp \
