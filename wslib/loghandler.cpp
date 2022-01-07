@@ -1,6 +1,5 @@
 #include "loghandler.h"
 
-LogHandler* LogHandler::instance = 0;
 
 void newLogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -24,41 +23,30 @@ void newLogMessageHandler(QtMsgType type, const QMessageLogContext &context, con
     QString logLine =  QString("[%1][%2:%3:%4] %5")
             .arg(typeLetter).arg(context.file).arg(context.function).arg(context.line).arg(msg);
 
-    LogHandler::instance->addLine(logLine);
+    LogHandler::getInst().addLine(logLine);
 
-    LogHandler::instance->oldHandler(type, context, logLine); //msg
+    LogHandler::getInst().getOldHandler()(type, context, logLine); //msg
 }
 
 LogHandler::LogHandler(QObject *parent) : QObject(parent)
 {
-    instance = this;
-    oldHandler = qInstallMessageHandler(newLogMessageHandler);
+    _oldHandler = qInstallMessageHandler(newLogMessageHandler);
 }
 
 
-void LogHandler::addLine(QString anotherLine)
+void LogHandler::addLine(const QString anotherLine)
 {
-    if (logFileName.isEmpty() == false)
-    {
-        //Better make in another thread
-        //+1 more thread could be done
-        //for server logging while connected to aim srv
+    if (_logFileName.isEmpty() == false) {
 
         QString closedLine = anotherLine + QString("\n\n");
-
-        QFile logFile(logFileName);
+        QFile logFile(_logFileName);
         logFile.open(QIODevice::Append);
         logFile.write(closedLine.toLocal8Bit());
         logFile.close();
     }
-    ///ALSO there can be network logging
-
-    logLines << anotherLine;
-    if (logLines.size() > 200) //make configurable
-        logLines.removeAt(0);
-
-    //QByteArray lineBytes = anotherLine.toLocal8Bit();
-    //fprintf(stdout,"%s",lineBytes.constData()); //dublicate to stdout
+    _logLines << anotherLine;
+    if (_logLines.size() > 200)
+        _logLines.removeAt(0);
 }
 
 
@@ -66,17 +54,14 @@ void LogHandler::addLine(QString anotherLine)
 
 
 void ConsoleLogQML::paint(QPainter* painter){
-  QStringList log = LogHandler::instance->getLines();
-
-  //can make a colored pen
+  QStringList log = LogHandler::getInst().getLines();
 
   int counter = 0;
-  for (int i = log.size()-1; i >= 0; i--)
-  {
+  for (int i = log.size()-1; i >= 0; i--) {
      ++counter;
       if (counter > 100) break; //maybe 2000, but return only 200 from them
-
      QString line =  log[i];
      painter->drawText(20,counter*10,line);
   }
+
 }

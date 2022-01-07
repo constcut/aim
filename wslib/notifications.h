@@ -4,30 +4,28 @@
 #include <QObject>
 #include <QTimer>
 
-//#include "usersloader.h"
-//#include "systemtray.h"
 
-class Notifications : public QObject
-{
+class Notifications : public QObject {
     Q_OBJECT
 
 public:
-    Notifications(QObject *parent = 0);
-    ~Notifications();
+    Notifications(QObject *parent = 0) : QObject(parent) {}
+    ~Notifications() = default;
 
-    void startWatchDog(int setInterval=60*5);
+    void startWatchDog(int setIntervalSec = 60 * 5) {
+        int intervalMs = 1000 * setIntervalSec;
+        connect(&_watchDogTimer, SIGNAL(timeout()), this, SLOT(watchDogWoughf()));
+        _watchDogTimer.start(intervalMs);
+    }
 
 signals:
     void requestViewNotifications();
 
 public slots:
-
-    virtual void watchDogWoughf()=0; //Woughf-woughf!!!
+    virtual void watchDogWoughf()=0;
 
 protected:
-    //QString daysText(int days);
-
-    QTimer watchDogTimer;
+    QTimer _watchDogTimer;
 };
 
 

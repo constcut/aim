@@ -6,44 +6,44 @@
 #include <QQuickPaintedItem>
 #include <QPainter>
 
-class LogHandler : public QObject
-{
+
+class LogHandler : public QObject {
     Q_OBJECT
+
 public:
     explicit LogHandler(QObject *parent = nullptr);
 
-    static LogHandler *instance;
+    static LogHandler& getInst() {
+        static LogHandler logHandler;
+        return logHandler;
+    }
 
-    void addLine(QString anotherLine);
+    void addLine(const QString anotherLine);
+    QStringList getLines() const { return _logLines; }
 
-    QtMessageHandler oldHandler;
+    void setFilename(const QString filename) { _logFileName = filename; }
 
-    QStringList getLines() { return logLines; }
-
-    void setFilename(QString filename) { logFileName = filename; }
+    QtMessageHandler getOldHandler() { return _oldHandler; }
 
 protected:
-    QStringList logLines;
 
-    QString logFileName;
+    QStringList _logLines;
+    QString _logFileName;
 
-//signals:
-//public slots:
+    QtMessageHandler _oldHandler;
+
 };
 
-class ConsoleLogQML : public QQuickPaintedItem
-{
+
+class ConsoleLogQML : public QQuickPaintedItem {
     Q_OBJECT
+
   public:
-    ConsoleLogQML() {}
-    ~ConsoleLogQML() {}
+    ConsoleLogQML() = default;
+    ~ConsoleLogQML() = default;
 
     void paint(QPainter* painter);
-
-    //must be autoupdated
 };
 
-//ITS NICE TO DUPLICATE QML ITEM WITH WIDGET
-///AND BEST IS TO MAKE SPECIAL TEMPLATE FOR THAT
 
 #endif // LOGHANDLER_H

@@ -8,7 +8,7 @@ Check list:
 4) group files by folders
 5) warnings and clang analyser + cppcheck
 6) Update all qml files to last .15
-
+7) remove useless headers
 
 
 

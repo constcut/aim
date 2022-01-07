@@ -12,7 +12,6 @@ SOURCES += main.cpp \
     usersettings.cpp \
     screenglobal.cpp \
     wslib/treemodel.cpp \
-    wslib/notifications.cpp \
     wslib/popup.cpp \
     wslib/systemtray.cpp \
     wslib/tabelserialize.cpp \
