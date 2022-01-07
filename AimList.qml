@@ -6,11 +6,6 @@ import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.15
 
 
-
-//import Qt.labs.handlers 1.0
-
-//import QtQuick.Controls.Styles.Flat 1.0 as Flat
-
 Item {
 
     id: aimListItem

@@ -13,7 +13,7 @@ class Clipboard : public QObject
 {
     Q_OBJECT
 public:
-    explicit Clipboard(QObject *parent = nullptr);
+    explicit Clipboard(QObject *parent = nullptr) : QObject(parent) {}
 
     Q_INVOKABLE bool copyImage(QString filename)
     {
@@ -36,6 +36,7 @@ public:
 
     Q_INVOKABLE bool copyText(QString text){
         QGuiApplication::clipboard()->setText(text);
+        return true;
     }
 
 //signals:

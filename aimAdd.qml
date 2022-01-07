@@ -18,7 +18,6 @@ Item {
     signal requestOpenViewAims()
     //and other signals could be also here
 
-    //AutoGeometry { id: autoGeometry; }
 
     property int elementHeight: screenGlobal.adaptYSize(45) //y 45/800 - 0.05625
     property int widthOffset: screenGlobal.adaptXSize(20) //x 20/480 - 0.041(6)

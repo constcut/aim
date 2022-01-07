@@ -9,9 +9,6 @@
         <file>runningAim.qml</file>
         <file>singleAim.qml</file>
         <file>AimList.qml</file>
-        <file>AutoGeometry.qml</file>
-        <file>chat.qml</file>
-        <file>qwebchannel.js</file>
         <file>actionsDone.qml</file>
         <file>ConsoleLog.qml</file>
         <file>ProgressReport.qml</file>

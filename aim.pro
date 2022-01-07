@@ -1,4 +1,3 @@
-#TEMPLATE = app
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android-sources
 
@@ -6,7 +5,6 @@ QT += sql qml quick widgets quickcontrols2
 
 android {
     QT += androidextras
-#    LIBS += -LC:/Qt592/5.9.2/android_armv7/qml/QtWebSockets
 }
 
 SOURCES += main.cpp \
@@ -22,13 +20,10 @@ SOURCES += main.cpp \
     runningaims.cpp \
     wslib/loghandler.cpp \
     usertoken.cpp \
-    wslib/clipboard.cpp \
     doneactschart.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
-#\
-#    icons.qrc
 
 jslib = $$PWD
 
@@ -62,5 +57,4 @@ HEADERS += \
     wslib/clipboard.h \
     doneactschart.h
 
-#dunno what is that
 INSTALLS += target
