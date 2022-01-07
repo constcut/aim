@@ -46,7 +46,7 @@ private:
     QGridLayout layout;
     QPropertyAnimation animation;
     float popupOpacity;
-    QTimer *timer;
+    QTimer *timer; //TODO no ptr!
 
     QColor currentColor;
     int secondsToStay;

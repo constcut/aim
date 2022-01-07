@@ -47,9 +47,9 @@ public slots:
 
 protected:
     QTimer watchDogTimer;
-    LocalSqlBase *localBase;
+    LocalSqlBase *localBase; //TODO no raw ptrs
 
-    PopUp *popUp; //or maybe popup had to be registered to be used from qml
+    PopUp *popUp; //TODO no raw ptrs
 
  public:
     NotificationClient androidNotification;

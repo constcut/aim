@@ -36,7 +36,7 @@ protected:
     QVariantList active; //current running
     QVariantList stopped; //already done
 
-    LocalSqlBase *localBase;
+    LocalSqlBase *localBase; //TODO no raw ptrs (here shared)
 
     QList<QDateTime> activeRuns; //Map<QString
 

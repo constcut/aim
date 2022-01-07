@@ -23,7 +23,7 @@ public:
 
 protected:
 
-    QScreen *screen;  //maybe once cover by signals
+    QScreen *screen;  //TODO no raw ptrs
 };
 
 #endif // SCREENGLOBAL_H

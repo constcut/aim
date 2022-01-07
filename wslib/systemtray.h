@@ -43,7 +43,7 @@ public slots:
     void hideIconTray();
 
 private:
-    QSystemTrayIcon *trayIcon;
+    QSystemTrayIcon *trayIcon; //TODO no raw ptr
 
 };
 

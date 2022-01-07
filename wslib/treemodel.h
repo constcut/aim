@@ -38,7 +38,7 @@ public:
 private:
     QList<TreeItem*> childItems;
     QVector<QVariant> itemData;
-    TreeItem *parentItem;
+    TreeItem *parentItem; //TODO no raw ptrs
 };
 
 

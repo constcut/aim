@@ -1,3 +1,20 @@
+Check list:
+
+0) repair basic view from old aim (failed because of some components)
+
+1) Same style as mtherapp
+2) Const correct classes
+3) Readme md with all screenshots + list of Qt components that could be reused in other projects
+4) group files by folders
+5) warnings and clang analyser + cppcheck
+
+
+
+
+
+
+
+
 Новые планы:
 
 
