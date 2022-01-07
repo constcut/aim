@@ -5,9 +5,6 @@
 #include <QAction>
 #include <QSystemTrayIcon>
 
-//#include "app/popup.h"
-//DON"T LIKE THAT CLASS HARDWIRED TO POPUP
-//class PopUp;
 
 class SystemTray : public QObject
 {

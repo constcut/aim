@@ -42,9 +42,7 @@ QVariantList AbstractSqlBase::fillList(QSqlQuery &query, int rowsCount) //maybe 
     return filledList;
 }
 
-//=======================
-/////////////===Local Base==\\\\\\\\\\\\\\\\\\
-//=======================
+
 
 LocalSqlBase::LocalSqlBase(QObject *parent): AbstractSqlBase(parent)
 {
@@ -986,7 +984,7 @@ bool LocalSqlBase::importAim(QString filename){
     quint32 linksSize = 0;
     importFile.read((char*)&linksSize,sizeof(linksSize));
 
-    for (auto i = 0; i < linksSize; ++i){
+    for (quint32 i = 0; i < linksSize; ++i){
         QString linkValue = readStringFromFile(importFile);
         QString linkName = readStringFromFile(importFile);
         addAimLink(aimId,linkValue,linkName);

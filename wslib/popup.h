@@ -6,8 +6,6 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 
-#include "popup.h"
-
 
 
 class PopUp : public QWidget

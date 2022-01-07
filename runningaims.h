@@ -15,8 +15,6 @@ class RunningAims : public QObject
     Q_OBJECT
 public:
 
-    //it could be sepparated later if needed but now more comfort of holding it together with database
-
     explicit RunningAims(LocalSqlBase *base,QObject *parent = 0);
 
     Q_INVOKABLE QVariantList getRunningAims() { return active; }
