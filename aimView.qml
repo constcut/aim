@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
 
-import QtQuick.Controls.Styles.Flat 1.0 as Flat
+//import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
 

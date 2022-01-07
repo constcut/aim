@@ -1,13 +1,15 @@
-﻿import QtQuick 2.8
-import QtQuick.Controls 2.1
+﻿import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 1.1
 import QtQuick.Extras 1.4
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.15
 
-import Qt.labs.handlers 1.0
 
-import QtQuick.Controls.Styles.Flat 1.0 as Flat
+
+//import Qt.labs.handlers 1.0
+
+//import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
 Item {
 
