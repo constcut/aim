@@ -17,7 +17,7 @@ public:
     Q_INVOKABLE void showWarning(const QString title, const QString text, const int seconds);
     Q_INVOKABLE void showError(const QString title, const QString text, const int seconds);
 
-    void switchIcon(QString iconName);
+    void setTrayIcon(const QSystemTrayIcon &newTrayIcon);
 
 signals:
     void signalIconActivated();

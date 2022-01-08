@@ -9,19 +9,19 @@ class TableSerialize
 {
 public:
 
-    void addRow(QStringList oneRow);
-    QStringList getRow(int index);
+    void addRow(const QStringList oneRow);
+    QStringList getRow(int index) const;
 
-    int size();
+    int size() const;
 
-    void fromString(QString source);
+    void fromString(const QString source);
     void fromRawString(QString source);
 
-    QString toString();
-    QString toRawString();
+    QString toString() const;
+    QString toRawString() const;
 
 protected:
-    QVector<QStringList> tableRows;
+    QVector<QStringList> _tableRows;
 
 };
 
