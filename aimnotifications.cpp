@@ -34,7 +34,7 @@ void NotificationClient::updateAndroidNotification() {
 
     qDebug() << "Running android notification attempt";
 
-    QAndroidJniObject javaNotification = QAndroidJniObject::fromString(m_notification);
+    QAndroidJniObject javaNotification = QAndroidJniObject::fromString(_notification);
     QAndroidJniObject::callStaticMethod<void>("at/wavespl/apps/aim/NotificationClient",
                                        "notify",
                                        "(Ljava/lang/String;)V",

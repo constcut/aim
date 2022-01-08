@@ -190,6 +190,8 @@ ApplicationWindow {
         anchors.centerIn: parent
         id: mainLoader
 
+        focus: true
+
         //we set it by pageChanged on Component.onCompleted
         //source: "aimView.qml" //hello by default
     }

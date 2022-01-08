@@ -19,8 +19,6 @@ public:
     Q_INVOKABLE double adaptXSize(int xValue);
     Q_INVOKABLE double adaptYSize(int yValue);
 
-    //double getCalendarValue() { return getScreenWidth()*1.0/8.0; }
-
 protected:
 
     QScreen *screen;  //TODO no raw ptrs

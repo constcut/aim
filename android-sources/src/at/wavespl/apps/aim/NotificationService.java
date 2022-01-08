@@ -1,4 +1,4 @@
-package at.wavespl.apps.aim;//later make it as it planned
+package acc.u.merrite.aim;//later make it as it planned
 
 import android.content.Context;
 import android.content.Intent;

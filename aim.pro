@@ -33,8 +33,15 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 DISTFILES += \
-    general_notes \
     android-sources/AndroidManifest.xml \
+    android-sources/build.gradle \
+    android-sources/gradle.properties \
+    android-sources/gradle/wrapper/gradle-wrapper.jar \
+    android-sources/gradle/wrapper/gradle-wrapper.properties \
+    android-sources/gradlew \
+    android-sources/gradlew.bat \
+    android-sources/res/values/libs.xml \
+    general_notes \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
     TODO \
     qwebchannel.js \
