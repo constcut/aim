@@ -21,18 +21,13 @@ public:
 
     void addLine(const QString anotherLine);
     QStringList getLines() const { return _logLines; }
-
     void setFilename(const QString filename) { _logFileName = filename; }
-
     QtMessageHandler getOldHandler() { return _oldHandler; }
 
 private:
-
     QStringList _logLines;
     QString _logFileName;
-
     QtMessageHandler _oldHandler;
-
 };
 
 

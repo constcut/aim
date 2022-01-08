@@ -10,18 +10,14 @@ class SystemTray : public QObject
 {
     Q_OBJECT
 public:
-    explicit SystemTray(QObject *parent = 0);
+    explicit SystemTray(QObject *parent = nullptr);
     ~SystemTray();
 
-    Q_INVOKABLE void showNotification(QString title, QString text, int seconds);
-    Q_INVOKABLE void showWarning(QString title, QString text, int seconds);
-    Q_INVOKABLE void showError(QString title, QString text, int seconds);
+    Q_INVOKABLE void showNotification(const QString title, const QString text, const int seconds);
+    Q_INVOKABLE void showWarning(const QString title, const QString text, const int seconds);
+    Q_INVOKABLE void showError(const QString title, const QString text, const int seconds);
 
-    //Q_INVOKABLE void showPopupMessage(QString text, QString color, int seconds); //later add seconds, + color
-    ///MOVED to be sepparated
-    ///
     void switchIcon(QString iconName);
-
 
 signals:
     void signalIconActivated();
@@ -29,8 +25,7 @@ signals:
     void signalQuit();
     void signalAdd();
 
-
-signals: //used for notifications and probably had to be updated one time
+signals:
     void requestTrayActionFromCpp();
 
 private slots:
@@ -40,8 +35,7 @@ public slots:
     void hideIconTray();
 
 private:
-    QSystemTrayIcon *trayIcon; //TODO no raw ptr
-
+    QSystemTrayIcon trayIcon;
 };
 
 #endif // SYSTEMTRAY_H

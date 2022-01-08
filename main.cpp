@@ -83,10 +83,6 @@ int main(int argc, char *argv[])
 
     //SYSTEM tray actions
     SystemTray tray(&app);
-
-
-    tray.switchIcon("Aim");
-
     context->setContextProperty("systemTray",&tray);
 
     //Notifications

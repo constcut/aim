@@ -11,7 +11,6 @@
 class PopUp : public QWidget
 {
     Q_OBJECT
-
     Q_PROPERTY(float popupOpacity READ getPopupOpacity WRITE setPopupOpacity)
 
     void setPopupOpacity(const float opacity);
@@ -40,8 +39,7 @@ protected:
     void paintEvent(QPaintEvent* event);
 
 private:
-
-    float popupOpacity;
+    float popupOpacity; //Out of style because of Qt funny macroses
 
     QLabel _label;
     QGridLayout _layout;
