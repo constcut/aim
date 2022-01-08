@@ -133,7 +133,7 @@ ApplicationWindow {
        MenuItem {
            text: "Console"
            font.pixelSize: fontNormalSize
-           onTriggered: prevPages.pageChanged("ConsoleLog.qml")
+           onTriggered: prevPages.pageChanged("consoleLog.qml")
        }
        MenuItem{
            text: "Import"

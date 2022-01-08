@@ -10,7 +10,7 @@
         <file>singleAim.qml</file>
         <file>AimList.qml</file>
         <file>actionsDone.qml</file>
-        <file>ConsoleLog.qml</file>
+        <file>сonsoleLog.qml</file>
         <file>ProgressReport.qml</file>
         <file>SelectAim.qml</file>
         <file>doneActsChart.qml</file>
