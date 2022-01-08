@@ -6,7 +6,7 @@ Base is stored using sqlite.
 ## Features
 
 * Add new task (aim), it can have: time\date, comments, tree hash tags, priority, parent aim, repeat period
-* View or edit single aim, with possibilities: add web links related to aim, navigate through child aims, set current progress, export aim into file (import is also availible)
+* View or edit single aim, with possibilities: add web links related to aim, navigate through child aims, set current progress, export aim into file (import is also available)
 * Track time of running aim (several aims could be running at the same time)
 * Navigate through tree of aims (parent\child)
 * Navigate through tree of tags (for example #code.refactoring.cpp and #code.refactoring.qml would be grouped)
@@ -16,7 +16,7 @@ Base is stored using sqlite.
 * Receive notification with popup of upcoming planed aim
 * Watch logging in application
 
-Also there was a simple chat using web sockets, but it require additional server so it was removed.
+Also there was a simple chat using web sockets, but it require additional server, so it was removed.
 
 
 ## Description
@@ -33,8 +33,8 @@ Add new:
 
 ![aim screenshot](info/add_new.png)
 
-Side pannel that awailible from every other view.
-Aim must have name, and could have time\date, comments, tags, priority, tags, assignment (to people, droped with server), parent aim, and repeat period.
+Side panel that available from every other view.
+Aim must have name, and could have time\date, comments, tags, priority, tags, assignment (to people, dropped with server), parent aim, and repeat period.
 
 Aims tree:
 
@@ -61,7 +61,7 @@ Schedule:
 
 ![aim screenshot](info/schedule.png)
 
-Let you search planed aims through the callendar.
+Let you search planed aims through the calendar.
 
 Done acts:
 
@@ -82,7 +82,7 @@ Single aim view:
 
 Can be opened from any view by double clicking on aim. 
 Lets you to edit aim, switch to it children, add links, mark progress and export aim.
-Importin exported aim could be done through menu.
+Importing aim could be done through menu.
 
 ![aim screenshot](info/single_view.png)
 
@@ -95,10 +95,10 @@ UI is pretty much overloaded, so there is a help button, that shows tool tips, t
 There is set of modules you may find in apptools namespaces, that could be used in Qt\QML projects:
 
 * Clipboard - helps to put text or image of QML component into your OS clipboard
-* LogHandler - helps to set levels of loging with custom log handler and also contains QML component to watch logs
+* LogHandler - helps to set levels of logging with custom log handler and also contains QML component to watch logs
 * Notification - let you send notification messages
-* Popup - draws a popup message on screen, that stays for a limmited time on screen, and then disapears, click on it can be handled in you own way
-* SystemTray - module to use system tray with menu to hide you application there
+* Popup - draws a popup message on screen, that stays for a limited time on screen, and then disappears, click on it can be handled in you own way
+* SystemTray - module to use system tray with menu to hide your application there
 * TableSerialize - simple module to serialize table fields into base64 string and back
 * TreeModel - model required for using TreeView in QML
 
