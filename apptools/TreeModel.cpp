@@ -5,6 +5,8 @@
 #include <QFile>
 
 
+using namespace apptools;
+
 Q_DECLARE_METATYPE(QModelIndex)
 
 TreeItem::TreeItem(const QVector<QVariant> &data, int columnsCount, TreeItem *parent) {

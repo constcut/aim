@@ -39,7 +39,7 @@ namespace aim {
         Q_OBJECT
 
     public:
-        AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent = nullptr);
+        AimNotifications(LocalSqlBase& base, apptools::PopUp& popUp, QObject *parent = nullptr);
         ~AimNotifications() = default;
 
         void startWatchDog(int setInterval = 60);
@@ -53,7 +53,7 @@ namespace aim {
     protected:
         QTimer _watchDogTimer;
         LocalSqlBase& _localBase;
-        PopUp& _popUp;
+        apptools::PopUp& _popUp;
 
      public:
         NotificationClient androidNotification;

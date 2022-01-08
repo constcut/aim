@@ -7,6 +7,8 @@
 #include <QGuiApplication>
 #include <QDebug>
 
+using namespace apptools;
+
 
 PopUp::PopUp(QWidget *parent) : QWidget(parent)
 {

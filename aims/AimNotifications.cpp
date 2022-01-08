@@ -45,7 +45,7 @@ void NotificationClient::updateAndroidNotification() {
 }
 
 
-AimNotifications::AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent)
+AimNotifications::AimNotifications(LocalSqlBase& base, apptools::PopUp& popUp, QObject *parent)
     : QObject(parent), _localBase(base), _popUp(popUp)
 {}
 

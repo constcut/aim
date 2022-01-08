@@ -124,7 +124,7 @@ bool LocalSqlBase::updateAimProgress(const QString aimId, const QString progress
 }
 
 
-bool LocalSqlBase::editTreeAims(TreeModel *aims)
+bool LocalSqlBase::editTreeAims(apptools::TreeModel *aims)
 {
     QVariantList treeAims =  aims->getFullList();
     QVariantList allAims = getAims();

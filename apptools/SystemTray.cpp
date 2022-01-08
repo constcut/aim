@@ -3,6 +3,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
+using namespace apptools;
 
 SystemTray::SystemTray(QObject *parent) : QObject(parent), trayIcon(0) {
 

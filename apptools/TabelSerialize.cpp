@@ -1,5 +1,7 @@
 #include "TabelSerialize.h"
 
+using namespace apptools;
+
 
 void TableSerialize::fromRawString(QString source) {
     if (source.size())

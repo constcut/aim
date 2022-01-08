@@ -35,7 +35,6 @@ DISTFILES += \
     android-sources/gradle/wrapper/gradle-wrapper.properties \
     android-sources/gradlew \
     android-sources/gradlew.bat \
-    android-sources/res/values/libs.xml \
     general_notes \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
     TODO \

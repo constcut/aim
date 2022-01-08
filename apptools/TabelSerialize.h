@@ -4,25 +4,29 @@
 #include <QVector>
 #include <QStringList>
 
+namespace apptools {
 
-class TableSerialize
-{
-public:
+    class TableSerialize
+    {
+    public:
 
-    void addRow(const QStringList oneRow);
-    QStringList getRow(int index) const;
+        void addRow(const QStringList oneRow);
+        QStringList getRow(int index) const;
 
-    int size() const;
+        int size() const;
 
-    void fromString(const QString source);
-    void fromRawString(QString source);
+        void fromString(const QString source);
+        void fromRawString(QString source);
 
-    QString toString() const;
-    QString toRawString() const;
+        QString toString() const;
+        QString toRawString() const;
 
-protected:
-    QVector<QStringList> _tableRows;
+    protected:
+        QVector<QStringList> _tableRows;
 
-};
+    };
+
+}
+
 
 #endif // TABELSERIALIZE_H

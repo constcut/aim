@@ -7,47 +7,50 @@
 #include <QTimer>
 
 
+namespace apptools {
 
-class PopUp : public QWidget
-{
-    Q_OBJECT
-    Q_PROPERTY(float popupOpacity READ getPopupOpacity WRITE setPopupOpacity)
+    class PopUp : public QWidget
+    {
+        Q_OBJECT
+        Q_PROPERTY(float popupOpacity READ getPopupOpacity WRITE setPopupOpacity)
 
-    void setPopupOpacity(const float opacity);
-    float getPopupOpacity() const;
+        void setPopupOpacity(const float opacity);
+        float getPopupOpacity() const;
 
-public:
+    public:
 
-    explicit PopUp(QWidget* parent = nullptr);
+        explicit PopUp(QWidget* parent = nullptr);
 
-    void mouseDoubleClickEvent(QMouseEvent* event);
+        void mouseDoubleClickEvent(QMouseEvent* event);
 
-signals:
-    void requestNotificationsViewFromCpp();
-
-
-public slots:
-    void setPopupText(const QString& text, const QString& color, const int seconds);
-    void show();
+    signals:
+        void requestNotificationsViewFromCpp();
 
 
-private slots:
-    void hideAnimation();
-    void hide();
+    public slots:
+        void setPopupText(const QString& text, const QString& color, const int seconds);
+        void show();
 
-protected:
-    void paintEvent(QPaintEvent* event);
 
-private:
-    float _popupOpacity; //Out of style because of Qt funny macroses
+    private slots:
+        void hideAnimation();
+        void hide();
 
-    QLabel _label;
-    QGridLayout _layout;
-    QPropertyAnimation _animation;
-    QTimer _timer;
+    protected:
+        void paintEvent(QPaintEvent* event);
 
-    QColor _currentColor;
-    int _secondsToStay;
-};
+    private:
+        float _popupOpacity; //Out of style because of Qt funny macroses
+
+        QLabel _label;
+        QGridLayout _layout;
+        QPropertyAnimation _animation;
+        QTimer _timer;
+
+        QColor _currentColor;
+        int _secondsToStay;
+    };
+}
+
 
 #endif // POPUP_H

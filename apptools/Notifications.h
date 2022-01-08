@@ -5,29 +5,31 @@
 #include <QTimer>
 
 
-class Notifications : public QObject {
-    Q_OBJECT
+namespace apptools {
 
-public:
-    Notifications(QObject *parent = nullptr) : QObject(parent) {}
-    ~Notifications() = default;
+    class Notifications : public QObject {
+        Q_OBJECT
 
-    void startWatchDog(int setIntervalSec = 60 * 5) {
-        int intervalMs = 1000 * setIntervalSec;
-        connect(&_watchDogTimer, SIGNAL(timeout()), this, SLOT(watchDogWoughf()));
-        _watchDogTimer.start(intervalMs);
-    }
+    public:
+        Notifications(QObject *parent = nullptr) : QObject(parent) {}
+        ~Notifications() = default;
 
-signals:
-    void requestViewNotifications();
+        void startWatchDog(int setIntervalSec = 60 * 5) {
+            int intervalMs = 1000 * setIntervalSec;
+            connect(&_watchDogTimer, SIGNAL(timeout()), this, SLOT(watchDogWoughf()));
+            _watchDogTimer.start(intervalMs);
+        }
 
-public slots:
-    virtual void watchDogWoughf()=0;
+    signals:
+        void requestViewNotifications();
 
-protected:
-    QTimer _watchDogTimer;
-};
+    public slots:
+        virtual void watchDogWoughf()=0;
 
+    protected:
+        QTimer _watchDogTimer;
+    };
+}
 
 
 #endif // NOTIFICATIONS_H

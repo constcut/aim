@@ -97,7 +97,7 @@ namespace aim {
         //=====================================
 
         Q_INVOKABLE QVariantList getAllTags();
-        Q_INVOKABLE bool editTreeAims(TreeModel *aims);
+        Q_INVOKABLE bool editTreeAims(apptools::TreeModel *aims);
         Q_INVOKABLE bool fillTreeModelWithAims();
         Q_INVOKABLE  bool fillTreeModelWithTags();
 
@@ -130,8 +130,8 @@ namespace aim {
 
         bool createTablesIfNeeded();
 
-        TreeModel aimsTree;
-        TreeModel tagsTree;
+        apptools::TreeModel aimsTree;
+        apptools::TreeModel tagsTree;
 
     protected:
         QSqlQuery executeRequest(const QString requestBody);

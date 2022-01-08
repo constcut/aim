@@ -28,6 +28,7 @@
 #endif
 
 using namespace aim;
+using namespace apptools;
 
 int main(int argc, char *argv[])
 {

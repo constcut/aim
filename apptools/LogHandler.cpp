@@ -1,5 +1,6 @@
 #include "LogHandler.h"
 
+using namespace apptools;
 
 void newLogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
