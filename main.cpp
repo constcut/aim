@@ -102,8 +102,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("runningAims",&runningAims);
 
     //Log handler
-    LogHandler logHandler;
-    logHandler.setFilename("log.txt");
+    LogHandler::getInst().setFilename("log.txt");
 
     //User token
     UserToken token;
