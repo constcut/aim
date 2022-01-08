@@ -4,24 +4,25 @@
 #include <QObject>
 #include <QScreen>
 
+
 class ScreenGlobal: public QObject
 {
     Q_OBJECT
 
 public:
-    ScreenGlobal(QObject *parent = 0);
+    ScreenGlobal(QObject *parent = nullptr);
 
-    Q_INVOKABLE int getScreenWidth();
-    Q_INVOKABLE int getScreenHeight();
+    Q_INVOKABLE int getScreenWidth() const;
+    Q_INVOKABLE int getScreenHeight() const;
 
-    Q_INVOKABLE double getDPI();
+    Q_INVOKABLE double getDPI() const;
 
-    Q_INVOKABLE double adaptXSize(int xValue);
-    Q_INVOKABLE double adaptYSize(int yValue);
+    Q_INVOKABLE double adaptXSize(const int xValue) const;
+    Q_INVOKABLE double adaptYSize(const int yValue) const;
 
 protected:
 
-    QScreen *screen;  //TODO no raw ptrs
+    QScreen& screen;
 };
 
 #endif // SCREENGLOBAL_H

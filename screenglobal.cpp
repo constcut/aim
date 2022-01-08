@@ -1,42 +1,47 @@
 #include "screenglobal.h"
 #include <QGuiApplication>
 
-ScreenGlobal::ScreenGlobal(QObject *parent):QObject(parent),screen(QGuiApplication::primaryScreen()){
-    //WEELL actually it just should work different on different platforms
-}
+ScreenGlobal::ScreenGlobal(QObject *parent):
+    QObject(parent), screen(*QGuiApplication::primaryScreen())
+{}
 
-int ScreenGlobal::getScreenWidth(){
+
+int ScreenGlobal::getScreenWidth() const {
 #ifdef Q_OS_ANDROID
-    return screen->geometry().width();
+    return screen.geometry().width();
 #else
    return 480;
 #endif
 }
 
-int ScreenGlobal::getScreenHeight(){
+
+int ScreenGlobal::getScreenHeight() const {
 #ifdef Q_OS_ANDROID
-    return screen->geometry().height();
+    return screen.geometry().height();
 #else
     return 800;
 #endif
 }
 
-double ScreenGlobal::adaptXSize(int xValue){
+
+double ScreenGlobal::adaptXSize(const int xValue) const {
 #ifdef Q_OS_ANDROID
-    return xValue/480.0*screen->geometry().width();
+    return xValue/480.0*screen.geometry().width();
 #else
     return xValue;
 #endif
 }
 
-double ScreenGlobal::adaptYSize(int yValue){
+
+double ScreenGlobal::adaptYSize(const int yValue) const {
 #ifdef Q_OS_ANDROID
-    return yValue/800.0*screen->geometry().height();
+    return yValue/800.0*screen.geometry().height();
 #else
     return yValue;
 #endif
 }
 
-double ScreenGlobal::getDPI(){
-    return screen->logicalDotsPerInch();
+
+double ScreenGlobal::getDPI() const {
+    return screen.logicalDotsPerInch();
 }
