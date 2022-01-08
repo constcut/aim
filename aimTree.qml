@@ -1,8 +1,8 @@
-import QtQuick 2.8
-import QtQuick.Controls 2.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
-import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.1
+import QtQuick.Layouts 1.15
 import QtQuick.Extras 1.4 as QmlExtra
 import QtQuick.Controls 1.4 as QMLOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
@@ -20,26 +20,11 @@ Item {
         localBase.fillTreeModelWithAims()
     }
 
-    //Ok we leave some comments here to document future changes
-    //1: change the scale, all the sizes
-    //2: chane the icon open/close
-    //3: open all / close all ways
-    //4: no add or so, if there is need to add comment or read it - double click and popup
-    //5: the only field but name is done, if progress == 100 or more then its done
-
-    //and by the way there must be a way to sort aims in order to tree like way
-    //means first go 1s top item, and then its children
-    //good to calculate depth of tree while sorting
-    //so we can add special offset in ListView
-
     property int microOffset : screenGlobal.adaptXSize(10)
     property int saveButtonOffset : screenGlobal.adaptYSize(650) //y
-
     property int treeOldButtonsOffset : screenGlobal.adaptYSize(700)
-
     property int treeViewHeight : screenGlobal.adaptYSize(600)
     property int yOffset : screenGlobal.adaptYSize(50)
-
     property int column1Width : screenGlobal.adaptXSize(150)
     property int column2Width : screenGlobal.adaptXSize(70)
     property int column3Width : screenGlobal.adaptXSize(70)
@@ -76,8 +61,7 @@ Item {
         highlighted: false
     }
 
-    RowLayout
-    {
+    RowLayout {
         y: treeOldButtonsOffset
         x: microOffset
         Button{
@@ -97,8 +81,7 @@ Item {
         }
     }
 
-    QMLOld.TreeView
-    {
+    QMLOld.TreeView {
         id: aimsTree
         model: treeModel //hierarchy
 
@@ -125,37 +108,6 @@ Item {
         x: 0
         y: yOffset
 
-        //y: 30
-        //x: 5
-        //width: parent.width/2 - 10
-        //height: parent.height/2 - 20 - 20
-/*
-        style: TreeViewStyle
-        {
-            activateItemOnSingleClick: true
-
-            alternateBackgroundColor: "darkgray"
-            backgroundColor: "gray"
-
-            textColor: "white"
-
-            control: aimsTree
-
-            headerDelegate: Item {
-                Rectangle {
-                    color: styleData.containsMouse ? "darkgray" : (styleData.pressed ? "black" : "gray")
-                    Text {
-                        color:  styleData.pressed ? "white" : "black"
-                        text: styleData.value
-                    }
-                }
-            }
-        }
-
-*/
-
-      //  anchors.fill: parent
-
         itemDelegate:   Item {
             id: treeDelegate
             TextEdit {
@@ -174,29 +126,23 @@ Item {
 
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(0)
-            title: "Имя цели"
+            title: "Aim name"
             width: column1Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(1)
-            title: "Время"
+            title: "Time"
             width: column2Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(2)
-            title: "Дата" //will autocalculate
+            title: "Date"
             width: column3Width
         }
         QMLOld.TableViewColumn {
             role: treeModel.getColumnName(3)
-            title: "Комментарий" //will autocalculate
+            title: "Comment" //will autocalculate
             width: column4Width
-        }
-
-        onClicked:
-        {
-            //mainWindow.reloadPlaceList(firmTree.getFieldByIndex(index,1))
-            console.log("Place code for reload : " + treeModel.getFieldByIndex(index,1))
         }
     }
 }
