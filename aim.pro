@@ -8,18 +8,19 @@ android {
 }
 
 SOURCES += main.cpp \
-    abstractBase.cpp \
-    usersettings.cpp \
-    screenglobal.cpp \
-    wslib/treemodel.cpp \
-    wslib/popup.cpp \
-    wslib/systemtray.cpp \
-    wslib/tabelserialize.cpp \
-    aimnotifications.cpp \
-    runningaims.cpp \
-    wslib/loghandler.cpp \
-    usertoken.cpp \
-    doneactschart.cpp
+    aims/abstractBase.cpp \
+    aims/aimnotifications.cpp \
+    aims/listoperations.cpp \
+    aims/usersettings.cpp \
+    aims/screenglobal.cpp \
+    apptools/treemodel.cpp \
+    apptools/popup.cpp \
+    apptools/systemtray.cpp \
+    apptools/tabelserialize.cpp \
+    aims/runningaims.cpp \
+    apptools/loghandler.cpp \
+    aims/usertoken.cpp \
+    aims/doneactschart.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -30,7 +31,7 @@ jslib = $$PWD
 QML_IMPORT_PATH =
 
 # Default rules for deployment.
-include(deployment.pri)
+#include(deployment.pri)
 
 DISTFILES += \
     android-sources/AndroidManifest.xml \
@@ -44,23 +45,23 @@ DISTFILES += \
     general_notes \
     android-sources/src/at/wavespl/apps/aim/NotificationClient.java \
     TODO \
-    qwebchannel.js \
     android-sources/src/at/wavespl/apps/aim/NotificationService.java
 
 HEADERS += \
-    abstractBase.h \
-    userSettings.h \
-    screenglobal.h \
-    wslib/treemodel.h \
-    wslib/notifications.h \
-    wslib/popup.h \
-    wslib/systemtray.h \
-    wslib/tabelserialize.h \
-    aimnotifications.h \
-    runningaims.h \
-    wslib/loghandler.h \
-    usertoken.h \
-    wslib/clipboard.h \
-    doneactschart.h
+    aims/abstractBase.h \
+    aims/listoperations.h \
+    aims/userSettings.h \
+    aims/screenglobal.h \
+    apptools/treemodel.h \
+    apptools/notifications.h \
+    apptools/popup.h \
+    apptools/systemtray.h \
+    apptools/tabelserialize.h \
+    aims/aimnotifications.h \
+    aims/runningaims.h \
+    apptools/loghandler.h \
+    aims/usertoken.h \
+    apptools/clipboard.h \
+    aims/doneactschart.h
 
 INSTALLS += target

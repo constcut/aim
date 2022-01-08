@@ -3,23 +3,20 @@
 
 #include <QObject>
 
+
 class UserToken : public QObject
 {
     Q_OBJECT
+
 public:
     explicit UserToken(QObject *parent = nullptr);
 
-    Q_INVOKABLE QString getToken() { return token; }
+    Q_INVOKABLE QString getToken() const { return _token; }
 
-protected:
-
+private:
     void prepareToken();
 
-    QString token;
-
-signals:
-
-public slots:
+    QString _token;
 };
 
 #endif // USERTOKEN_H

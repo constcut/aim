@@ -6,18 +6,19 @@
 
 #include <QQuickStyle>
 
-#include "abstractBase.h"
-#include "userSettings.h"
-#include "screenglobal.h"
-#include "wslib/treemodel.h"
-#include "wslib/systemtray.h"
-#include "wslib/popup.h"
-#include "wslib/loghandler.h"
-#include "aimnotifications.h"
-#include "runningaims.h"
-#include "usertoken.h"
-#include "wslib/clipboard.h"
-#include "doneactschart.h"
+
+#include "apptools/treemodel.h"
+#include "apptools/systemtray.h"
+#include "apptools/popup.h"
+#include "apptools/loghandler.h"
+#include "apptools/clipboard.h"
+#include "aims/abstractBase.h"
+#include "aims/userSettings.h"
+#include "aims/screenglobal.h"
+#include "aims/aimnotifications.h"
+#include "aims/runningaims.h"
+#include "aims/usertoken.h"
+#include "aims/doneactschart.h"
 
 #include <QDebug>
 

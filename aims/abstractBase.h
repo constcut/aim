@@ -5,7 +5,7 @@
 #include <QVariantList>
 #include <QSqlQuery>
 
-#include "wslib/treemodel.h"
+#include "apptools/treemodel.h"
 
 class AbstractSqlBase : public QObject
 {

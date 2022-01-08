@@ -13,7 +13,6 @@ Item {
         {
             id:consoleLog
 
-
             y: 100
 
             width: parent.width
