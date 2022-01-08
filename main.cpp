@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     notifications.startWatchDog(30);
     engine.rootContext()->setContextProperty("androidNotify",&notifications.androidNotification);
 
-    RunningAims runningAims(&localBase,&app);
+    RunningAims runningAims(localBase, &app);
     context->setContextProperty("runningAims",&runningAims);
 
     LogHandler::getInst().setFilename("log.txt");
