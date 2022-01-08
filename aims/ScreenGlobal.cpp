@@ -1,4 +1,4 @@
-#include "screenglobal.h"
+#include "ScreenGlobal.h"
 #include <QGuiApplication>
 
 ScreenGlobal::ScreenGlobal(QObject *parent):

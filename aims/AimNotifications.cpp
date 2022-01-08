@@ -1,4 +1,4 @@
-#include "aimnotifications.h"
+#include "AimNotifications.h"
 #include <QDebug>
 
 

@@ -1,4 +1,4 @@
-#include "doneactschart.h"
+#include "DoneActsChart.h"
 
 void DoneActsChartQML::paint(QPainter* painter){
 

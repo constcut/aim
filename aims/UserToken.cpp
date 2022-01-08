@@ -1,4 +1,4 @@
-#include "usertoken.h"
+#include "UserToken.h"
 
 #include <QNetworkInterface>
 #include <QCryptographicHash>

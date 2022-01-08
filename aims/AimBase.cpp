@@ -1,4 +1,4 @@
-#include "abstractBase.h"
+#include "AimBase.h"
 
 #include <QDebug>
 #include <QSqlError>
@@ -9,7 +9,7 @@
 #include <QDateTime>
 #include <QDate>
 
-#include "listoperations.h"
+#include "ListOperations.h"
 
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {

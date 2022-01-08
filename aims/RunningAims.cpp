@@ -1,8 +1,8 @@
-#include "runningaims.h"
+#include "RunningAims.h"
 
 #include <QDebug>
 
-#include "listoperations.h"
+#include "ListOperations.h"
 
 
 RunningAims::RunningAims(LocalSqlBase &base, QObject *parent) : QObject(parent), _localBase(base)

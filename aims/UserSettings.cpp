@@ -1,4 +1,4 @@
-#include "userSettings.h"
+#include "UserSettings.h"
 
 UserSettings::UserSettings(QObject *parent): QObject(parent)
 {

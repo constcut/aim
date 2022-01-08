@@ -1,4 +1,4 @@
-#include "listoperations.h"
+#include "ListOperations.h"
 #include <QDebug>
 
 

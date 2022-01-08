@@ -12,13 +12,13 @@
 #include "apptools/popup.h"
 #include "apptools/loghandler.h"
 #include "apptools/clipboard.h"
-#include "aims/abstractBase.h"
-#include "aims/userSettings.h"
-#include "aims/screenglobal.h"
-#include "aims/aimnotifications.h"
-#include "aims/runningaims.h"
-#include "aims/usertoken.h"
-#include "aims/doneactschart.h"
+#include "aims/AimBase.h"
+#include "aims/UserSettings.h"
+#include "aims/ScreenGlobal.h"
+#include "aims/AimNotifications.h"
+#include "aims/RunningAims.h"
+#include "aims/UserToken.h"
+#include "aims/DoneActsChart.h"
 
 #include <QDebug>
 
