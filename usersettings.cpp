@@ -1,125 +1,105 @@
 #include "userSettings.h"
 
-UserSettings::UserSettings(QObject *parent):QObject(parent)
+UserSettings::UserSettings(QObject *parent): QObject(parent)
 {
-    //here now lay defaults but later save them to base and load from there
-
-    orderType = 0; //enumerate them later 0 - from first
-    //1 - from last; 2 - like a tree
-    //4 - last acts; 5 - sequence (soones, unmarked, lated)
-
+    _orderType = 0;
     setColor("Accent","#4CAF50"); //Material.Green
     setColor("Primary","#3F51B5"); //Material.Ingido
     setColor("Foreground","#444444"); // #795548or Material.Brown
     setColor("Background","#333333"); //or Material.Grey#607D8B
     setColor("ListHightlight","#263E26"); //#98FB98
     setColor("Text","#CCCCCC");
-    ///maybe better store as propeties to be able to update asap
-
-
-    addAimSettings["ListName"] = true;
-    addAimSettings["TimeAndDate"] = true;
-    addAimSettings["Category"] = true;
-    addAimSettings["Repeatable"] = true;
-    addAimSettings["Privacy"] = true;
-    addAimSettings["AssignTo"] = true;
-    addAimSettings["ParentAim"] = true;
-    addAimSettings["ChildAims"] = true;
-    addAimSettings["Progress"] = true;
-
-
-    viewAimSettings["ListName"] = true;
-    viewAimSettings["TimeAndDate"] = true; //false;
-    viewAimSettings["Category"] = true;
-    viewAimSettings["Repeatable"] = true; //false;
-    viewAimSettings["Privacy"] = true; //false;
-    viewAimSettings["AssignTo"] = true; //false;
-    viewAimSettings["ParentAim"] = true; //false;
-    viewAimSettings["ChildAims"] = true; //false;
-    viewAimSettings["Progress"] = true; //false;
+    _addAimSettings["ListName"] = true;
+    _addAimSettings["TimeAndDate"] = true;
+    _addAimSettings["Category"] = true;
+    _addAimSettings["Repeatable"] = true;
+    _addAimSettings["Privacy"] = true;
+    _addAimSettings["AssignTo"] = true;
+    _addAimSettings["ParentAim"] = true;
+    _addAimSettings["ChildAims"] = true;
+    _addAimSettings["Progress"] = true;
+    _viewAimSettings["ListName"] = true;
+    _viewAimSettings["TimeAndDate"] = true;
+    _viewAimSettings["Category"] = true;
+    _viewAimSettings["Repeatable"] = true;
+    _viewAimSettings["Privacy"] = true;
+    _viewAimSettings["AssignTo"] = true;
+    _viewAimSettings["ParentAim"] = true;
+    _viewAimSettings["ChildAims"] = true;
+    _viewAimSettings["Progress"] = true;
 }
 
 
-QList<bool> UserSettings::getAddAimSettings()
+QList<bool> UserSettings::getAddAimSettings() const {
+    QList<bool> response;
+    response.append(_viewAimSettings["ListName"]);
+    response.append(_viewAimSettings["TimeAndDate"]);
+    response.append(_viewAimSettings["Category"]);
+    response.append(_viewAimSettings["Repeatable"]);
+    response.append(_viewAimSettings["Privacy"]);
+    response.append(_viewAimSettings["AssignTo"]);
+    response.append(_viewAimSettings["ParentAim"]);
+    response.append(_viewAimSettings["ChildAims"]);
+    response.append(_viewAimSettings["Progress"]);
+    return response;
+}
+
+void UserSettings::setAddAimSettings(const QList<bool> newSettings)
+{
+    _addAimSettings["ListName"] = newSettings[0];
+    _addAimSettings["TimeAndDate"] = newSettings[1];
+    _addAimSettings["Category"] = newSettings[2];
+    _addAimSettings["Repeatable"] = newSettings[3];
+    _addAimSettings["Privacy"] = newSettings[4];
+    _addAimSettings["AssignTo"] = newSettings[5];
+    _addAimSettings["ParentAim"] = newSettings[6];
+    _addAimSettings["ChildAims"] = newSettings[7];
+    _addAimSettings["Progress"] = newSettings[8];
+}
+
+
+QList<bool> UserSettings::getViewAimSettings() const
 {
     QList<bool> response;
 
-    response.append(viewAimSettings["ListName"]);
-    response.append(viewAimSettings["TimeAndDate"]);
-    response.append(viewAimSettings["Category"]);
-    response.append(viewAimSettings["Repeatable"]);
-    response.append(viewAimSettings["Privacy"]);
-    response.append(viewAimSettings["AssignTo"]);
-    response.append(viewAimSettings["ParentAim"]);
-    response.append(viewAimSettings["ChildAims"]);
-    response.append(viewAimSettings["Progress"]);
+    response.append(_viewAimSettings["ListName"]);
+    response.append(_viewAimSettings["TimeAndDate"]);
+    response.append(_viewAimSettings["Category"]);
+    response.append(_viewAimSettings["Repeatable"]);
+    response.append(_viewAimSettings["Privacy"]);
+    response.append(_viewAimSettings["AssignTo"]);
+    response.append(_viewAimSettings["ParentAim"]);
+    response.append(_viewAimSettings["ChildAims"]);
+    response.append(_viewAimSettings["Progress"]);
 
     return response;
 }
 
-void UserSettings::setAddAimSettings(QList<bool> newSettings)
+void UserSettings::setViewAimSettings(const QList<bool> newSettings)
 {
-    addAimSettings["ListName"] = newSettings[0];
-    addAimSettings["TimeAndDate"] = newSettings[1];
-    addAimSettings["Category"] = newSettings[2];
-    addAimSettings["Repeatable"] = newSettings[3];
-    addAimSettings["Privacy"] = newSettings[4];
-    addAimSettings["AssignTo"] = newSettings[5];
-    addAimSettings["ParentAim"] = newSettings[6];
-    addAimSettings["ChildAims"] = newSettings[7];
-    addAimSettings["Progress"] = newSettings[8];
+    _viewAimSettings["ListName"] = newSettings[0];
+    _viewAimSettings["TimeAndDate"] = newSettings[1];
+    _viewAimSettings["Category"] = newSettings[2];
+    _viewAimSettings["Repeatable"] = newSettings[3];
+    _viewAimSettings["Privacy"] = newSettings[4];
+    _viewAimSettings["AssignTo"] = newSettings[5];
+    _viewAimSettings["ParentAim"] = newSettings[6];
+    _viewAimSettings["ChildAims"] = newSettings[7];
+    _viewAimSettings["Progress"] = newSettings[8];
 }
 
-///helpable function to set up ui in roper good way
 
-QList<bool> UserSettings::getViewAimSettings()
+bool UserSettings::setColor(const QString colorType, const QString colorValue)
 {
-    QList<bool> response;
-
-    response.append(viewAimSettings["ListName"]);
-    response.append(viewAimSettings["TimeAndDate"]);
-    response.append(viewAimSettings["Category"]);
-    response.append(viewAimSettings["Repeatable"]);
-    response.append(viewAimSettings["Privacy"]);
-    response.append(viewAimSettings["AssignTo"]);
-    response.append(viewAimSettings["ParentAim"]);
-    response.append(viewAimSettings["ChildAims"]);
-    response.append(viewAimSettings["Progress"]);
-
-    return response;
-}
-
-void UserSettings::setViewAimSettings(QList<bool> newSettings)
-{
-    viewAimSettings["ListName"] = newSettings[0];
-    viewAimSettings["TimeAndDate"] = newSettings[1];
-    viewAimSettings["Category"] = newSettings[2];
-    viewAimSettings["Repeatable"] = newSettings[3];
-    viewAimSettings["Privacy"] = newSettings[4];
-    viewAimSettings["AssignTo"] = newSettings[5];
-    viewAimSettings["ParentAim"] = newSettings[6];
-    viewAimSettings["ChildAims"] = newSettings[7];
-    viewAimSettings["Progress"] = newSettings[8];
-}
-
-//colors functions
-void UserSettings::setStyle(QString styleName, QString themeName)
-{
-    //Will need just to reload all the colors
-
-}
-
-bool UserSettings::setColor(QString colorType, QString colorValue)
-{
-    bool colorExists = colors.find(colorType) != colors.end();
-    colors[colorType]=colorValue;
+    bool colorExists = _colors.find(colorType) != _colors.end();
+    _colors[colorType]=colorValue;
     return colorExists;
 }
 
-QString UserSettings::getColor(QString colorType)
+QString UserSettings::getColor(QString colorType) const
 {
-    bool colorExists = colors.find(colorType) != colors.end();
+    bool colorExists = _colors.find(colorType) != _colors.end();
     if (colorExists)
-        return colors[colorType];
+        return _colors[colorType];
     return "";
 }

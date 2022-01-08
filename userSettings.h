@@ -5,48 +5,43 @@
 #include <QList>
 #include <QMap>
 
+
 class UserSettings : public QObject
 {
     Q_OBJECT
 public:
-    explicit UserSettings(QObject *parent = 0);
+    explicit UserSettings(QObject *parent = nullptr);
 
+    Q_INVOKABLE QList<bool> getAddAimSettings() const;
+    Q_INVOKABLE void setAddAimSettings(const QList<bool> newSettings);
 
-    Q_INVOKABLE QList<bool> getAddAimSettings();
-    Q_INVOKABLE void setAddAimSettings(QList<bool> newSettings);
+    Q_INVOKABLE QList<bool> getViewAimSettings() const;
+    Q_INVOKABLE void setViewAimSettings(const QList<bool> newSettings);
 
-    ///helpable function to set up ui in roper good way
+    Q_INVOKABLE bool setColor(const QString colorType, const QString colorValue);
+    Q_INVOKABLE QString getColor(const QString colorType) const;
 
-    Q_INVOKABLE QList<bool> getViewAimSettings();
-    Q_INVOKABLE void setViewAimSettings(QList<bool> newSettings);
+    Q_INVOKABLE quint8 getSortingOrderType() const { return _orderType; }
+    Q_INVOKABLE void setSortingOrderType(quint8 newOrderType){ _orderType = newOrderType; }
 
-    //colors functions
-    Q_INVOKABLE void setStyle(QString styleName, QString themeName); //default, material light, dark, univeral ..etc
-
-    Q_INVOKABLE bool setColor(QString colorType, QString colorValue);
-    Q_INVOKABLE QString getColor(QString colorType);
-
-    Q_INVOKABLE quint8 getSortingOrderType(){return orderType;}
-    Q_INVOKABLE void setSortingOrderType(quint8 newOrderType){orderType=newOrderType;}
-
-    Q_INVOKABLE bool isDebugBuild(){
+    Q_INVOKABLE bool isDebugBuild() const {
         #ifdef QT_DEBUG
             return true;
         #else
-                return false;
+            return false;
         #endif
     }
 
-protected: //best idea is make QMap <QString, QVariable> to store all the parameters, and easy expend them
+protected:
 
-    QMap<QString,bool> viewAimSettings;
-    QMap<QString,bool> addAimSettings;
+    QMap<QString,bool> _viewAimSettings;
+    QMap<QString,bool> _addAimSettings;
 
-    QString currentStyle;
-    QString currentTheme;
-    QMap<QString,QString> colors;
+    QString _currentStyle;
+    QString _currentTheme;
+    QMap<QString, QString> _colors;
 
-    quint8 orderType;
+    quint8 _orderType;
 };
 
 #endif // USERSETTINGS_H
