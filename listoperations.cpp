@@ -5,11 +5,9 @@
 QStringList createListByField(QVariantList source, int fieldIndex)
 {
     QStringList result;
-    for (int i = 0; i < source.size(); ++i)
-    {
+    for (int i = 0; i < source.size(); ++i) {
         QStringList fields = source[i].toStringList();
         QString exactField = fields[fieldIndex];
-
         result << exactField;
     }
     return result;
