@@ -14,7 +14,7 @@ class NotificationClient : public QObject
     Q_PROPERTY(QString notification READ notification WRITE setNotification NOTIFY notificationChanged)
 
 public:
-    explicit NotificationClient(QObject *parent = 0);
+    explicit NotificationClient(QObject *parent = nullptr);
 
     Q_INVOKABLE void setNotification(const QString &notification);
     QString notification() const;
@@ -29,27 +29,28 @@ private:
     QString _notification;
 };
 
+
+
 class AimNotifications : QObject
 {
     Q_OBJECT
 
 public:
-    AimNotifications(LocalSqlBase *base,PopUp *popUp,QObject *parent = 0);
-    ~AimNotifications();
+    AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent = nullptr);
+    ~AimNotifications() = default;
 
-    void startWatchDog(int setInterval=60); //1min
+    void startWatchDog(int setInterval = 60);
 
 signals:
     void requestViewNotifications();
 
 public slots:
-    void watchDogWoughf(); //Woughf-woughf!!!
+    void watchDogWoughf();
 
 protected:
-    QTimer watchDogTimer;
-    LocalSqlBase *localBase; //TODO no raw ptrs
-
-    PopUp *popUp; //TODO no raw ptrs
+    QTimer _watchDogTimer;
+    LocalSqlBase& _localBase;
+    PopUp& _popUp;
 
  public:
     NotificationClient androidNotification;

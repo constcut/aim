@@ -6,11 +6,13 @@
 #include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
+
 NotificationClient::NotificationClient(QObject *parent)
     : QObject(parent)
 {
     connect(this, SIGNAL(notificationChanged()), this, SLOT(updateAndroidNotification()));
 }
+
 
 void NotificationClient::setNotification(const QString &notification)
 {
@@ -21,13 +23,13 @@ void NotificationClient::setNotification(const QString &notification)
     emit notificationChanged();
 }
 
-QString NotificationClient::notification() const
-{
+
+QString NotificationClient::notification() const {
     return _notification;
 }
 
-void NotificationClient::updateAndroidNotification()
-{
+
+void NotificationClient::updateAndroidNotification() {
     #ifdef ANDROID
 
     qDebug() << "Running android notification attempt";
@@ -37,44 +39,32 @@ void NotificationClient::updateAndroidNotification()
                                        "notify",
                                        "(Ljava/lang/String;)V",
                                        javaNotification.object<jstring>());
-
-
-
-
     #endif
 }
 
-//EXAMPLE of android notifications
 
-AimNotifications::AimNotifications(LocalSqlBase *base,PopUp *popUp,QObject *parent):QObject(parent),localBase(base),popUp(popUp)
-{
-}
+AimNotifications::AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent)
+    : QObject(parent), _localBase(base), _popUp(popUp)
+{}
 
-AimNotifications::~AimNotifications()
-{
-}
 
 void AimNotifications::startWatchDog(int setInterval)
 {
     int interval = 1000*setInterval;
-    connect(&watchDogTimer,SIGNAL(timeout()),this,SLOT(watchDogWoughf()));
-    watchDogTimer.start(interval);
+    connect(&_watchDogTimer,SIGNAL(timeout()),this,SLOT(watchDogWoughf()));
+    _watchDogTimer.start(interval);
 }
+
 
 void AimNotifications::watchDogWoughf()
 {
-   //qDebug() << "Tick";
+   QVariantList currentAims = _localBase.getCurrentMomementAims();
 
-   QVariantList currentAims = localBase->getCurrentMomementAims();
-
-   if (currentAims.size())
-   {
+   if (currentAims.size()) {
        qDebug() << "There are aims now! "<<currentAims;
-
        QString messageText;
 
-       if (currentAims.size() == 1)
-       {
+       if (currentAims.size() == 1) {
            QStringList aimLine = currentAims[0].toStringList();
            messageText = aimLine[1] + " starts now!";
        }
@@ -85,8 +75,8 @@ void AimNotifications::watchDogWoughf()
         androidNotification.setNotification(messageText);
         //later show popup too, but it should have another shape
 #else
-       popUp->setPopupText(messageText,"gray",10);
-       popUp->show();
+       _popUp.setPopupText(messageText,"gray",10);
+       _popUp.show();
 #endif
    }
 }

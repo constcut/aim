@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     PopUp popUp;
     context->setContextProperty("popUpItem",&popUp);
 
-    AimNotifications notifications(&localBase,&popUp,&app);
+    AimNotifications notifications(localBase, popUp, &app);
     notifications.startWatchDog(30);
     engine.rootContext()->setContextProperty("androidNotify",&notifications.androidNotification);
 
