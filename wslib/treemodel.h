@@ -7,6 +7,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
+
 class TreeItem
 {
 
@@ -73,16 +74,18 @@ public:
 
 
     bool setData(const QModelIndex &index, const QVariant &value,
-                 int role = Qt::EditRole) Q_DECL_OVERRIDE;
-    bool setHeaderData(int section, Qt::Orientation orientation,
+                 const int role = Qt::EditRole) Q_DECL_OVERRIDE;
+
+    bool setHeaderData(const int section, const Qt::Orientation orientation,
                        const QVariant &value, int role = Qt::EditRole) Q_DECL_OVERRIDE;
-    bool removeRows(int position, int rows,
+
+    bool removeRows(const int position, const int rows,
                     const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
 
 
-    Q_INVOKABLE QString getFieldByIndex(QModelIndex index, int field);
+    Q_INVOKABLE QString getFieldByIndex(const QModelIndex index, const int field) const;
 
-    Q_INVOKABLE bool printTopValues();
+    Q_INVOKABLE bool printTopValues() const;
 
     Q_INVOKABLE QString getAimId(const QModelIndex &index);
 
@@ -91,8 +94,8 @@ public:
     Q_INVOKABLE bool setItemText(const QModelIndex &index, const QString text, int column=0);
     Q_INVOKABLE bool removeItem(const QModelIndex &index);
 
-    Q_INVOKABLE QString getColumnName(int index);
-    Q_INVOKABLE int getColumnIndex(QString name);
+    Q_INVOKABLE QString getColumnName(const int index);
+    Q_INVOKABLE int getColumnIndex(const QString name);
     Q_INVOKABLE int columnsAmount();
 
 
@@ -110,14 +113,13 @@ public:
     QVariantList getFullList() const;
 
 
-    bool setValueOnCondition(int conditionIndex, QString conditionText,
-                             int settingIndex, QString settingText);
+    bool setValueOnCondition(const int conditionIndex, const QString conditionText,
+                             const int settingIndex, const QString settingText);
 
-    bool setValueOnConditionIfEmpty(int conditionIndex, QString conditionText,
-                             int settingIndex, QString settingText);
+    bool setValueOnConditionIfEmpty(const int conditionIndex, const QString conditionText,
+                                    const int settingIndex, const QString settingText);
 
-
-    TreeItem* getFirstItem() {
+    TreeItem* getFirstItem() const {
         if (_rootItem->childCount())
             return _rootItem->child(0);
         return 0;
@@ -127,19 +129,19 @@ public:
    void setNewEntryTemplate(const QString newTempate) { newEntryTemplate = newTempate; }
 
    TreeItem *getRootItem() const { return _rootItem; }
-   size_t getColumnNamesSize() const { return columnNames.size(); }
+   size_t getColumnNamesSize() const { return _columnNames.size(); }
 
 private:
 
    QString newEntryTemplate;
 
-    bool setDataSpecial(const QModelIndex &index, const QVariant &value, int column);
-    TreeItem *getItem(const QModelIndex &index) const;
+    bool setDataSpecial(const QModelIndex& index, const QVariant &value, const int column);
+    TreeItem *getItem(const QModelIndex& index) const;
 
-    void setupModelData(const QString &linesData, TreeItem *parent);
-    void addChildrenExport(QStringList &outputList, TreeItem *parent, int level) const;
+    void setupModelData(const QString& linesData, const TreeItem *parent);
+    void addChildrenExport(QStringList& outputList, TreeItem* parent, const int level) const;
 
-    void addChildrenList(QVariantList &outputList, TreeItem *parent) const;
+    void addChildrenList(QVariantList& outputList, TreeItem* parent) const;
 
     TreeItem* _rootItem;
     QHash<int, QByteArray> _roleNameMapping;
@@ -149,6 +151,6 @@ protected:
     void autoFillRoles();
     void createRootElement();
 
-    QList<QString> columnNames;
+    QList<QString> _columnNames;
 };
 #endif // TREEMODEL_H

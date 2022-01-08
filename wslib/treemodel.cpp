@@ -124,7 +124,7 @@ TreeModel::TreeModel(QObject *parent, QStringList columnsList)
 
 
 void TreeModel::refillTableColumns(const QStringList data) {
-    columnNames = data;
+    _columnNames = data;
     autoFillRoles();
     createRootElement();
 }
@@ -132,12 +132,12 @@ void TreeModel::refillTableColumns(const QStringList data) {
 
 void TreeModel::fillTableColumns()
 {
-    columnNames.clear();
+    _columnNames.clear();
 
-    columnNames.append("Aim name");
-    columnNames.append("Time");
-    columnNames.append("Date");
-    columnNames.append("Comment");
+    _columnNames.append("Aim name");
+    _columnNames.append("Time");
+    _columnNames.append("Date");
+    _columnNames.append("Comment");
 
     //columnNames.append("flags");
 }
@@ -146,15 +146,15 @@ void TreeModel::autoFillRoles()
 {
     _roleNameMapping.clear();
 
-    for (int i = 0; i < columnNames.size(); ++i)
-         _roleNameMapping[Qt::UserRole + 1 + i]= columnNames[i].toUtf8();
+    for (int i = 0; i < _columnNames.size(); ++i)
+         _roleNameMapping[Qt::UserRole + 1 + i]= _columnNames[i].toUtf8();
 }
 
 void TreeModel::createRootElement()
 {
     QVector<QVariant> rootData;
-    for (int i = 0; i < columnNames.size(); ++i)
-        rootData << columnNames[i];
+    for (int i = 0; i < _columnNames.size(); ++i)
+        rootData << _columnNames[i];
 
     if (_rootItem)
     {
@@ -162,29 +162,29 @@ void TreeModel::createRootElement()
         _rootItem = 0;
     }
 
-    _rootItem = new TreeItem(rootData, columnNames.size()); //Qt is far from modern C++.. at least Qt5
+    _rootItem = new TreeItem(rootData, _columnNames.size()); //Qt is far from modern C++.. at least Qt5
 }
 
-QString TreeModel::getColumnName(int index)
+
+QString TreeModel::getColumnName(const int index)
 {
-    if (index < 0 || index >= columnNames.size())
+    if (index < 0 || index >= _columnNames.size())
         return "";
-
-        return columnNames[index];
+    return _columnNames[index];
 }
 
-int TreeModel::getColumnIndex(QString name)
-{
-    for (int i = 0; i < columnNames.size(); ++i)
-        if (columnNames[i]==name)
-            return i;
 
+int TreeModel::getColumnIndex(const QString name) {
+    for (int i = 0; i < _columnNames.size(); ++i)
+        if (_columnNames[i] == name)
+            return i;
     return -1;
 }
 
+
 int TreeModel::columnsAmount()
 {
-    return columnNames.size() ;
+    return _columnNames.size() ;
 }
 
 TreeModel::~TreeModel()
@@ -205,7 +205,7 @@ int TreeModel::columnCount(const QModelIndex &parent) const
 }
 
 
-QString TreeModel::getFieldByIndex(QModelIndex index, int field)
+QString TreeModel::getFieldByIndex(const QModelIndex index, const int field) const
 {
     TreeItem *item = getItem(index);
     if (item->columnCount() > field)
@@ -296,7 +296,7 @@ QHash<int, QByteArray> TreeModel::roleNames() const
     return _roleNameMapping;
 }
 
-void TreeModel::setupModelData(const QString &linesData, TreeItem *parent)
+void TreeModel::setupModelData(const QString &linesData, const TreeItem *parent)
 {
     QStringList  lines = linesData.split(QString("\n"));
 
@@ -338,7 +338,7 @@ void TreeModel::setupModelData(const QString &linesData, TreeItem *parent)
                 }
             }
 
-            parents.last()->appendChild(new TreeItem(columnData, columnNames.size(), parents.last()));
+            parents.last()->appendChild(new TreeItem(columnData, _columnNames.size(), parents.last()));
         }
 
         ++number;
@@ -403,8 +403,8 @@ QVariantList TreeModel::getFullList() const
     return response;
 }
 
-bool TreeModel::setValueOnCondition(int conditionIndex, QString conditionText,
-                         int settingIndex, QString settingText)
+bool TreeModel::setValueOnCondition(int conditionIndex, const QString conditionText,
+                         const int settingIndex, const QString settingText)
 {
     //MOST SIMPLE WAY EVER
     return _rootItem->setValueOnCondition(conditionIndex,conditionText,settingIndex,settingText);
@@ -436,24 +436,23 @@ bool TreeItem::setValueOnCondition(const int conditionIndex, const QString condi
 }
 
 
-bool TreeModel::setValueOnConditionIfEmpty(int conditionIndex, QString conditionText,
-                         int settingIndex, QString settingText)
+bool TreeModel::setValueOnConditionIfEmpty(const int conditionIndex, const QString conditionText,
+                         const int settingIndex, const QString settingText)
 {
-    //MOST SIMPLE WAY EVER
     return _rootItem->setValueOnConditionIfEmpty(conditionIndex,conditionText,settingIndex,settingText);
 }
 
-bool TreeItem::setValueOnConditionIfEmpty(const int conditionIndex, const QString conditionText, const int settingIndex, const QString settingText)
+
+bool TreeItem::setValueOnConditionIfEmpty(const int conditionIndex, const QString conditionText,
+                                          const int settingIndex, const QString settingText)
 {
     if (_itemData.size() > conditionIndex)
-    {
         if (_itemData[conditionIndex].toString() == conditionText)
         {
             if (_itemData.size() > settingIndex)
             {
                 QString tempString = _itemData[settingIndex].toString().trimmed();
-                if (tempString.isEmpty()) ///SET value only if there is no value
-                {
+                if (tempString.isEmpty())  {
                     _itemData[settingIndex] = settingText;
                     return true;
                 }
@@ -463,41 +462,34 @@ bool TreeItem::setValueOnConditionIfEmpty(const int conditionIndex, const QStrin
             else
                 return false;
         }
-    }
 
     for (int i = 0; i < _childItems.size(); ++i)
-    {
         if (_childItems[i]->setValueOnConditionIfEmpty(conditionIndex,conditionText,settingIndex, settingText)) //recurse, but it wouldn't grow too mush
             return true;
-    }
-
     return false;
 }
 
 
 
-//not set yet
 void TreeModel::addChildrenList(QVariantList &outputList, TreeItem *parent) const
 {
     QStringList parentLine = parent->getColumns();
     QString parentCode =  parentLine[1];
 
-    for (int i = 0; i < parent->childCount(); ++i)
-    {
+    for (int i = 0; i < parent->childCount(); ++i) {
         TreeItem *currentItem = parent->child(i);
         QStringList oneLine = currentItem->getColumns(); //There was parent code, but its unused
-
         QStringList lineWithFineId;
         lineWithFineId = putIdOnFirstPlace(oneLine);
+        outputList.append(lineWithFineId);
 
-        outputList.append(lineWithFineId); //oneLine!
-
-        if (currentItem->childCount()) //recurse should leave - it always possible
+        if (currentItem->childCount())
             addChildrenList(outputList,currentItem);
     }
 }
 
-void TreeModel::addChildrenExport(QStringList &outputList, TreeItem *parent, int level) const
+
+void TreeModel::addChildrenExport(QStringList &outputList, TreeItem *parent, const int level) const
 {
     for (int i = 0; i < parent->childCount(); ++i) {
         TreeItem *currentItem = parent->child(i);
@@ -714,7 +706,6 @@ void TreeModel::loadFromFile(const QString filename)
 {
     if (filename.isEmpty())
         return;
-        //filename = QFileDialog::getOpenFileName(0,"Load tree structure","","(*.structure)");
 
     QFile inputFile;
     inputFile.setFileName(filename);
@@ -725,7 +716,7 @@ void TreeModel::loadFromFile(const QString filename)
 }
 
 
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool TreeModel::setData(const QModelIndex &index, const QVariant &value, const int role)
 {
     if (role != Qt::EditRole)
         return false;
@@ -739,7 +730,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return result;
 }
 
-bool TreeModel::setDataSpecial(const QModelIndex &index, const QVariant &value, int column)
+
+bool TreeModel::setDataSpecial(const QModelIndex &index, const QVariant &value, const int column)
 {
     TreeItem *item = getItem(index);
     bool result = item->setData(column, value);
@@ -750,7 +742,8 @@ bool TreeModel::setDataSpecial(const QModelIndex &index, const QVariant &value, 
     return result;
 }
 
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
+
+bool TreeModel::setHeaderData(const int section, const Qt::Orientation orientation,
                               const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
@@ -764,10 +757,9 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
-{
-    //checkup
 
+bool TreeModel::removeRows(const int position, const int rows, const QModelIndex &parent)
+{
     TreeItem *parentItem = getItem(parent);
     bool success = true;
 
@@ -791,17 +783,13 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
 
 
 
-bool TreeModel::printTopValues()
-{
-    for (int i = 0; i < _rootItem->childCount(); ++i)
-    {
+bool TreeModel::printTopValues() const {
+    for (int i = 0; i < _rootItem->childCount(); ++i) {
         TreeItem *currentItem = _rootItem->child(i);
         QString fullLine;
-
         for (int j = 0; j < currentItem->columnCount(); ++j)
             fullLine += " [" + QString::number(j) + "] " + currentItem->data(j).toString();
-
-        qDebug() <<fullLine;
+        qDebug() << fullLine;
     }
     return true;
 }
@@ -814,7 +802,7 @@ bool TreeModel::addTopItem(const QModelIndex &index)
     handData << newEntryTemplate << " " << " "; //position?
 
     TreeItem *item = _rootItem;
-    TreeItem *handMade = new TreeItem(handData, columnNames.size(),item);
+    TreeItem *handMade = new TreeItem(handData, _columnNames.size(),item);
 
     beginInsertRows(QModelIndex(),item->childCount(),item->childCount());
     item->appendChild(handMade);
@@ -829,7 +817,7 @@ bool TreeModel::addChildItem(const QModelIndex &index)
     handData << newEntryTemplate << " " << " "; //position?
 
     TreeItem *item = getItem(index);
-    TreeItem *handMade = new TreeItem(handData, columnNames.size(), item);
+    TreeItem *handMade = new TreeItem(handData, _columnNames.size(), item);
 
     beginInsertRows(index,item->childCount(),item->childCount());
     item->appendChild(handMade);
