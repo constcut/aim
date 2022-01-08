@@ -16,11 +16,11 @@ SOURCES += main.cpp \
     aims/ScreenGlobal.cpp \
     aims/UserSettings.cpp \
     aims/UserToken.cpp \
-    apptools/treemodel.cpp \
-    apptools/popup.cpp \
-    apptools/systemtray.cpp \
-    apptools/tabelserialize.cpp \
-    apptools/loghandler.cpp
+    apptools/LogHandler.cpp \
+    apptools/Popup.cpp \
+    apptools/SystemTray.cpp \
+    apptools/TabelSerialize.cpp \
+    apptools/TreeModel.cpp
 
 RESOURCES += qml.qrc \
     icons.qrc
@@ -51,13 +51,13 @@ HEADERS += \
     aims/ScreenGlobal.h \
     aims/UserSettings.h \
     aims/UserToken.h \
-    apptools/treemodel.h \
-    apptools/notifications.h \
-    apptools/popup.h \
-    apptools/systemtray.h \
-    apptools/tabelserialize.h \
-    apptools/loghandler.h \
-    apptools/clipboard.h
+    apptools/Clipboard.h \
+    apptools/LogHandler.h \
+    apptools/Notifications.h \
+    apptools/Popup.h \
+    apptools/SystemTray.h \
+    apptools/TabelSerialize.h \
+    apptools/TreeModel.h
 
 
 INSTALLS += target

@@ -7,11 +7,11 @@
 #include <QQuickStyle>
 
 
-#include "apptools/treemodel.h"
-#include "apptools/systemtray.h"
-#include "apptools/popup.h"
-#include "apptools/loghandler.h"
-#include "apptools/clipboard.h"
+#include "apptools/TreeModel.h"
+#include "apptools/SystemTray.h"
+#include "apptools/Popup.h"
+#include "apptools/LogHandler.h"
+#include "apptools/Clipboard.h"
 #include "aims/AimBase.h"
 #include "aims/UserSettings.h"
 #include "aims/ScreenGlobal.h"

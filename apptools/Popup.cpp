@@ -1,4 +1,4 @@
-#include "popup.h"
+#include "Popup.h"
 
 //popup headers
 #include <QPainter>

@@ -5,7 +5,7 @@
 #include <QTimer>
 
 #include "AimBase.h"
-#include "apptools/popup.h"
+#include "apptools/Popup.h"
 
 
 class NotificationClient : public QObject

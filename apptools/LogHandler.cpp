@@ -1,4 +1,4 @@
-#include "loghandler.h"
+#include "LogHandler.h"
 
 
 void newLogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)

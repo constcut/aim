@@ -1,4 +1,4 @@
-#include "tabelserialize.h"
+#include "TabelSerialize.h"
 
 
 void TableSerialize::fromRawString(QString source) {

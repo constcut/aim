@@ -1,4 +1,4 @@
-#include "treemodel.h"
+#include "TreeModel.h"
 
 #include <QStringList>
 #include <QDebug>
