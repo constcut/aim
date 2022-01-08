@@ -20,6 +20,7 @@ void UserToken::prepareToken()
 {
     QString result;
     QCryptographicHash crypt(QCryptographicHash::Md5);
+    bool oneExtra = false;
     foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
         QString macAddress = interface.hardwareAddress();
         if (macAddress == "00:00:00:00:00:00:00:E0")
@@ -27,17 +28,15 @@ void UserToken::prepareToken()
         if (macAddress.size() == 0) {
     #ifdef ANDROID
 
-            if (oneExtra == false)
-            {
-                QAndroidJniObject javaResult = QAndroidJniObject::callStaticObjectMethod<jstring>("at/wavespl/apps/aim/NotificationClient",
-                                                                                         "getMacAddr");
-                qDebug() << javaResult.toString() <<" from android!";
-                macAddress = javaResult.toString();
-
-                oneExtra = true;
-            }
-            else
-                continue;
+        if (oneExtra == false) {
+            QAndroidJniObject javaResult = QAndroidJniObject::callStaticObjectMethod<jstring>("at/wavespl/apps/aim/NotificationClient",
+                                                                                     "getMacAddr");
+            qDebug() << javaResult.toString() <<" from android!";
+            macAddress = javaResult.toString();
+            oneExtra = true;
+        }
+        else
+            continue;
     #else
             continue;
     #endif
