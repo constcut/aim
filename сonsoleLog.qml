@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import wwav.es.app 1.0
+import aim.tasks 1.0
 
 Item {
     anchors.fill: parent

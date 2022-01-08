@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 1.4 as QMLOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
 
-import wwav.es.app 1.0
+import aim.tasks 1.0
 
 Item {
     id:doneChartItem

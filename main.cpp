@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     Clipboard clip;
     engine.rootContext()->setContextProperty("clipboard",&clip);
 
-    qmlRegisterType<ConsoleLogQML>("wwav.es.app",1,0,"ConsoleLog");
-    qmlRegisterType<DoneActsChartQML>("wwav.es.app",1,0,"DoneActsChart");
+    qmlRegisterType<ConsoleLogQML>("aim.tasks",1,0,"ConsoleLog");
+    qmlRegisterType<DoneActsChartQML>("aim.tasks",1,0,"DoneActsChart");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     return app.exec();
