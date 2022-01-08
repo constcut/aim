@@ -4,7 +4,9 @@
 #include <QPainter>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QGuiApplication>
 #include <QDebug>
+
 
 PopUp::PopUp(QWidget *parent) : QWidget(parent)
 {
@@ -14,25 +16,24 @@ PopUp::PopUp(QWidget *parent) : QWidget(parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating);
 
-    animation.setTargetObject(this);
-    animation.setPropertyName("popupOpacity");
-    connect(&animation, &QAbstractAnimation::finished, this, &PopUp::hide);
+    _animation.setTargetObject(this);
+    _animation.setPropertyName("popupOpacity");
+    connect(&_animation, &QAbstractAnimation::finished, this, &PopUp::hide);
 
-    label.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    label.setStyleSheet("QLabel { color : white; "
+    _label.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    _label.setStyleSheet("QLabel { color : white; "
                         "margin-top: 6px;"
                         "margin-bottom: 6px;"
                         "margin-left: 10px;"
                         "margin-right: 10px; }");
 
-    layout.addWidget(&label, 0, 0);
-    setLayout(&layout);
+    _layout.addWidget(&_label, 0, 0);
+    setLayout(&_layout);
 
-    timer = new QTimer();
-    connect(timer, &QTimer::timeout, this, &PopUp::hideAnimation);
-
-    currentColor = QColor(0,0,0,180); //QColor redColor(255,10,10);
+    connect(&_timer, &QTimer::timeout, this, &PopUp::hideAnimation);
+    _currentColor = QColor(0,0,0,180);
 }
+
 
 void PopUp::paintEvent(QPaintEvent *event)
 {
@@ -47,110 +48,96 @@ void PopUp::paintEvent(QPaintEvent *event)
     roundedRect.setWidth(rect().width() - 10);
     roundedRect.setHeight(rect().height() - 10);
 
-    painter.setBrush(QBrush( currentColor )); //QColor(0,0,0,180)
+    painter.setBrush(QBrush( _currentColor )); //QColor(0,0,0,180)
     painter.setPen(Qt::NoPen);
 
     painter.drawRoundedRect(roundedRect, 10, 10);
 }
 
+
 void PopUp::setPopupText(const QString &text, const QString& color, const int seconds)
 {
-    if (color == "red")
-    {
-        currentColor = QColor(255,10,10);
-        label.setStyleSheet("QLabel { color : white; "
+    if (color == "red") {
+        _currentColor = QColor(255,10,10);
+        _label.setStyleSheet("QLabel { color : white; "
+                            "margin-top: 6px;"
+                            "margin-bottom: 6px;"
+                            "margin-left: 10px;"
+                            "margin-right: 10px; }");
+    }
+    if (color == "gray") {
+        _currentColor = QColor(90,90,90);
+        _label.setStyleSheet("QLabel { color : white; "
+                            "margin-top: 6px;"
+                            "margin-bottom: 6px;"
+                            "margin-left: 10px;"
+                            "margin-right: 10px; }");
+    }
+    if (color == "green") {
+        _currentColor = QColor(10,255,10);
+        _label.setStyleSheet("QLabel { color : black; "
+                            "margin-top: 6px;"
+                            "margin-bottom: 6px;"
+                            "margin-left: 10px;"
+                            "margin-right: 10px; }");
+    }
+    if (color == "yellow") {
+        _currentColor = QColor(255,255,10);
+        _label.setStyleSheet("QLabel { color : black; "
                             "margin-top: 6px;"
                             "margin-bottom: 6px;"
                             "margin-left: 10px;"
                             "margin-right: 10px; }");
     }
 
-    if (color == "gray")
-    {
-        currentColor = QColor(90,90,90);
-        label.setStyleSheet("QLabel { color : white; "
-                            "margin-top: 6px;"
-                            "margin-bottom: 6px;"
-                            "margin-left: 10px;"
-                            "margin-right: 10px; }");
-    }
-
-    if (color == "green")
-    {
-        currentColor = QColor(10,255,10);
-
-        label.setStyleSheet("QLabel { color : black; "
-                            "margin-top: 6px;"
-                            "margin-bottom: 6px;"
-                            "margin-left: 10px;"
-                            "margin-right: 10px; }");
-    }
-    if (color == "yellow")
-    {
-        currentColor = QColor(255,255,10);
-
-        label.setStyleSheet("QLabel { color : black; "
-                            "margin-top: 6px;"
-                            "margin-bottom: 6px;"
-                            "margin-left: 10px;"
-                            "margin-right: 10px; }");
-    }
-
-    secondsToStay = seconds;
-
-    label.setText(text);
+    _secondsToStay = seconds;
+    _label.setText(text);
     adjustSize();
 }
 
-void PopUp::show()
-{
+
+void PopUp::show() {
     setWindowOpacity(0.0);
-
-    animation.setDuration(150);
-    animation.setStartValue(0.0);
-    animation.setEndValue(1.0);
-
+    _animation.setDuration(150);
+    _animation.setStartValue(0.0);
+    _animation.setEndValue(1.0);
     setGeometry(QApplication::desktop()->availableGeometry().width() - 36 - width() + QApplication::desktop() -> availableGeometry().x(),
                 QApplication::desktop()->availableGeometry().height() - 36 - height() + QApplication::desktop() -> availableGeometry().y(),
                 width(),
                 height());
     QWidget::show();
-
-    animation.start();
-    timer->start(secondsToStay*1000);
+    _animation.start();
+    _timer.start(_secondsToStay * 1000);
 }
 
-void PopUp::mouseDoubleClickEvent(QMouseEvent * event)
-{
-    Q_UNUSED(event);
+
+void PopUp::mouseDoubleClickEvent([[maybe_unused]] QMouseEvent* event) {
     emit requestNotificationsViewFromCpp();
 }
 
 
-void PopUp::hideAnimation()
-{
-    timer->stop();
-    animation.setDuration(2000); //5000 can make it fade slower
-    animation.setStartValue(1.0);
-    animation.setEndValue(0.0);
-    animation.start();
+void PopUp::hideAnimation() {
+    _timer.stop();
+    _animation.setDuration(2000);
+    _animation.setStartValue(1.0);
+    _animation.setEndValue(0.0);
+    _animation.start();
 }
 
-void PopUp::hide()
-{
+
+void PopUp::hide() {
     if(getPopupOpacity() == 0.0){
         QWidget::hide();
     }
 }
 
-void PopUp::setPopupOpacity(float opacity)
-{
-    popupOpacity = opacity;
 
+void PopUp::setPopupOpacity(const float opacity) {
+    popupOpacity = opacity;
     setWindowOpacity(opacity);
 }
 
-float PopUp::getPopupOpacity() const
-{
+
+float PopUp::getPopupOpacity() const {
     return popupOpacity;
 }

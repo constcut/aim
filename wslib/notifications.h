@@ -9,7 +9,7 @@ class Notifications : public QObject {
     Q_OBJECT
 
 public:
-    Notifications(QObject *parent = 0) : QObject(parent) {}
+    Notifications(QObject *parent = nullptr) : QObject(parent) {}
     ~Notifications() = default;
 
     void startWatchDog(int setIntervalSec = 60 * 5) {

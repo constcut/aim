@@ -14,21 +14,18 @@ class PopUp : public QWidget
 
     Q_PROPERTY(float popupOpacity READ getPopupOpacity WRITE setPopupOpacity)
 
-    void setPopupOpacity(float opacity);
+    void setPopupOpacity(const float opacity);
     float getPopupOpacity() const;
 
 public:
-    explicit PopUp( QWidget *parent = 0);
 
-    void mouseDoubleClickEvent(QMouseEvent * event);
+    explicit PopUp(QWidget* parent = nullptr);
 
+    void mouseDoubleClickEvent(QMouseEvent* event);
 
-signals: //used for notifications and probably had to be updated one time
+signals:
     void requestNotificationsViewFromCpp();
 
-
-protected:
-    void paintEvent(QPaintEvent *event);
 
 public slots:
     void setPopupText(const QString& text, const QString& color, const int seconds);
@@ -39,16 +36,20 @@ private slots:
     void hideAnimation();
     void hide();
 
+protected:
+    void paintEvent(QPaintEvent* event);
+
 private:
-    QLabel label;
-    QGridLayout layout;
-    QPropertyAnimation animation;
+
     float popupOpacity;
-    QTimer *timer; //TODO no ptr!
 
-    QColor currentColor;
-    int secondsToStay;
+    QLabel _label;
+    QGridLayout _layout;
+    QPropertyAnimation _animation;
+    QTimer _timer;
 
+    QColor _currentColor;
+    int _secondsToStay;
 };
 
 #endif // POPUP_H
