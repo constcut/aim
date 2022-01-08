@@ -11,209 +11,48 @@
 
 #include "ListOperations.h"
 
+
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
-
 }
 
-void AbstractSqlBase::notifySqlError(QSqlQuery &query)
-{
+
+void AbstractSqlBase::notifySqlError(QSqlQuery& query) {
     qDebug() << "SQL error: "<<query.lastError();
     qDebug() << "On request: "<<lastRequestBody;
 }
 
-QVariantList AbstractSqlBase::fillList(QSqlQuery &query, int rowsCount) //maybe olso return as link&
+
+QVariantList AbstractSqlBase::fillList(QSqlQuery &query, const int rowsCount) //maybe olso return as link&
 {
     QVariantList filledList;
-
-    while (query.next())
-    {
+    while (query.next()) {
         QStringList oneLine;
-
-        for (int i = 0; i < rowsCount; ++i) //sqlite cant figure it out
-        {
+        for (int i = 0; i < rowsCount; ++i)
             oneLine << query.value(i).toString();
-            //qDebug() << i << query.value(i).toString();
-        }
-
         filledList << oneLine;
     }
-
     return filledList;
 }
 
 
 
 LocalSqlBase::LocalSqlBase(QObject *parent): AbstractSqlBase(parent)
-{
-    /*
-    if (!QSqlDatabase::drivers().contains("QSQLITE"))
-        qDebug() << "SQLite driver doesn't exists";
+{}
 
 
-    //QSqlDatabase::database("localbase", false).close();
-   // QSqlDatabase::removeDatabase("localbase");
-
-     dataBase = QSqlDatabase::addDatabase("QSQLITE");
-     dataBase.setDatabaseName(":memory:"); //localbase.sqlite:
-
-     if (dataBase.isValid()==false)
-         qDebug() << "Base is not valid!";
-
-     if (dataBase.open()==false)
-         qDebug() << "Failed to open sqlite base";
-     else
-         qDebug() << "SQLite base opened";
-         */
-}
-
-LocalSqlBase::~LocalSqlBase()
-{
-    //dataBase.close();
-}
-
-QSqlQuery LocalSqlBase::executeRequest(QString requestBody)
-{
+QSqlQuery LocalSqlBase::executeRequest(const QString requestBody) {
     lastRequestBody = requestBody;
-
-    QSqlQuery request; //always do on default on sqlite
-
+    QSqlQuery request;
     if (request.exec(requestBody)==false)
         notifySqlError(request);
-
     return request;
 }
 
-////========================================================================
 
-//Good to make auto creating bases for local one with SQL statements
-
-//==================first start on most simple things=======================
-/*
-int LocalSqlBase::addCategory(QString categoryName, QString categoryParent)
-{
-    QString requestBody("INSERT OUTPUT INSERTED.categoryId INTO categories (categoryName,categoryParent) VALUES('%1','%2')");
-    requestBody.arg(categoryName,categoryParent);
-
-    QSqlQuery request = executeRequest(requestBody);
-
-    if (request.next())
-        return request.value(0).toInt();
-
-    return -1;
-}
-
-QVariantList LocalSqlBase::getCatregories() //please check about & return - is it qml fine
-{
-    QString requestBody = "SELECT * FROM categories"; //on remote would append WHERE userId=''
-    ///please think about how to use local & global bases fine - not to copypaste whole code
-    QSqlQuery request = executeRequest(requestBody);
-    return fillList(request,3);
-}
-
-
-int LocalSqlBase::addFriend(QString friendNick)
-{
-    QString requestBody("INSERT OUTPUT INSERTED.friendId INTO friends (friendNick) VALUES('%1')");
-    requestBody.arg(friendNick);
-
-    QSqlQuery request = executeRequest(requestBody);
-
-    if (request.next())
-        return request.value(0).toInt();
-
-    return -1;
-}
-
-QVariantList LocalSqlBase::getFriends()
-{
-    QString requestBody = "SELECT * FROM friends"; //on remote would append WHERE userId=''
-    QSqlQuery request = executeRequest(requestBody);
-    return fillList(request,2);
-}
-
-QString LocalSqlBase::searchFriendByMail(QString mail)
-{
-    return ""; //unabled to search offline
-}
-
-QString LocalSqlBase::searchFriendByPhone(QString phone)
-{
-    return ""; //unabled to search offline
-}
-
-QVariantList LocalSqlBase::getGroups()
-{
-    QString requestBody = "SELECT * FROM groups";
-    QSqlQuery request = executeRequest(requestBody);
-    return fillList(request,2);
-}
-
-int LocalSqlBase::createGroup(QString groupName) //creater becomes owner
-{
-    return -1; //not usable offline
-}
-
-bool LocalSqlBase::addFriendToGroup(QString groupName, QString friendNick)
-{
-    return false; //not usable offline
-}
-
-bool LocalSqlBase::sendPrivateMessage(QString friendNick, QString message, QString aimId)
-{
-    QString requestBody("INSERT OUTPUT INSERTED.friendId INTO pendingMessages (messageType,destination,message,aimId) VALUES('f','%1','%2','%3')");
-    requestBody.arg(friendNick,message,aimId); //f - means friend type message
-
-    QSqlQuery request = executeRequest(requestBody);
-
-    if (request.next())
-        return request.value(0).toInt(); //amount of messages in queue
-
-    return -1;
-}
-bool LocalSqlBase::sendGroupMessage(QString groupName, QString message, QString aimId)
-{
-    ///should store in the same temp base, just with different flags
-}
-
-int LocalSqlBase::addList(QString listName, QString listType)
-{
-    QString requestBody("INSERT OUTPUT INSERTED.friendId INTO lists (listName,listType) VALUES('%1','%2')");
-    requestBody.arg(listName,listType);
-
-    QSqlQuery request = executeRequest(requestBody);
-
-    if (request.next())
-        return request.value(0).toInt();
-
-    return -1;
-}
-
-int LocalSqlBase::insertListElement(QString listName, QString elementValue)
-{
-    //value deppends on list type: on string - just it, on aim - its name (or id?)
-}
-
-bool LocalSqlBase::editListElement(QString listName, int elementIndex, QString elementValue)
-{
-    ///had to find list id first, then connect with it adding
-}
-
-QVariantList LocalSqlBase::getLists()
-{
-    QString requestBody = "SELECT * FROM lists";
-    QSqlQuery request = executeRequest(requestBody);
-    return fillList(request,3);
-}
-*/
-///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//=============FINALY AIMS itself=======================
-///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-QString LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                         QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
-                        QString repeatable, QString privacy)
+QString LocalSqlBase::addAim(const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
+                         const QString assignTo, /*delayed*/ const QString priority,  const QString parent, [[maybe_unused]] const QString progress,
+                        const QString repeatable, [[maybe_unsued]] const  QString privacy)
 {
 
     QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
@@ -228,10 +67,12 @@ QString LocalSqlBase::addAim(QString aimName, QString timeAndDate, QString comme
                          "','" + parent +  "','" + repeatable + "');");
 
     QSqlQuery request = executeRequest(requestBody);
-    return getLastAimId(); //but doesn't help if were not added
+    return getLastAimId();
 }
 
-QString LocalSqlBase::getLastAimId(){ //last added actually
+
+
+QString LocalSqlBase::getLastAimId() { //last added actually
     QString requestBody = "SELECT last_insert_rowid() FROM aims";
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimIdList = fillList(request,1);
@@ -239,9 +80,10 @@ QString LocalSqlBase::getLastAimId(){ //last added actually
     return aimId[0];
 }
 
-bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, QString comment, QString tag,
-                           QString assignTo, /*delayed*/ QString priority,  QString parent, QString progress,
-                         QString repeatable, QString privacy)
+
+bool LocalSqlBase::editAim(const QString aimId, const QString aimName, const QString timeAndDate, const QString comment, const  QString tag,
+                           const QString assignTo, /*delayed*/ const QString priority, const QString parent, [[maybe_unused]] const QString progress,
+                         const QString repeatable, [[maybe_unused]] const QString privacy)
 {
     QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
     QString timePart;
@@ -253,426 +95,356 @@ bool LocalSqlBase::editAim(QString aimId,QString aimName, QString timeAndDate, Q
                         "assignTo='%6',priority='%7',parentAim='%8',repeatable='%9'")
             .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(parent).arg(repeatable)
             +  QString(" WHERE aimId='%1';").arg(aimId);
-    ///use this practice to replace all the bad code
-
-    //qDebug() << requestBody << " formed request";
 
     QSqlQuery request = executeRequest(requestBody);
-
     if (request.next())
-        return request.value(0).toInt(); //no sure it works..
-
-
-
+        return request.value(0).toInt();
     return false;
 }
 
-bool LocalSqlBase::updateAimProgress(QString aimId, QString progress, QString progressText)
+
+bool LocalSqlBase::updateAimProgress(const QString aimId, const QString progress, const QString progressText)
 {
     QString requestBody = QString("UPDATE aims SET progress='%1',progressText='%2'")
             .arg(progress).arg(progressText)
             +  QString(" WHERE aimId='%1';").arg(aimId);
-    ///use this practice to replace all the bad code
-    ///
+
     QSqlQuery request = executeRequest(requestBody);
-
-
     QDateTime now = QDateTime::currentDateTime();
     QString currentMoment = now.toString("yyyy-MM-ddTHH:mm:ss");
 
     QString logRecord = QString("INSERT INTO progress (aimId,progress,progressText,moment) VALUES('%1','%2','%3','%4');")
             .arg(aimId).arg(progress).arg(progressText).arg(currentMoment);
 
-
     if (request.next())
         return request.value(0).toInt();
+    return false;
 }
 
 
-bool LocalSqlBase::editTreeAims(TreeModel *aims) //actually here must be QObject
+bool LocalSqlBase::editTreeAims(TreeModel *aims)
 {
-    qDebug() << "Editing Tree Aims";
-
     QVariantList treeAims =  aims->getFullList();
     QVariantList allAims = getAims();
-
     QVariantList toInsert,toEdit,toDelete;
     compareLists(allAims, treeAims,toInsert,toEdit,toDelete);
 
-    for (int i = 0 ; i < toInsert.size(); ++i)
-    {
-        QStringList aimLine = toInsert[i].toStringList();
+    for (int i = 0 ; i < toInsert.size(); ++i) {
+        const QStringList aimLine = toInsert[i].toStringList();
 
-        QString aimId = aimLine[0];
-        QString aimName = aimLine[1];
-        QString timePart = aimLine[2];
-        QString datePart = aimLine[3];
-        QString comment = aimLine[4];
-        QString tag = aimLine[5];
-        QString assignTo = aimLine[6];
-        QString priority = aimLine[7];
-        QString progress = aimLine[8];
-        QString progressText = aimLine[9];
-        QString parentAim = aimLine[10];
-        //privacy had to be missing
+        //const QString aimId = aimLine[0];
+        const QString aimName = aimLine[1];
+        const QString timePart = aimLine[2];
+        const QString datePart = aimLine[3];
+        const QString comment = aimLine[4];
+        const QString tag = aimLine[5];
+        const QString assignTo = aimLine[6];
+        const QString priority = aimLine[7];
+        const QString progress = aimLine[8];
+        //const QString progressText = aimLine[9];
+        const QString parentAim = aimLine[10];
 
         QString timeAndDate = datePart;
         if (timePart.isEmpty()==false)
             timeAndDate += "T" + timePart;
 
-        //some other fields yet missing
-        addAim(aimName,timeAndDate,comment,tag,assignTo,priority,parentAim,progress);
+        addAim(aimName, timeAndDate, comment, tag, assignTo, priority, parentAim, progress);
     }
 
-    for (int i = 0; i < toEdit.size(); ++i)
-    {
-        QStringList aimLine = toEdit[i].toStringList();
+    for (int i = 0; i < toEdit.size(); ++i) {
+        const QStringList aimLine = toEdit[i].toStringList();
 
-        QString aimId = aimLine[0];
-        QString aimName = aimLine[1];
-        QString timePart = aimLine[2];
-        QString datePart = aimLine[3];
-        QString comment = aimLine[4];
-        QString tag = aimLine[5];
-        QString assignTo = aimLine[6];
-        QString priority = aimLine[7];
-        QString progress = aimLine[8];
-        QString progressText = aimLine[9];
-        QString parentAim = aimLine[10];
-        //privacy had to be missing
+        const QString aimId = aimLine[0];
+        const QString aimName = aimLine[1];
+        const QString timePart = aimLine[2];
+        const QString datePart = aimLine[3];
+        const QString comment = aimLine[4];
+        const QString tag = aimLine[5];
+        const QString assignTo = aimLine[6];
+        const QString priority = aimLine[7];
+        const QString progress = aimLine[8];
+        const QString progressText = aimLine[9];
+        const QString parentAim = aimLine[10];
 
         QString timeAndDate = datePart;
         if (timePart.isEmpty()==false)
             timeAndDate += "T" + timePart;
 
-        editAim(aimId,aimName,timeAndDate,comment,tag,assignTo,priority,parentAim,progress);
+        editAim(aimId, aimName, timeAndDate, comment, tag, assignTo, priority, parentAim, progress);
     }
 
-    //nice if there would be not a real delete but some put in trash
-    for (int i = 0; i < toDelete.size(); ++i)
-    {
+    for (int i = 0; i < toDelete.size(); ++i) {
         QStringList aimLine = toDelete[i].toStringList();
-
-        QString aimId = aimLine[0];
-
+        const QString aimId = aimLine[0];
         deleteAim(aimId);
     }
-
     return true;
 }
 
 
 
-
 inline uint qHash(const QVariant& varString)
 {
-    QString stringValue = varString.toString();
-    return qHash(stringValue,0xa03f);
+    const QString stringValue = varString.toString();
+    return qHash(stringValue, 0xa03f);
 }
+
 
 QVariantList addTagPairs(QString tag)
 {
     QVariantList result;
-if (tag.isEmpty())
-    return result;
+    if (tag.isEmpty())
+        return result;
 
     int lastDot = tag.lastIndexOf(".");
-    while (lastDot != -1) //hope its right condition
-    {
+    while (lastDot != -1)  {
         QStringList tagsPair;
-        QString parentTag = tag.mid(0,lastDot); //or no -1. hahaha?
-
+        const QString parentTag = tag.mid(0,lastDot); //or no -1. hahaha?
         tagsPair << tag << parentTag;
-
         result << tagsPair;
-
-        tag=parentTag;
+        tag = parentTag;
         lastDot = tag.lastIndexOf(".");
     }
 
     QStringList tagsPair;
-    tagsPair << tag << QString(); //and root one
-
+    tagsPair << tag << QString();
     result << tagsPair;
-
     return result;
 }
+
 
 QVariantList addTagPairs(QStringList aimLine)
 {
-    QString tag = aimLine[5];
-
-    //TO MAKE POSSIBLE MULTIPLE TAGS WE JUST NEED TO
+    const QString tag = aimLine[5];
     QStringList tagParts = tag.split(" ");
 
     QVariantList result;
-
     for (int i = 0; i < tagParts.size(); ++i)
         result += addTagPairs(tagParts[i]);
 
-                return result;
+    return result;
 }
+
 
 QVariantList LocalSqlBase::getAllTags()
 {
-        QVariantList allAims = getAims();
-        QVariantList allTags;
-
-        for (int i = 0; i < allAims.size(); ++i)
-        {
-           QVariantList thisTag = addTagPairs(allAims[i].toStringList());
-            allTags += thisTag;
-        }
-
-        QSet<QVariant> norepeats = allTags.toSet();
-        QVariantList norepeatsList = norepeats.toList();
-
-        return norepeatsList;
+    QVariantList allAims = getAims();
+    QVariantList allTags;
+    for (int i = 0; i < allAims.size(); ++i){
+        QVariantList thisTag = addTagPairs(allAims[i].toStringList());
+        allTags += thisTag;
+    }
+    QSet<QVariant> norepeats = allTags.toSet();
+    QVariantList norepeatsList = norepeats.toList();
+    return norepeatsList;
 }
 
 
-bool LocalSqlBase::deleteAim(QString aimId)
+bool LocalSqlBase::deleteAim(const QString aimId)
 {
-    QString requestBody("DELETE FROM aims WHERE aimId='"+
+    const QString requestBody("DELETE FROM aims WHERE aimId='"+
                         aimId + "';");
 
     QSqlQuery request = executeRequest(requestBody);
-
     return request.next();
 }
 
+
 QStringList LocalSqlBase::getAimsNames()
 {
-    QVariantList aimsList = getAims();
-
+    const QVariantList aimsList = getAims();
     QStringList result;
     result << QString();
-    result += createListByField(aimsList,1);
-
+    result += createListByField(aimsList, 1);
     return result;
 }
+
 
 QStringList LocalSqlBase::getAimsNamesBackwards()
 {
-    QVariantList aimsList = getAims();
-
+    const QVariantList aimsList = getAims();
     QStringList result;
     result << QString();
-    result += createListByFieldBackwards(aimsList,1); //10 but i yet ruins too much of done..
-
+    result += createListByFieldBackwards(aimsList, 1);
     return result;
 }
 
+
 QVariantList LocalSqlBase::getCurrentMomementAims()
 {
-    QDateTime now(QDateTime::currentDateTime());
+    const QDateTime now(QDateTime::currentDateTime());
+    const QString dateAndTime = now.toString("yyyy-MM-ddTHH:mm");
 
-    QString dateAndTime = now.toString("yyyy-MM-ddTHH:mm");
-
-    QString timePart,datePart;
-
-    datePart = dateAndTime.mid(0,dateAndTime.indexOf("T"));
-    timePart = dateAndTime.mid(dateAndTime.indexOf("T")+1);
+    const QString timePart = dateAndTime.mid(dateAndTime.indexOf("T")+1);
+    const QString datePart = dateAndTime.mid(0,dateAndTime.indexOf("T"));
 
     QString requestBody = QString("SELECT * FROM aims WHERE timePart='%1' AND datePart='%2';")
             .arg(timePart).arg(datePart);
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
-
-    return aimsList;
+    return fillList(request, 13);;
 }
 
-QStringList LocalSqlBase::getCurrentMomementAimsNames()
-{
+
+QStringList LocalSqlBase::getCurrentMomementAimsNames() {
    return createListByField(getCurrentMomementAims(),1);
 }
 
 
 bool sortingCondition(const QVariant &v1, const QVariant &v2){
-    QStringList line1 = v1.toStringList();
-    QStringList line2 = v2.toStringList();
-
-    QString dateString1 = line1[3];
-    QString dateString2 = line2[3];
-
-    QDate date1 = QDate::fromString(dateString1,"yyyy-MM-dd");
-    QDate date2 = QDate::fromString(dateString2,"yyyy-MM-dd");
-
+    const QStringList line1 = v1.toStringList();
+    const QStringList line2 = v2.toStringList();
+    const QString dateString1 = line1[3];
+    const QString dateString2 = line2[3];
+    const QDate date1 = QDate::fromString(dateString1,"yyyy-MM-dd");
+    const QDate date2 = QDate::fromString(dateString2,"yyyy-MM-dd");
     return date1 < date2;
 }
 
+
 QVariantList LocalSqlBase::getFutureAims()
 {
-    QDate today(QDate::currentDate());
-
-    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
-
+    const QDate today(QDate::currentDate());
+    const QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
+    const QVariantList aimsList = fillList(request,13); //11 is fields amount
 
     QVariantList futureAims;
-
     for (int i = 0; i < aimsList.size(); ++i){
-        QStringList aimLine = aimsList[i].toStringList();
-        QString dateValue = aimLine[3];
-
-        QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
-
+        const QStringList aimLine = aimsList[i].toStringList();
+        const QString dateValue = aimLine[3];
+        const QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
         if (date > today)
             futureAims << aimLine;
     }
-
     qSort(futureAims.begin(),futureAims.end(), sortingCondition);
-
     return futureAims;
 }
 
+
 QVariantList LocalSqlBase::getDelayedAims()
 {
-    QDate today(QDate::currentDate());
-
-    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
-
+    const QDate today(QDate::currentDate());
+    const QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL;";
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimsList = fillList(request,13); //11 is fields amount
 
     QVariantList pastAims;
-
-    for (int i = 0; i < aimsList.size(); ++i)
-    {
-        QStringList aimLine = aimsList[i].toStringList();
-        QString dateValue = aimLine[3];
-
-        QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
-
+    for (int i = 0; i < aimsList.size(); ++i) {
+        const QStringList aimLine = aimsList[i].toStringList();
+        const QString dateValue = aimLine[3];
+        const QDate date = QDate::fromString(dateValue,"yyyy-MM-dd");
         if (date < today)
             pastAims << aimLine;
     }
-
     return pastAims;
 }
 
-QStringList LocalSqlBase::getFutureAimsNames()
-{
+
+QStringList LocalSqlBase::getFutureAimsNames() {
     return createListByField(getFutureAims(),1);
 }
 
-QStringList LocalSqlBase::getDelayedAimsNames()
-{
+
+QStringList LocalSqlBase::getDelayedAimsNames() {
     return createListByField(getDelayedAims(),1);
 }
 
 
-QVariantList LocalSqlBase::getAims()
-{
+QVariantList LocalSqlBase::getAims() {
     QString requestBody = "SELECT * FROM aims";
-
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
-
+    QVariantList aimsList = fillList(request, 13);
     return aimsList;
 }
 
-QVariantList LocalSqlBase::getAimsBackwards(){ //all new functions shoud have new style, old would be refactored
+
+QVariantList LocalSqlBase::getAimsBackwards() {
     QVariantList result;
     QVariantList aims = getAims();
-
     for (auto i = aims.size()-1; i >= 0; --i)
         result << aims[i];
-
     return result;
 }
 
-QVariantList LocalSqlBase::getChildAims(QString parentAimId)
+
+QVariantList LocalSqlBase::getChildAims(const QString parentAimId)
 {
-    QString requestBody =
+    const QString requestBody =
             QString("SELECT * FROM aims WHERE parentAim='%1';")
             .arg(parentAimId);
-
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
-
-    return aimsList;
+    return fillList(request, 13);;
 }
 
-QStringList LocalSqlBase::getChildAimsNames(QString parentAimId)
+
+QStringList LocalSqlBase::getChildAimsNames(const QString parentAimId)
 {
     QVariantList aimsList = getChildAims(parentAimId);
-    return createListByField(aimsList,1);
+    return createListByField(aimsList, 1);
 }
 
 
-QVariantList LocalSqlBase::getAimsByDate(QString date)
+QVariantList LocalSqlBase::getAimsByDate(const QString date)
 {
     QVariantList aimsList = getAimsByDateOnly(date);
             aimsList += getPeriodHitAimsByDate(date);
-
     return aimsList;
 }
+
 
 QVariantList LocalSqlBase::getAimsByDateOnly(QString date)
 {
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
-
-    QString requestBody = "SELECT * FROM aims WHERE datePart='" + date + "';";
-
+    const QString requestBody = "SELECT * FROM aims WHERE datePart='" + date + "';";
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
-
-    return aimsList;
+    return fillList(request, 13);;
 }
 
-quint64 LocalSqlBase::getDoneActionsLength(QString date){ //this is finally goodbye to old style and request on refactoring
 
+quint64 LocalSqlBase::getDoneActionsLength(QString date) {
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
 
-    QString requestBody = "SELECT totalLength FROM actions WHERE moment LIKE '" + date + "%';";
-
+    const QString requestBody = "SELECT totalLength FROM actions WHERE moment LIKE '" + date + "%';";
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList lengthList = fillList(request,1); //1 is fields amount
-    //qDebug() << lengthList;
-
+    QVariantList lengthList = fillList(request,1);
     quint64 totalSecondsSpent=0;
-
     for (auto i = 0; i < lengthList.size(); ++i){
-        QStringList l = lengthList[i].toStringList();
-        QString secondsSpent = l[0];
+        const QStringList l = lengthList[i].toStringList();
+        const QString secondsSpent = l[0];
         totalSecondsSpent += secondsSpent.toUInt();
     }
-
     return totalSecondsSpent;
 }
 
-QString LocalSqlBase::secondsTranslate(quint64 seconds)
+
+QString LocalSqlBase::secondsTranslate(const quint64 seconds)
 {
     if (seconds == 0)
         return QString("is not finished");
 
-    quint64 minutes = seconds / 60;
-    quint64 leftSec = seconds % 60;
-    quint64 hours = minutes / 60;
-    quint64 leftMinutes = minutes % 60;
+    const quint64 minutes = seconds / 60;
+    const quint64 leftSec = seconds % 60;
+    const quint64 hours = minutes / 60;
+    const quint64 leftMinutes = minutes % 60;
 
     return QString::number(hours) + QString("h ") + QString::number(leftMinutes) + QString("m ") +
             QString::number(leftSec) + QString("s");
 }
 
-QStringList LocalSqlBase::getDoneActionsList(QString date){
+
+QStringList LocalSqlBase::getDoneActionsList(QString date) {
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
 
-    QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
+    const QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList allActionsList = fillList(request,6); //6 is fields amount
-    //we can do here with map
-    //qDebug() << allActionsList;
+    const QVariantList allActionsList = fillList(request, 6);
 
     QMap<QString,quint32> counts;
-
     for (auto i = 0; i < allActionsList.size(); ++i){
         QStringList actionLine = allActionsList[i].toStringList();
         if (counts.contains(actionLine[2]))
@@ -682,185 +454,165 @@ QStringList LocalSqlBase::getDoneActionsList(QString date){
     }
 
     QStringList allStringLines;
-
     for (auto i = 0; i < counts.size(); ++i){
-       QString anotherKey =  (counts.begin()+i).key();
-       QStringList aim = getSingleAim(anotherKey);
-
-       QString fullLine = QString("<style>a:link { color:#11FF33; }</style>") +
-               QString("<br>On <b><big>") + QString("  <a color='11FF22' href=\"") +anotherKey+
-                                                QString("\">")+aim[1]+QString("</a>") +
-               QString("</big></b>       ") + secondsTranslate(counts[anotherKey]);
-
-       allStringLines<<fullLine;
+       const QString anotherKey =  (counts.begin()+i).key();
+       const QStringList aim = getSingleAim(anotherKey);
+       const QString fullLine = QString("<style>a:link { color:#11FF33; }</style>") +
+               QString("<br>On <b><big>") + QString("  <a color='11FF22' href=\"") + anotherKey+
+               QString("\">") + aim[1] + QString("</a>") + QString("</big></b>       ")
+               + secondsTranslate(counts[anotherKey]);
+       allStringLines << fullLine;
     }
-
     return allStringLines;
 }
+
 
 QVariantList LocalSqlBase::getAllDoneActionsList(QString date){
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
-
-    QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
-
+    const QString requestBody = "SELECT * FROM actions WHERE moment LIKE '" + date + "%';";
     QSqlQuery request = executeRequest(requestBody);
     QVariantList allActionsList = fillList(request,6); //6 is fields amount
-
     return allActionsList;
 }
 
-bool canDateHitPeriod(QString originDate, QString period, QString searchDate)
+
+bool canDateHitPeriod(const QString originDate, QString period, const QString searchDate)
 {
-    QString daysPeriod = period.mid(0,period.indexOf("d"));
-    qint64 daysAmount = daysPeriod.toInt();
+    const QString daysPeriod = period.mid(0,period.indexOf("d"));
+    const qint64 daysAmount = daysPeriod.toInt();
     if (daysAmount == 0)
         return false;
 
-    QDate originDateValue = QDate::fromString(originDate,"yyyy-MM-dd");
-    QDate searchDateValue = QDate::fromString(searchDate,"yyyy-MM-dd");
+    const QDate originDateValue = QDate::fromString(originDate,"yyyy-MM-dd");
+    const QDate searchDateValue = QDate::fromString(searchDate,"yyyy-MM-dd");
 
     if (searchDateValue <= originDateValue)
         return false;
 
-    qint64 daysBetween = originDateValue.daysTo(searchDateValue);
-
-    if (daysBetween%daysAmount==0)
+    const qint64 daysBetween = originDateValue.daysTo(searchDateValue);
+    if (daysBetween % daysAmount==0)
         return true;
 
     return false;
 }
+
 
 QVariantList LocalSqlBase::getPeriodHitAimsByDate(QString date)
 {
     if (date.indexOf("T") != -1)
         date = date.mid(0,date.indexOf("T"));
 
-    QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL AND repeatable NOT NULL;";
-
+    const QString requestBody = "SELECT * FROM aims WHERE datePart NOT NULL AND repeatable NOT NULL;";
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimsList = fillList(request,13); //11 is fields amount
 
+    const QVariantList aimsList = fillList(request,13);
     QVariantList hittedPeriodAims;
 
-    //then we must check each of the date + period, for posibility to hit date
-    for (int i = 0; i < aimsList.size(); ++i)
-    {
+    for (int i = 0; i < aimsList.size(); ++i) {
         QStringList aimLine = aimsList[i].toStringList();
-
         QString originDate = aimLine[3];
-        QString period = aimLine[11]; //actually 11, but only after reboot of base.. terrible
-
+        QString period = aimLine[11];
         if (canDateHitPeriod(originDate,period,date))
             hittedPeriodAims << aimLine;
     }
-
     return hittedPeriodAims;
 }
 
-QStringList LocalSqlBase::getSingleAim(QString aimId)
-{
-    QString requestBody = "SELECT * FROM aims WHERE aimId='" + aimId + "';";
+
+QStringList LocalSqlBase::getSingleAim(const QString aimId) {
+    const QString requestBody = "SELECT * FROM aims WHERE aimId='" + aimId + "';";
     QSqlQuery request = executeRequest(requestBody);
+    const QVariantList allLines = fillList(request, 13);
 
-    QVariantList allLines = fillList(request,13); //11 is fields amount
     QStringList result;
-
     if (allLines.size() > 0)
         result = allLines[0].toStringList(); //taking only first line
-
     return result;
 }
 
-QVariantList LocalSqlBase::searchAimsByName(QString searchText)
+
+QVariantList LocalSqlBase::searchAimsByName(const QString searchText)
 {
-    QString requestBody = "SELECT * FROM aims";
+    const QString requestBody = "SELECT * FROM aims";
     QSqlQuery request = executeRequest(requestBody);
 
     QVariantList searchResult;
-    QVariantList aimsList = fillList(request,12);
+    const QVariantList aimsList = fillList(request,12);
 
     QRegExp pattern("*" + searchText + "*");
     pattern.setPatternSyntax(QRegExp::Wildcard);
 
-    for (int i = 0; i < aimsList.size(); ++i)
-    {
+    for (int i = 0; i < aimsList.size(); ++i) {
         QStringList aimLine= aimsList[i].toStringList();
         QString aimName = aimLine[1];
-
         if (pattern.exactMatch(aimName))
             searchResult.append(aimLine);
-
     }
-
     return searchResult;
 }
 
-//The serialization section
 
-//========================export import=======================
-
-void writeStringToFile(QFile &file, QString &string){
-    quint32 stringLen = string.size();
+void writeStringToFile(QFile &file, const QString& string){
+    const quint32 stringLen = string.size();
     file.write((char*)&stringLen,sizeof (stringLen));
     file.write(string.toLocal8Bit());
 }
 
+
 QString readStringFromFile(QFile &file){
     quint32 stringLen = 0;
     file.read((char*)&stringLen,sizeof(stringLen));
-    QByteArray bytes = file.read(stringLen);
+    const QByteArray bytes = file.read(stringLen);
     return QString(bytes);
 }
 
-int LocalSqlBase::checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                                         QString assignTo, QString priority,  QString parent, QString progress,
-                                         QString repeatable)
+
+int LocalSqlBase::checkThereIsSameAim(const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
+                                         const QString assignTo, const QString priority, [[maybe_unused]] const QString parent,
+                                        [[maybe_unused]] QString progress, QString repeatable)
 {
-    QString datePart = timeAndDate.mid(0,timeAndDate.indexOf("T"));
+    const QString datePart = timeAndDate.mid(0, timeAndDate.indexOf("T"));
     QString timePart;
 
     if (timeAndDate.indexOf("T") > 0)
         timePart = timeAndDate.mid(timeAndDate.indexOf("T")+1);
 
-    QString requestBody = QString("SELECT * FROM aims WHERE aimName='%1' AND timePart='%2' AND datePart='%3' AND comment='%4' AND tag='%5'"
+    const QString requestBody = QString("SELECT * FROM aims WHERE aimName='%1' AND timePart='%2' AND datePart='%3' AND comment='%4' AND tag='%5'"
                         "AND assignTo='%6' AND priority='%7' AND repeatable='%8';") //AND parentAim='%8'
             .arg(aimName).arg(timePart).arg(datePart).arg(comment).arg(tag).arg(assignTo).arg(priority).arg(repeatable); //.arg(parent)
 
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList allLines = fillList(request,13);
+    const QVariantList allLines = fillList(request,13);
 
     if (allLines.size() == 0)
         return 0;
-
-    if (allLines.size() == 1){
-        //check progress values
-        //WE CAN CHECK IF THERE IS A PROGRESS UPDATE AND RECOGNIZE IT AS NOT SEPPARATED AIM BUT THE ONE WE HAVE AND UPDATE IT THEN
+    if (allLines.size() == 1)
         return 1;
-    }
-
     if (allLines.size() > 1)
         return 2;
-
     return -1;
 }
 
-int LocalSqlBase::checkThereIsSameAim(QStringList aimLine){
+
+int LocalSqlBase::checkThereIsSameAim(const QStringList aimLine) {
     QString fulldate = aimLine[3];
     if (aimLine[2].isEmpty() == false)
         fulldate += QString("T") + aimLine[2];
 
-    return checkThereIsSameAim(aimLine[1],fulldate,aimLine[4],aimLine[5],aimLine[6],aimLine[7],"",aimLine[8],aimLine[11]); //skipped is parent [10]
-    //Parent move back when export import with children would be allowed
+    return checkThereIsSameAim(aimLine[1], fulldate, aimLine[4], aimLine[5], aimLine[6],
+            aimLine[7], "", aimLine[8], aimLine[11]);
+
 }
 
-int LocalSqlBase::checkThereIsSameImportAim(QString filename){
+
+int LocalSqlBase::checkThereIsSameImportAim(QString filename) {
+
     if (filename.indexOf("file://")!=-1)
         filename.replace("file://","");
 
     QFile importFile(filename);
     importFile.open(QIODevice::ReadOnly);
-
     if (importFile.isOpen()==false)
         return false;
 
@@ -868,71 +620,58 @@ int LocalSqlBase::checkThereIsSameImportAim(QString filename){
     importFile.read((char*)&fieldsMask,sizeof (fieldsMask));
 
     const int totalFields = 13;
-
     QStringList loadedAim;
 
-    for (auto i = 0; i < totalFields; ++i){
-        quint32 localMask = 1 << i;
-
-        if (fieldsMask & localMask){
-
+    for (auto i = 0; i < totalFields; ++i) {
+        const quint32 localMask = 1 << i;
+        if (fieldsMask & localMask)
             loadedAim << readStringFromFile(importFile);
-        }
         else
             loadedAim << QString();
     }
+
     return checkThereIsSameAim(loadedAim);
 }
 
 
-bool LocalSqlBase::exportAim(QString aimId, QString filename){
+bool LocalSqlBase::exportAim(const QString aimId, QString filename){
     QStringList oneAim = getSingleAim(aimId);
     quint32 fieldsMask = 0;
-
 
     for (auto i = 0; i < oneAim.size(); ++i){
         if (oneAim[i].isEmpty()==false)
             fieldsMask |= 1 << i;
     }
 
-    //qDebug() << "Saving aim is "<<oneAim;
-    //qDebug() << "Field mask on save "<<fieldsMask;
-
     if (filename.indexOf("file://")!=-1)
         filename.replace("file://","");
 
     QFile exportFile(filename);
     exportFile.open(QIODevice::WriteOnly);
-
     if (exportFile.isOpen()==false)
         return false;
 
     exportFile.write((char*)&fieldsMask,sizeof (fieldsMask));
 
-    for (auto i = 0; i < oneAim.size(); ++i){
-       if (oneAim[i].isEmpty()==false){
-           writeStringToFile(exportFile,oneAim[i]);
-           //quint32 fieldLength = oneAim[i].size();
-           //exportFile.write((char*)&fieldLength,sizeof(fieldLength));
-           //exportFile.write(oneAim[i].toLocal8Bit()); //untill 0 char
-       }
-    }
+    for (auto i = 0; i < oneAim.size(); ++i)
+       if (oneAim[i].isEmpty( )== false)
+           writeStringToFile(exportFile, oneAim[i]);
 
     QVariantList links = getAimLinks(oneAim[0]);
-    quint32 linksSize = links.size();
+    const quint32 linksSize = links.size();
     exportFile.write((char*)&linksSize,sizeof(linksSize));
 
     for (auto i = 0; i < links.size(); ++i){
-        QStringList linkLine = links[i].toStringList();
-        QString linkValue = linkLine[2];
-        QString linkName = linkLine[3];
+        const QStringList linkLine = links[i].toStringList();
+        const QString linkValue = linkLine[2];
+        const QString linkName = linkLine[3];
         writeStringToFile(exportFile,linkValue);
         writeStringToFile(exportFile,linkName);
     }
-
     exportFile.close();
     return true;
 }
+
 
 bool LocalSqlBase::importAim(QString filename){
 
@@ -941,7 +680,6 @@ bool LocalSqlBase::importAim(QString filename){
 
     QFile importFile(filename);
     importFile.open(QIODevice::ReadOnly);
-
     if (importFile.isOpen()==false)
         return false;
 
@@ -949,51 +687,34 @@ bool LocalSqlBase::importAim(QString filename){
     importFile.read((char*)&fieldsMask,sizeof (fieldsMask));
 
     const int totalFields = 13;
-
     QStringList loadedAim;
-
     for (auto i = 0; i < totalFields; ++i){
-        quint32 localMask = 1 << i;
-
-        if (fieldsMask & localMask){
-            //qDebug() << "So we add field "<<i<<" "<<(localMask);
-            //quint32 fieldLength = 0;
-            //importFile.read((char*)&fieldLength,sizeof(fieldLength));
-            //QByteArray bytes = importFile.read(fieldLength);
-            //loadedAim << QString(bytes);
+        const quint32 localMask = 1 << i;
+        if (fieldsMask & localMask)
             loadedAim << readStringFromFile(importFile);
-        }
         else
             loadedAim << QString();
     }
 
-    //qDebug() << "Imported aim is: "<<loadedAim;
-    //qDebug() << "Field mask on load "<<fieldsMask;
-    //id, name, time, date, comment, tag, assign, prio, progress, progressText, parent, repeat, privacy, duration
-    //addAim function fields
-
-            //name,          timeAndDate,                          comment, tag,             assignTo, prio,
-    QString aimId = addAim(loadedAim[1],loadedAim[3]+QString("T")+loadedAim[2],loadedAim[4],loadedAim[5],loadedAim[6],loadedAim[7],
-            loadedAim[10],loadedAim[8],loadedAim[11],loadedAim[12]);
-            //parent,      progress,                    repeatable, privacy
+    const QString aimId = addAim(loadedAim[1], loadedAim[3]+QString("T")+loadedAim[2], loadedAim[4] ,loadedAim[5],
+            loadedAim[6], loadedAim[7], loadedAim[10], loadedAim[8], loadedAim[11], loadedAim[12]);
 
     if (aimId != "0" && aimId != "")
         updateAimProgress(aimId,loadedAim[8],loadedAim[9]);
 
-    //Links are missing
     quint32 linksSize = 0;
     importFile.read((char*)&linksSize,sizeof(linksSize));
 
     for (quint32 i = 0; i < linksSize; ++i){
-        QString linkValue = readStringFromFile(importFile);
-        QString linkName = readStringFromFile(importFile);
+        const QString linkValue = readStringFromFile(importFile);
+        const QString linkName = readStringFromFile(importFile);
         addAimLink(aimId,linkValue,linkName);
     }
-
     return true;
 }
 
-//=============the links section=========================
+
+
 
 QVariantList LocalSqlBase::getAimLinks(QString aimId){
     QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "';");
@@ -1001,6 +722,7 @@ QVariantList LocalSqlBase::getAimLinks(QString aimId){
     QVariantList aimLinks = fillList(request,4);
     return aimLinks;
 }
+
 
 bool LocalSqlBase::addAimLink(QString aimId, QString link, QString linkName){
 

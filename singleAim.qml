@@ -355,7 +355,7 @@ Item {
                 flickLinks.reloadModel()
             }
 
-            function saveSingleLink(aim, link, name {
+            function saveSingleLink(aim, link, name) {
                 if (localBase.isThereAimLink(aim,link))
                     localBase.changeAimLink(aim,link,link,name)
                 else

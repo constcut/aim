@@ -7,97 +7,42 @@
 
 #include "apptools/TreeModel.h"
 
+
 class AbstractSqlBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractSqlBase(QObject *parent = 0);
-
-    //as we start to move it into server
-
-    //Aims
-    /*
-    Q_INVOKABLE virtual int addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                                   QString assignTo, QString priority="",  QString parent="", QString progress="",
-                                  QString repeatable="", QString privacy="")=0;
-
-    Q_INVOKABLE virtual bool editAim(QString aimId, QString aimName, QString timeAndDate, QString comment, QString tag,
-                                     QString assignTo, QString priority="",  QString parent="", QString progress="",
-                                   QString repeatable="", QString privacy="")=0; //maybe some params as links should be accesable alone
-
-    Q_INVOKABLE virtual bool deleteAim(QString aimId)=0;
-
-    Q_INVOKABLE virtual QVariantList getAims()=0;
-    Q_INVOKABLE virtual QVariantList getAimsByDate(QString date)=0;
-    Q_INVOKABLE virtual QStringList getSingleAim(QString aimId)=0;
-
-     Q_INVOKABLE virtual QStringList getAimsNames()=0;
-
-    Q_INVOKABLE virtual QStringList getAimLinks(QString aimName)=0; //aim id
-    Q_INVOKABLE virtual bool setAimLinks(QString aimName, QStringList aimLinks)=0; //aim id
-    */
-
-    /*
-    //Category
-    Q_INVOKABLE virtual int addCategory(QString categoryName, QString categoryParent)=0; //name, parent
-    Q_INVOKABLE virtual QVariantList getCatregories()=0; //over all - good to build it as a tree - or at least fill as sequence
-
-    //Lists
-    Q_INVOKABLE virtual int addList(QString listName, QString listType="string")=0; //type(string, aim, columns=table)
-    Q_INVOKABLE virtual int insertListElement(QString listName, QString elementValue)=0;
-    Q_INVOKABLE virtual bool editListElement(QString listName, int elementIndex, QString elementValue)=0;
-    Q_INVOKABLE virtual QVariantList getLists()=0; //can have a type - default = all
-
-    //Friends
-    Q_INVOKABLE virtual QVariantList getFriends()=0;
-    Q_INVOKABLE virtual int addFriend(QString friendNick)=0; //nick or tel or email
-    Q_INVOKABLE virtual QString searchFriendByMail(QString mail)=0;
-    Q_INVOKABLE virtual QString searchFriendByPhone(QString phone)=0;
-
-    //Groups
-    Q_INVOKABLE virtual QVariantList getGroups()=0;
-    Q_INVOKABLE virtual int createGroup(QString groupName)=0; //group name
-    Q_INVOKABLE virtual bool addFriendToGroup(QString groupName, QString friendNick)=0; //group name + friend nick
-
-    //Chats
-    Q_INVOKABLE virtual bool sendPrivateMessage(QString friendNick, QString message, QString aimId="")=0; //nick name
-    Q_INVOKABLE virtual bool sendGroupMessage(QString groupName, QString message, QString aimId="")=0; //group name
-    */
-
-    ///FOR a little while class abadoned untill remote appear so please later inlucde things such as search etc
+    explicit AbstractSqlBase(QObject *parent = nullptr);
 
 protected:
-    virtual QSqlQuery executeRequest(QString requestBody)=0;
+    virtual QSqlQuery executeRequest(const QString requestBody)=0;
 
     void notifySqlError(QSqlQuery &query);
     QString lastRequestBody;
 
-    QVariantList fillList(QSqlQuery &query, int rowsCount);
+    QVariantList fillList(QSqlQuery &query, const int rowsCount);
 
-signals:
-
-public slots:
 };
 
-///===========================================================================
 
-class LocalSqlBase : public AbstractSqlBase  //RENAME into LocalAimBase
+
+class LocalSqlBase : public AbstractSqlBase
 {
         Q_OBJECT
 public:
-    explicit LocalSqlBase(QObject *parent = 0);
-    ~LocalSqlBase();
+    explicit LocalSqlBase(QObject *parent = nullptr);
+    ~LocalSqlBase() = default;
 
-    //Aims
-    Q_INVOKABLE QString addAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                           QString assignTo, QString priority="",  QString parent="", QString progress="",
-                           QString repeatable="", QString privacy="");
 
-    Q_INVOKABLE bool editAim(QString aimId, QString aimName, QString timeAndDate, QString comment, QString tag,
-                             QString assignTo, QString priority="", QString parent="", QString progress="",
-                           QString repeatable="", QString privacy=""); //maybe some params as links should be accesable alone
+    Q_INVOKABLE QString addAim(const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
+                           const QString assignTo, const QString priority="",  const QString parent="", const QString progress="",
+                           const QString repeatable="", const QString privacy="");
 
-    Q_INVOKABLE bool deleteAim(QString aimId);
+    Q_INVOKABLE bool editAim(const QString aimId, const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
+                             const QString assignTo, const QString priority="", const QString parent="", const QString progress="",
+                                const QString repeatable="", const QString privacy=""); //maybe some params as links should be accesable alone
+
+    Q_INVOKABLE bool deleteAim(const QString aimId);
 
 
     //=====================================
@@ -110,34 +55,34 @@ public:
     Q_INVOKABLE QStringList getAimsNames();
     Q_INVOKABLE QStringList getAimsNamesBackwards(); //and with parent
 
-    Q_INVOKABLE QStringList getSingleAim(QString aimId);
+    Q_INVOKABLE QStringList getSingleAim(const QString aimId);
 
-    Q_INVOKABLE QVariantList getChildAims(QString parentAimId);
-    Q_INVOKABLE QStringList getChildAimsNames(QString parentAimId);
+    Q_INVOKABLE QVariantList getChildAims(const QString parentAimId);
+    Q_INVOKABLE QStringList getChildAimsNames(const QString parentAimId);
 
     //Serialization
 
-    Q_INVOKABLE bool exportAim(QString aimId, QString filename);
+    Q_INVOKABLE bool exportAim(const QString aimId, QString filename);
     Q_INVOKABLE bool importAim(QString filename);
 
     //helper not to add duplicate
-    Q_INVOKABLE int checkThereIsSameAim(QString aimName, QString timeAndDate, QString comment, QString tag,
-                                         QString assignTo, QString priority="",  QString parent="", QString progress="",
-                                         QString repeatable="");
+    Q_INVOKABLE int checkThereIsSameAim(const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
+                                        const QString assignTo, const QString priority="",  const QString parent="", const QString progress="",
+                                        const QString repeatable="");
 
-    Q_INVOKABLE int checkThereIsSameAim(QStringList aimLine);
+    Q_INVOKABLE int checkThereIsSameAim(const QStringList aimLine);
 
     Q_INVOKABLE int checkThereIsSameImportAim(QString filename);
 
     //=======================================
 
-    Q_INVOKABLE QString secondsTranslate(quint64 seconds);
+    Q_INVOKABLE QString secondsTranslate(const quint64 seconds);
 
     Q_INVOKABLE quint64 getDoneActionsLength(QString date);
     Q_INVOKABLE QStringList getDoneActionsList(QString date);
     Q_INVOKABLE QVariantList getAllDoneActionsList(QString date);
 
-    Q_INVOKABLE QVariantList getAimsByDate(QString date);
+    Q_INVOKABLE QVariantList getAimsByDate(const QString date);
     Q_INVOKABLE QVariantList getAimsByDateOnly(QString date);
     Q_INVOKABLE QVariantList getPeriodHitAimsByDate(QString date);
 
@@ -166,7 +111,7 @@ public:
     Q_INVOKABLE QVariantList getActivityLog(QString aimId); //all records
     Q_INVOKABLE QString getActivitySummary(QString aimId);
 
-    Q_INVOKABLE bool updateAimProgress(QString aimId, QString progress, QString progressText);
+    Q_INVOKABLE bool updateAimProgress(const QString aimId, const QString progress, const QString progressText);
 
     Q_INVOKABLE QVariantList getLastActivities(); //returns last 100 acts of all aims
     Q_INVOKABLE QVariantList getLastActsAims();
@@ -182,7 +127,7 @@ public:
     //===================================
 
     //search functions
-    Q_INVOKABLE QVariantList searchAimsByName(QString searchText);
+    Q_INVOKABLE QVariantList searchAimsByName(const QString searchText);
 
 
     //------------------------------------------------------------------------
@@ -195,7 +140,7 @@ public:
     TreeModel tagsTree;
 
 protected:
-    QSqlQuery executeRequest(QString requestBody);
+    QSqlQuery executeRequest(const QString requestBody);
 
     QSqlError initDatabase();
 };
