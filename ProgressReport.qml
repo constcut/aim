@@ -1,9 +1,8 @@
-import QtQuick 2.8
-import QtQuick.Controls 2.4
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
-//import QtQuick.Extras 1.4
-import QtQuick.Layouts 1.11
+import QtQuick.Dialogs 1.1
+import QtQuick.Layouts 1.15
 import QtQuick.Extras 1.4 as QmlExtra
 import QtQuick.Controls 1.4 as QmlOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
@@ -11,18 +10,13 @@ import QtQuick.Controls.Styles.Flat 1.0 as Flat
 Item {
     id: reportProgressWindow
 
-    //I guess on popup loaders better to use -
-    //anchors.fill: parent
-
     width: screenGlobal.getScreenWidth()//480
     height: screenGlobal.getScreenHeight()//800
-
 
     signal reportCanceled()
     signal reportFinished()
 
     property string aimId : ""
-
     property int smallFontSize : screenGlobal.adaptYSize(15)
 
     Slider{
@@ -60,18 +54,12 @@ Item {
         font.pixelSize: smallFontSize //its normal size verywhere
         onClicked: {
             var aimLine = localBase.getSingleAim(reportProgressWindow.aimId)
-
             var fullProgress = parseFloat(aimLine[8]) + progressSlider.value
             var fullProgressText = aimLine[9]
-
             fullProgressText += "\n" + new Date().toLocaleDateString(Qt.locale()) + "\n"
             fullProgressText += progressText.text
             fullProgressText += "\n[" + progressSlider.value +"%]\n"
-
-            console.log("Full prog " + fullProgress)
-
             localBase.updateAimProgress(reportProgressWindow.aimId,fullProgress,fullProgressText)
-
             reportProgressWindow.reportFinished()
         }
     }
@@ -83,6 +71,5 @@ Item {
         font.pixelSize: smallFontSize
         onPressed: reportProgressWindow.reportCanceled()
     }
-
 }
 
