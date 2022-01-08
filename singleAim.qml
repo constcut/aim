@@ -1,9 +1,9 @@
-import QtQuick 2.8
-import QtQuick.Controls 2.4
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 //import QtQuick.Extras 1.4
-import QtQuick.Layouts 1.11
+import QtQuick.Layouts 1.15
 import QtQuick.Extras 1.4 as QmlExtra
 import QtQuick.Controls 1.4 as QmlOld
 import QtQuick.Controls.Styles.Flat 1.0 as Flat
@@ -14,7 +14,6 @@ Item {
     width: screenGlobal.getScreenWidth()//480
     height: screenGlobal.getScreenHeight()//800
 
-    //signal to edit!
 
     signal requestOpenAddAim()
     signal requestOpenEditAim(var aimId)
@@ -22,23 +21,17 @@ Item {
 
     property int elementHeight: screenGlobal.adaptYSize(45) //apply to every one
     property int widthOffset: screenGlobal.adaptXSize(20) //70
-
     property int yOffset: screenGlobal.adaptYSize(50) //be aware of low screens try everywhere
-
     property int microOffset: screenGlobal.adaptXSize(10)
-
     property int bigFontSize : screenGlobal.adaptYSize(35)
     property int middleFontSize : screenGlobal.adaptYSize(25)
     property int smallFontSize : screenGlobal.adaptYSize(15)
-
     property string aimId : ""
-
     property bool helpMode: false
 
     function loadAim(){
 
-        if (aimId.length > 0) //cover under the function load aim
-        {
+        if (aimId.length > 0)  {
             var aimLine = localBase.getSingleAim(aimId)
 
             var parentAimId = aimLine[10]
@@ -54,13 +47,9 @@ Item {
                 dateAndTime += " : " + aimLine[11];
 
             aimName.text = "<style>a:link { color:#11BB33; }</style><big><b>" + aimLine[1] + "</b></big><small>" + "    : <a href=\"" + parentAimId + "\">" + parentName + "</a>  " + "</small>"; //IN FUTURE WE CAL ALSO CREATE LINKS FOR DATES
-            //MAYBE GIVE THE FULL SEQUENCE OF PARENTS?
-            //on review and attention check or just refactoring - make this idea as settings option, it could be nice
             aimMoment.text = dateAndTime
             if (aimLine[5].length > 1)
                 aimMoment.text += "  tag: " +aimLine[5]
-
-            //section 2
 
             childList.model = localBase.getChildAimsNames(aimId);
             childInfoText.text = "Has " + childList.model.length + " child";
@@ -70,16 +59,10 @@ Item {
             else
                 openChildButton.enabled = true;
 
-            //YET unused, but later should be:
-            //aimAssignedTo.text = aimLine[6]
-            //aimPriority.text = aimLine[7]
-            //viewParentButton.visible = false
-
             aimSummory.text = localBase.getActivitySummary(aimId)
 
             progressSlider.value = aimLine[8]
             progressText.text = aimLine[9]
-            //aimComment.text = aimLine[4] //move to tree commenting
 
             if (runningAims.isRunning(aimId)){
                 aimRunningState.text = runningAims.getSecondsPassed(aimId) + " seconds";
@@ -89,7 +72,6 @@ Item {
                 aimRunningState.text = "Aim is stopped"
                 stopStartButton.text = "Start";
             }
-
 
             linksRepeater.loadLinks()
         }
@@ -168,8 +150,7 @@ Item {
             text:"New child"
             font.pixelSize: smallFontSize
             onClicked:{
-                singleAimWindow.requestOpenAddAim() //it must be possible
-                //to presend parent parameter for the add window
+                singleAimWindow.requestOpenAddAim()
             }
         }
     }
@@ -198,16 +179,6 @@ Item {
             font.pixelSize: smallFontSize
         }
     }
-    /*TextArea { //sorry yet we haven,t found place for comment
-        y: borderBeforeProgress.y + borderBeforeProgress.height*2
-        id: aimComment
-        placeholderText: "Comment"
-        font.pixelSize: smallFontSize
-        width: parent.width/2
-        x: parent.width/2
-        height: elementHeight*3
-        visible: false
-    }*/
     Slider{
         id: progressSlider
         y: progressView.y + progressView.height + screenGlobal.adaptYSize(10)
@@ -220,9 +191,8 @@ Item {
         y: progressView.y + progressView.height + screenGlobal.adaptYSize(10)
         x: parent.width - width - screenGlobal.adaptXSize(10)
         text : "Save progress"
-        font.pixelSize: smallFontSize //its normal size verywhere
+        font.pixelSize: smallFontSize
         onClicked: {
-            //here also should lay comment
             localBase.updateAimProgress(aimId,progressSlider.value,progressText.text)
         }
     }
@@ -230,9 +200,8 @@ Item {
     Button {
         y: screenGlobal.adaptYSize(10) + elementHeight*2
         x: parent.width - width - screenGlobal.adaptXSize(10)
-        font.pixelSize: smallFontSize //its normal size verywhere
+        font.pixelSize: smallFontSize
         text : "Edit"
-
         onClicked: {
             singleAimWindow.requestOpenEditAim(aimId)
         }
@@ -243,7 +212,6 @@ Item {
          x: 0
          width: parent.width
          height: screenGlobal.adaptYSize(10)
-
          border.color: "black"
          color: "gray"
          id: borderBeforeSummary
@@ -251,7 +219,6 @@ Item {
 
     Text {
         id: aimSummory
-        //placeholderText:  "Summory"
         font.pixelSize: smallFontSize
         y: borderBeforeSummary.y + borderBeforeSummary.height*2
         width: 3*parent.width/4
@@ -261,15 +228,15 @@ Item {
     Text {
         id: aimRunningState
         text: "Running"
-        x: parent.width/2 //3*parent.width/4
+        x: parent.width/2
         font.pixelSize: smallFontSize
         y: borderBeforeSummary.y + borderBeforeSummary.height*2
     }
 
     Button{
         id: stopAndReportButton
-        y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10) //screenGlobal.adaptYSize(30)
-        x: parent.width - width - screenGlobal.adaptXSize(10) //pa.wi / 2
+        y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10)
+        x: parent.width - width - screenGlobal.adaptXSize(10)
         text: "Stop + report"
         onPressed: {
             runningAims.stop(aimId)
@@ -283,11 +250,11 @@ Item {
     }
 
     Popup {
-        id: reportProgressPopup //make also time popup with tumbler
+        id: reportProgressPopup
         x: 0
-        y: borderBeforeProgress.y //or firstBorder.y
-        width:  parent.width//popupWidth
-        height: parent.height-y//popupHeight //ensure manual sizing
+        y: borderBeforeProgress.y
+        width:  parent.width
+        height: parent.height - y
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -297,7 +264,7 @@ Item {
             id: progressLoader
         }
         Connections{
-            target: progressLoader.item //got warnings sometimes, how to avoid them fine?
+            target: progressLoader.item
             onReportCanceled: reportProgressPopup.close()
             onReportFinished: {
                 reportProgressPopup.close()
@@ -307,9 +274,9 @@ Item {
     }
 
     Button {
-        y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10) //screenGlobal.adaptYSize(30)
-        x: parent.width/2 //parent.width - width - screenGlobal.adaptXSize(10)
-        font.pixelSize: smallFontSize //its normal size verywhere
+        y:  aimRunningState.y + aimRunningState.height + screenGlobal.adaptYSize(10)
+        x: parent.width/2
+        font.pixelSize: smallFontSize
         id: stopStartButton
         text: "stop|start"
         onClicked: {
@@ -325,23 +292,22 @@ Item {
             }
         }
     }
-    Timer{
-            id: refreshTimer
-            running: true; interval: 500; repeat: true
-            onTriggered: {
-                if (aimId.length > 0){
-                    if (runningAims.isRunning(aimId)){
-                        aimRunningState.text = "Aim running " + runningAims.getSecondsPassed(aimId) + " seconds";
-                        stopStartButton.text = "Stop";
-                    }
-                    else{
-                        aimRunningState.text = "Aim is stopped"
-                        stopStartButton.text = "Start";
-                    }
+    Timer {
+        id: refreshTimer
+        running: true; interval: 500; repeat: true
+        onTriggered: {
+            if (aimId.length > 0){
+                if (runningAims.isRunning(aimId)){
+                    aimRunningState.text = "Aim running " + runningAims.getSecondsPassed(aimId) + " seconds";
+                    stopStartButton.text = "Stop";
                 }
-             }
-        }
-
+                else{
+                    aimRunningState.text = "Aim is stopped"
+                    stopStartButton.text = "Start";
+                }
+            }
+         }
+    }
 
     Rectangle {
          y: aimSummory.y + aimSummory.height + screenGlobal.adaptYSize(10)
@@ -354,63 +320,53 @@ Item {
          id: borderBeforeLinks
     }
 
-    Flickable { //or flickable
+    Flickable {
         id: flickLinks
 
         y: borderBeforeLinks.y + screenGlobal.adaptYSize(20)
         x: screenGlobal.adaptXSize( 5 )
-
         width: parent.width - screenGlobal.adaptYSize( 10 )
         height: elementHeight*4
-
         contentWidth: parent.width - screenGlobal.adaptYSize( 10 )
         contentHeight: elementHeight*(linksRepeater.model + 1)
 
         ScrollBar.vertical: ScrollBar { active: true }
-        //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
-        function reloadModel(){
-            //flickLinks.contentHeight = elementHeight*(linksRepeater.model+1);
-        }
 
         property real span : contentY + height
 
         Repeater{
             id: linksRepeater
 
-            //MARK THE LINKS THAY ARE THE SAME WITH DATE BASE OR ALREADY SAVED
-
-            function saveLinks(){
-
-            }
             function loadLinks(skipCheck){
 
                 var links = localBase.getAimLinks(singleAimWindow.aimId)
-
-                if (skipCheck !== true){ //skip check only when deleting aim
+                if (skipCheck !== true) {
                     if (linksRepeater.model<links.length)
                         linksRepeater.model = links.length
-                }else
+                }
+                else
                     linksRepeater.model = links.length
 
-                for (var i =0 ; i < links.length; ++i){
+                for (var i =0 ; i < links.length; ++i) {
                     linksRepeater.itemAt(i).valueOfLink = links[i][2].toString()
                     linksRepeater.itemAt(i).nameOfLink = links[i][3].toString()
                 }
                 flickLinks.reloadModel()
             }
-            function saveSingleLink(aim, link, name){
+
+            function saveSingleLink(aim, link, name {
                 if (localBase.isThereAimLink(aim,link))
                     localBase.changeAimLink(aim,link,link,name)
                 else
                     localBase.addAimLink(aim,link,name)
 
-                if (aim === singleAimWindow.aimId) //refresh only if its our aim
+                if (aim === singleAimWindow.aimId)
                     linksRepeater.loadLinks()
             }
 
             model: 1
-            Item{
+            Item {
                 y: index * elementHeight
                 x: screenGlobal.adaptXSize( 5 )
                 width:  flickLinks.width - screenGlobal.adaptYSize( 20 )
@@ -422,30 +378,29 @@ Item {
 
                 property string valueOfLink : ""
                 property string nameOfLink : ""
-
                 property int indexValue: index
 
                 RowLayout{
                     anchors.fill: parent
                     id:layout
 
-                    TextField{ //spread width a bit for better look take a round button in calculations
+                    TextField {
                         placeholderText: "link"
                         Layout.fillWidth: true
                         id: linkValue
                         text: valueOfLink
                     }
-                    TextField{
+                    TextField {
                         placeholderText: "link name"
                         Layout.fillWidth: true
                         id: linkName
                         text: nameOfLink
                     }
-                    RoundButton{
+                    RoundButton {
                        id: linkButton
                        onPressed: { linkMenu.y = linkButton.y; linkMenu.open() }
                        text: "..."
-                       Menu{
+                       Menu {
                            id: linkMenu
                            MenuItem {
                                text: "Open"
@@ -505,23 +460,20 @@ Item {
         }
     }
 
-
     Popup {
-        id: aimSelectionPopup //make also time popup with tumbler
+        id: aimSelectionPopup
         x: 0
-        y: borderBeforeProgress.y //or firstBorder.y
-        width:  parent.width//popupWidth
-        height: parent.height-y//popupHeight //ensure manual sizing
+        y: borderBeforeProgress.y
+        width:  parent.width
+        height: parent.height-y
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-        property int operationType: 0 //0 is nothing
-                                    //1 is copy; 2 is move
+        property int operationType: 0
+        property int linkIndex: 0
 
-        property int linkIndex: 0 //must be set before open pop
-
-        Loader{
+        Loader {
             anchors.fill: parent
             id: aimSelectLoader
         }
@@ -530,9 +482,6 @@ Item {
             onSelectionCanceled:{ aimSelectionPopup.close(); aimSelectionPopup.operationType = 0}
             onAimSelected: {
                 aimSelectionPopup.close()
-
-                //console.log("We selected the aim: " + selectedAimId)
-                //console.log(localBase.getSingleAim(selectedAimId))
 
                 var linkValue = linksRepeater.itemAt(aimSelectionPopup.linkIndex).valueOfLink
                 var linkName = linksRepeater.itemAt(aimSelectionPopup.linkIndex).nameOfLink
@@ -550,7 +499,7 @@ Item {
                      localBase.delAimLink(singleAimWindow.aimId,linkValue)
                      ++deletedLinks.counter;
                      restoreLinksButton.enabled = true
-                     linksRepeater.loadLinks(true) //but here we must refresh
+                     linksRepeater.loadLinks(true)
                  }
                  else
                      console.log("Something got strange operation type on select aim is " + aimSelectionPopup.operationType)
@@ -623,7 +572,7 @@ Item {
         y: parent.height-height-screenGlobal.adaptYSize(15)
         //y: elementHeight
         x: parent.width - width - screenGlobal.adaptXSize(10)
-        font.pixelSize: smallFontSize //its normal size verywhere
+        font.pixelSize: smallFontSize
         text : "Export aim"
         onClicked: exportFileDialog.open()
         id: exportButton
@@ -632,45 +581,42 @@ Item {
     Button {
         y: elementHeight
         x: parent.width - width - screenGlobal.adaptXSize(10)
-        font.pixelSize: smallFontSize //its normal size verywhere
+        font.pixelSize: smallFontSize
         text : "?"
         onClicked: singleAimWindow.helpMode = !singleAimWindow.helpMode
-        //maybe we should use invisible items to better positions
     }
 
-    //move all the help info down
-    ToolTip{
+    ToolTip {
         parent: aimMoment
         visible: singleAimWindow.helpMode
         text: qsTr("Aim main params: name, parent, moment & tags")
     }
-    ToolTip{
+    ToolTip {
         parent: childList
         visible: singleAimWindow.helpMode
         text: qsTr("Child aims of a current one")
     }
-    ToolTip{
+    ToolTip {
           parent: progressSlider.handle
           visible: progressSlider.pressed
           text: progressSlider.value.toFixed(1) + "%"
     }
-    ToolTip{
+    ToolTip {
         parent: stopAndReportButton
         visible: singleAimWindow.helpMode
         text: qsTr("Button stops running aim and helps input report")
     }
-    ToolTip{
+    ToolTip {
 
         parent: exportButton
         visible: singleAimWindow.helpMode
         text: qsTr("Button used to save aim in file")
     }
-    ToolTip{
-        //y: flickLinks.y
+    ToolTip {
         parent: flickLinks
         visible: singleAimWindow.helpMode
         text: qsTr("Area used for links connected to aim")
-        Component.onCompleted: y += screenGlobal.adaptYSize(50) //trick used to make help notes where we want them
+        Component.onCompleted: y += screenGlobal.adaptYSize(50)
     }
 
 }
