@@ -715,60 +715,55 @@ bool LocalSqlBase::importAim(QString filename){
 
 
 
-
-QVariantList LocalSqlBase::getAimLinks(QString aimId){
-    QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "';");
+QVariantList LocalSqlBase::getAimLinks(const QString aimId) {
+    const QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "';");
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList aimLinks = fillList(request,4);
-    return aimLinks;
+    return fillList(request, 4);;
 }
 
 
-bool LocalSqlBase::addAimLink(QString aimId, QString link, QString linkName){
+bool LocalSqlBase::addAimLink(const QString aimId, const QString link, const QString linkName){
 
-    QString requestBody("INSERT INTO links (aimId,link,name) VALUES('"
+    const QString requestBody("INSERT INTO links (aimId,link,name) VALUES('"
                         + aimId  + "','" + link + "','" + linkName + "');");
 
     QSqlQuery request = executeRequest(requestBody);
     if (request.next())
         return request.value(0).toInt();
-
     return false;
 }
 
-bool LocalSqlBase::isThereAimLink(QString aimId, QString link)
+
+bool LocalSqlBase::isThereAimLink(const QString aimId, const QString link)
 {
-    QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "' AND link='"+link +"';");
+    const QString requestBody("SELECT * FROM links WHERE aimId='" + aimId + "' AND link='"+link +"';");
     QSqlQuery request = executeRequest(requestBody);
     QVariantList aimLink = fillList(request,4);
     return aimLink.size();
 }
 
-bool LocalSqlBase::delAimLink(QString aimId, QString link){
-    QString requestBody("DELETE FROM links WHERE aimId='"+
+
+bool LocalSqlBase::delAimLink(const QString aimId, const QString link){
+    const QString requestBody("DELETE FROM links WHERE aimId='"+
                         aimId + "' AND link='"+ link +"';");
     QSqlQuery request = executeRequest(requestBody);
     return request.next();
 }
 
-bool LocalSqlBase::changeAimLink(QString aimId, QString link, QString newLink, QString newName)
+
+bool LocalSqlBase::changeAimLink(const QString aimId, const QString link, const QString newLink, const QString newName)
 {
-    QString requestBody = QString("UPDATE links SET link='%1',name='%2'")
-            .arg(newLink).arg(newName)
+    const QString requestBody = QString("UPDATE links SET link='%1',name='%2'").arg(newLink).arg(newName)
             +  QString(" WHERE aimId='%1' AND link='%2';").arg(aimId).arg(link);
 
     QSqlQuery request = executeRequest(requestBody);
     if (request.next())
-        return request.value(0).toInt(); //no sure it works..
+        return request.value(0).toInt();
     return false;
 }
 
 
-
-//=================Here must be create functions - to be able start from very begining========
-
-
-QSqlError  LocalSqlBase::initDatabase()
+QSqlError LocalSqlBase::initDatabase()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("local.sqlite");
@@ -776,30 +771,25 @@ QSqlError  LocalSqlBase::initDatabase()
     if (!db.open())
         return db.lastError();
 
-    QStringList tables = db.tables();
-
-    for (int i =0 ;i < tables.size(); ++i)
+    const QStringList tables = db.tables();
+    for (int i = 0; i < tables.size(); ++i)
         qDebug() << tables;
 
     if (tables.contains("aims", Qt::CaseInsensitive)
         && tables.contains("categories", Qt::CaseInsensitive))
         return QSqlError();
 
-
     return QSqlError();
 }
 
 
-//========================================================================
-//Activity things
 
-bool LocalSqlBase::addActivity(QString aimId, QString aimName,
-                 QString operation, QString totalLength)
+bool LocalSqlBase::addActivity(const QString aimId, const QString aimName,
+                 const QString operation, const QString totalLength)
 {
-    QDateTime now = QDateTime::currentDateTime();
-    QString currentMoment = now.toString("yyyy-MM-ddTHH:mm:ss");
-
-    QString requestBody("INSERT INTO actions (aimName,aimId,operation,moment,totalLength) VALUES('"
+    const QDateTime now = QDateTime::currentDateTime();
+    const QString currentMoment = now.toString("yyyy-MM-ddTHH:mm:ss");
+    const QString requestBody("INSERT INTO actions (aimName,aimId,operation,moment,totalLength) VALUES('"
                         +aimName + "','" + aimId  + "','" + operation + "','" + currentMoment + "','" + totalLength + "');");
 
     QSqlQuery request = executeRequest(requestBody);
@@ -809,35 +799,33 @@ bool LocalSqlBase::addActivity(QString aimId, QString aimName,
     return false;
 }
 
-QVariantList LocalSqlBase::getActivityLog(QString aimId)
+
+QVariantList LocalSqlBase::getActivityLog(const QString aimId)
 {
-    //only last 100 records - make limit in future pay attention!
-    QString requestBody("SELECT * FROM actions WHERE aimId='" + aimId + "';");
+    const QString requestBody("SELECT * FROM actions WHERE aimId='" + aimId + "';");
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList activityLogResult = fillList(request,6); //there was 13 but must be 6
+    QVariantList activityLogResult = fillList(request, 6);
     return activityLogResult;
 }
 
-QVariantList LocalSqlBase::getLastActivities(){
-    //maybe make limit as param? 100
-    QString requestBody("SELECT * FROM actions ORDER BY actId DESC LIMIT 100;");
+
+QVariantList LocalSqlBase::getLastActivities() {
+    const QString requestBody("SELECT * FROM actions ORDER BY actId DESC LIMIT 100;");
     QSqlQuery request = executeRequest(requestBody);
-    QVariantList activityLogResult = fillList(request,6); //there was 13 but must be 6
+    QVariantList activityLogResult = fillList(request, 6);
     return activityLogResult;
 }
+
 
 QVariantList LocalSqlBase::getLastActsAims(){
-    QVariantList lastActs = getLastActivities();
-
+    const QVariantList lastActs = getLastActivities();
     QSet<QString> aimsId;
 
     for (auto i = 0; i < lastActs.size(); ++i){
         QStringList act = lastActs[i].toStringList();
         aimsId.insert(act[2]);
     }
-
     QVariantList collectedAims;
-
     for (auto it = aimsId.begin(); it != aimsId.end(); it++){
         QString oneAimId = (*it);
         QStringList singleAim = getSingleAim(oneAimId);
@@ -846,44 +834,37 @@ QVariantList LocalSqlBase::getLastActsAims(){
     return collectedAims;
 }
 
-QString LocalSqlBase::getActivitySummary(QString aimId)
-{
-    QVariantList actLog = getActivityLog(aimId);
-    int countStarts=0,countStops=0;
 
+QString LocalSqlBase::getActivitySummary(const QString aimId) {
+    QVariantList actLog = getActivityLog(aimId);
+    int countStarts = 0, countStops = 0;
     int totalSeconds = 0;
 
-    for (int i = 0; i < actLog.size(); ++i)
-    {
-       QStringList actionLine = actLog[i].toStringList();
+    for (int i = 0; i < actLog.size(); ++i) {
+       const QStringList actionLine = actLog[i].toStringList();
 
        if (actionLine[3] == "start")
            ++countStarts;
-       if (actionLine[3] == "stop")
-       {
+       if (actionLine[3] == "stop") {
            ++countStops;
-
            QString actionLength = actionLine[5];
            int secondsAmount = actionLength.toInt();
            totalSeconds += secondsAmount;
        }
     }
 
-    QString result = "Summary: " + QString::number(countStarts)
+    const QString result = "Summary: " + QString::number(countStarts)
             + " starts\n" + QString::number(countStops) + " stops\n"
             + "Total seconds spent: " + QString::number(totalSeconds);
-
     return result;
 }
 
-//End of activity things
-//========================================================================
 
 bool LocalSqlBase::createTablesIfNeeded()
 {
     qDebug() << initDatabase();
 
-    QString aimTableCreate("CREATE TABLE IF NOT EXISTS aims (" //
+    const QString aimTableCreate("CREATE TABLE IF NOT EXISTS aims (" //
                            "aimId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
                            "timePart text,"//"timeAndDate text,"
@@ -904,7 +885,7 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request = executeRequest(aimTableCreate);
 
-    QString activityTableCreate("CREATE TABLE IF NOT EXISTS actions (" //
+    const QString activityTableCreate("CREATE TABLE IF NOT EXISTS actions (" //
                            "actId integer primary key autoincrement NOT NULL,"
                            "aimName text NOT NULL,"
                            "aimId text NOT NULL,"
@@ -915,7 +896,7 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request2 = executeRequest(activityTableCreate);
 
-    QString progressTableCreate("CREATE TABLE IF NOT EXISTS progress (" //
+    const QString progressTableCreate("CREATE TABLE IF NOT EXISTS progress (" //
                            "recordId integer primary key autoincrement NOT NULL,"
                            "aimId text NOT NULL,"
                            "progress text,"
@@ -925,7 +906,7 @@ bool LocalSqlBase::createTablesIfNeeded()
 
     QSqlQuery request3 = executeRequest(progressTableCreate);
 
-    QString linksTableCreate("CREATE TABLE IF NOT EXISTS links (" //
+    const QString linksTableCreate("CREATE TABLE IF NOT EXISTS links (" //
                            "linkId integer primary key autoincrement NOT NULL,"
                            "aimId text NOT NULL,"
                            "link text,"
@@ -945,7 +926,8 @@ bool LocalSqlBase::fillTreeModelWithAims()
     return false;
 }
 
-bool  LocalSqlBase::fillTreeModelWithTags()
+
+bool LocalSqlBase::fillTreeModelWithTags()
 {
     tagsTree.fillWithTagList(getAllTags());
     return false;

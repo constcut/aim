@@ -61,11 +61,10 @@ public:
     Q_INVOKABLE QStringList getChildAimsNames(const QString parentAimId);
 
     //Serialization
-
     Q_INVOKABLE bool exportAim(const QString aimId, QString filename);
     Q_INVOKABLE bool importAim(QString filename);
 
-    //helper not to add duplicate
+
     Q_INVOKABLE int checkThereIsSameAim(const QString aimName, const QString timeAndDate, const QString comment, const QString tag,
                                         const QString assignTo, const QString priority="",  const QString parent="", const QString progress="",
                                         const QString repeatable="");
@@ -97,7 +96,6 @@ public:
 
     //=====================================
 
-
     Q_INVOKABLE QVariantList getAllTags();
     Q_INVOKABLE bool editTreeAims(TreeModel *aims);
     Q_INVOKABLE bool fillTreeModelWithAims();
@@ -105,11 +103,11 @@ public:
 
      //==================================
 
-    Q_INVOKABLE bool addActivity(QString aimId, QString aimName,
-                     QString operation, QString totalLength="");
+    Q_INVOKABLE bool addActivity(const QString aimId, const QString aimName,
+                     const QString operation, const QString totalLength="");
 
-    Q_INVOKABLE QVariantList getActivityLog(QString aimId); //all records
-    Q_INVOKABLE QString getActivitySummary(QString aimId);
+    Q_INVOKABLE QVariantList getActivityLog(const QString aimId); //all records
+    Q_INVOKABLE QString getActivitySummary(const QString aimId);
 
     Q_INVOKABLE bool updateAimProgress(const QString aimId, const QString progress, const QString progressText);
 
@@ -118,24 +116,20 @@ public:
 
     //=========================
 
-    Q_INVOKABLE QVariantList getAimLinks(QString aimId);
-    Q_INVOKABLE bool addAimLink(QString aimId, QString link, QString linkName);
-    Q_INVOKABLE bool delAimLink(QString aimId, QString link);
-    Q_INVOKABLE bool changeAimLink(QString aimId, QString link, QString newLink, QString newName);
-    Q_INVOKABLE bool isThereAimLink(QString aimId, QString link);
+    Q_INVOKABLE QVariantList getAimLinks(const QString aimId);
+    Q_INVOKABLE bool addAimLink(const QString aimId, const QString link, const QString linkName);
+    Q_INVOKABLE bool delAimLink(const QString aimId, const QString link);
+    Q_INVOKABLE bool changeAimLink(const QString aimId, const QString link, const QString newLink, const QString newName);
+    Q_INVOKABLE bool isThereAimLink(const QString aimId, const QString link);
 
     //===================================
 
-    //search functions
     Q_INVOKABLE QVariantList searchAimsByName(const QString searchText);
 
-
     //------------------------------------------------------------------------
-    //Local tables creator
+
     bool createTablesIfNeeded();
 
-
-    //TreeModels - yet that stay here, as part of base structure, but accesable
     TreeModel aimsTree;
     TreeModel tagsTree;
 
@@ -145,31 +139,5 @@ protected:
     QSqlError initDatabase();
 };
 
-///===========================================================================
-
-//note that its possible to make encryption on database
-class RemoteSqlBase : public AbstractSqlBase
-{
-    //connection on creation - after that few function availible first before login
-    Q_OBJECT
-public:
-
-    Q_INVOKABLE bool isLoggedIn() { return false;}
-    Q_INVOKABLE bool tryLogIn(){ return false;} //username + password
-
-    Q_INVOKABLE bool registration(){ return false;} //username, password, tel, e-mail + some capture when goes into tests
-    //after login on registration
-
-    ///Here also must be special functions to load QVariantList into needed tables, to sync
-
-private:
-    bool loggedIn;//=false
-};
-
-///===========================================================================
-
-
-///SmartBase - automatically connects to remote if possible, but also always updates locale one
-//in fact local one always used as a source but when possible syn with remote one
 
 #endif // AIMBASE_H
