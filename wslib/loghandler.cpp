@@ -7,29 +7,24 @@ void newLogMessageHandler(QtMsgType type, const QMessageLogContext &context, con
 
     if (type == QtDebugMsg)
         typeLetter = "D";
-    else
-    if (type == QtInfoMsg)
+    else if (type == QtInfoMsg)
         typeLetter = "I";
-    else
-    if (type == QtWarningMsg)
+    else if (type == QtWarningMsg)
         typeLetter = "W";
-    else
-    if (type == QtCriticalMsg)
+    else if (type == QtCriticalMsg)
         typeLetter = "C";
-    else
-    if (type == QtFatalMsg)
+    else if (type == QtFatalMsg)
         typeLetter = "F";
 
     QString logLine =  QString("[%1][%2:%3:%4] %5")
-            .arg(typeLetter).arg(context.file).arg(context.function).arg(context.line).arg(msg);
+            .arg(typeLetter, context.file, context.function).arg(context.line).arg(msg);
 
     LogHandler::getInst().addLine(logLine);
-
     LogHandler::getInst().getOldHandler()(type, context, logLine); //msg
 }
 
-LogHandler::LogHandler(QObject *parent) : QObject(parent)
-{
+
+LogHandler::LogHandler(QObject *parent) : QObject(parent) {
     _oldHandler = qInstallMessageHandler(newLogMessageHandler);
 }
 
@@ -50,18 +45,14 @@ void LogHandler::addLine(const QString anotherLine)
 }
 
 
-//==============QML log components=========================
-
 
 void ConsoleLogQML::paint(QPainter* painter){
-  QStringList log = LogHandler::getInst().getLines();
-
-  int counter = 0;
-  for (int i = log.size()-1; i >= 0; i--) {
-     ++counter;
-      if (counter > 100) break; //maybe 2000, but return only 200 from them
-     QString line =  log[i];
-     painter->drawText(20,counter*10,line);
-  }
-
+    QStringList log = LogHandler::getInst().getLines();
+    int counter = 0;
+    for (int i = log.size()-1; i >= 0; i--) {
+        ++counter;
+        if (counter > 100) break;
+        QString line =  log[i];
+        painter->drawText(20, counter*10, line);
+    }
 }

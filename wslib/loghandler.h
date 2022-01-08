@@ -11,6 +11,7 @@ class LogHandler : public QObject {
     Q_OBJECT
 
 public:
+
     explicit LogHandler(QObject *parent = nullptr);
 
     static LogHandler& getInst() {
@@ -25,7 +26,7 @@ public:
 
     QtMessageHandler getOldHandler() { return _oldHandler; }
 
-protected:
+private:
 
     QStringList _logLines;
     QString _logFileName;

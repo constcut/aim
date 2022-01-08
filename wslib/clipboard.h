@@ -24,8 +24,8 @@ public:
     }
 
     Q_INVOKABLE bool copyImageSrc(const QVariant var) const {
-        QImage img = var.value<QImage>();
-        QGuiApplication::clipboard()->setImage(img);
+        QImage image = var.value<QImage>();
+        QGuiApplication::clipboard()->setImage(image);
         return true;
     }
 
