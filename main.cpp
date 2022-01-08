@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ConsoleLogQML>("aim.tasks",1,0,"ConsoleLog");
     qmlRegisterType<DoneActsChartQML>("aim.tasks",1,0,"DoneActsChart");
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     return app.exec();
 }
 

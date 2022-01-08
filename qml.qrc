@@ -1,18 +1,19 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>aimAdd.qml</file>
-        <file>aimView.qml</file>
-        <file>schedule.qml</file>
-        <file>aimTree.qml</file>
-        <file>tagTree.qml</file>
-        <file>runningAim.qml</file>
-        <file>singleAim.qml</file>
-        <file>AimList.qml</file>
-        <file>actionsDone.qml</file>
-        <file>сonsoleLog.qml</file>
-        <file>ProgressReport.qml</file>
-        <file>SelectAim.qml</file>
-        <file>doneActsChart.qml</file>
+        <file>qml/сonsoleLog.qml</file>
+        <file>qml/tagTree.qml</file>
+        <file>qml/singleAim.qml</file>
+        <file>qml/SelectAim.qml</file>
+        <file>qml/schedule.qml</file>
+        <file>qml/runningAim.qml</file>
+        <file>qml/ProgressReport.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/doneActsChart.qml</file>
+        <file>qml/aimView.qml</file>
+        <file>qml/aimTree.qml</file>
+        <file>qml/aims.qml</file>
+        <file>qml/AimList.qml</file>
+        <file>qml/aimAdd.qml</file>
+        <file>qml/actionsDone.qml</file>
     </qresource>
 </RCC>
