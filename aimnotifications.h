@@ -7,12 +7,12 @@
 #include "abstractBase.h"
 #include "wslib/popup.h"
 
-//FOR A WHILE WE USE EXAMPLE
 
 class NotificationClient : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString notification READ notification WRITE setNotification NOTIFY notificationChanged)
+
 public:
     explicit NotificationClient(QObject *parent = 0);
 
@@ -26,7 +26,7 @@ private slots:
     void updateAndroidNotification();
 
 private:
-    QString m_notification;
+    QString _notification;
 };
 
 class AimNotifications : QObject

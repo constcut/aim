@@ -296,7 +296,7 @@ QHash<int, QByteArray> TreeModel::roleNames() const
     return _roleNameMapping;
 }
 
-void TreeModel::setupModelData(const QString &linesData, const TreeItem *parent)
+void TreeModel::setupModelData(const QString &linesData, TreeItem *parent)
 {
     QStringList  lines = linesData.split(QString("\n"));
 

@@ -133,11 +133,11 @@ void PopUp::hide() {
 
 
 void PopUp::setPopupOpacity(const float opacity) {
-    popupOpacity = opacity;
+    _popupOpacity = opacity;
     setWindowOpacity(opacity);
 }
 
 
 float PopUp::getPopupOpacity() const {
-    return popupOpacity;
+    return _popupOpacity;
 }

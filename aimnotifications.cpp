@@ -14,16 +14,16 @@ NotificationClient::NotificationClient(QObject *parent)
 
 void NotificationClient::setNotification(const QString &notification)
 {
-    if (m_notification == notification)
+    if (_notification == notification)
         return;
 
-    m_notification = notification;
+    _notification = notification;
     emit notificationChanged();
 }
 
 QString NotificationClient::notification() const
 {
-    return m_notification;
+    return _notification;
 }
 
 void NotificationClient::updateAndroidNotification()

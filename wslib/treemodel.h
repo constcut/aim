@@ -138,7 +138,7 @@ private:
     bool setDataSpecial(const QModelIndex& index, const QVariant &value, const int column);
     TreeItem *getItem(const QModelIndex& index) const;
 
-    void setupModelData(const QString& linesData, const TreeItem *parent);
+    void setupModelData(const QString& linesData, TreeItem *parent);
     void addChildrenExport(QStringList& outputList, TreeItem* parent, const int level) const;
 
     void addChildrenList(QVariantList& outputList, TreeItem* parent) const;

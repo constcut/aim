@@ -39,7 +39,7 @@ protected:
     void paintEvent(QPaintEvent* event);
 
 private:
-    float popupOpacity; //Out of style because of Qt funny macroses
+    float _popupOpacity; //Out of style because of Qt funny macroses
 
     QLabel _label;
     QGridLayout _layout;
