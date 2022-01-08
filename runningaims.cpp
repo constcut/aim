@@ -1,35 +1,36 @@
 #include "runningaims.h"
 
-#include "listoperations.h"
-
 #include <QDebug>
 
-RunningAims::RunningAims(LocalSqlBase &base, QObject *parent) : QObject(parent), localBase(base)
+#include "listoperations.h"
+
+
+RunningAims::RunningAims(LocalSqlBase &base, QObject *parent) : QObject(parent), _localBase(base)
 {
 }
 
 
-QStringList RunningAims::getRunningAimsNames() {
+QStringList RunningAims::getRunningAimsNames() const {
     return createListByField(getRunningAims(), 1);
 }
 
 
-QStringList RunningAims::getStoppedAimsNames() {
+QStringList RunningAims::getStoppedAimsNames() const {
     return createListByField(getStoppedAims(), 1);
 }
 
 
-void RunningAims::start(QString aimId) {
-    QStringList aimLine = localBase.getSingleAim(aimId);
-    active << aimLine;
-    activeRuns << QDateTime::currentDateTime();
-    localBase.addActivity(aimLine[0],aimLine[1],"start");
+void RunningAims::start(const QString aimId) {
+    const QStringList aimLine = _localBase.getSingleAim(aimId);
+    _active << aimLine;
+    _activeRuns << QDateTime::currentDateTime();
+    _localBase.addActivity(aimLine[0], aimLine[1],"start");
 }
 
 
-bool RunningAims::isRunning(QString aimId) {
-    for (int i = 0; i < active.size(); ++i) {
-        const QStringList aimLine = active[i].toStringList();
+bool RunningAims::isRunning(const QString aimId) const {
+    for (int i = 0; i < _active.size(); ++i) {
+        const QStringList aimLine = _active[i].toStringList();
         if (aimLine[0] == aimId)
             return true;
     }
@@ -37,11 +38,11 @@ bool RunningAims::isRunning(QString aimId) {
 }
 
 
-int RunningAims::getSecondsPassed(QString aimId) {
-    for (int i = 0; i < active.size(); ++i) {
-        QStringList aimLine = active[i].toStringList();
+int RunningAims::getSecondsPassed(QString aimId) const {
+    for (int i = 0; i < _active.size(); ++i) {
+        QStringList aimLine = _active[i].toStringList();
         if (aimLine[0]==aimId) {
-            const QDateTime startMoment = activeRuns[i];
+            const QDateTime startMoment = _activeRuns[i];
             const QDateTime currentMoment = QDateTime::currentDateTime();
             return startMoment.secsTo(currentMoment);
         }
@@ -50,20 +51,20 @@ int RunningAims::getSecondsPassed(QString aimId) {
 }
 
 
-void RunningAims::stop(QString aimId)
+void RunningAims::stop(const QString aimId)
 {
-    QStringList aimLine = localBase.getSingleAim(aimId);
-    for (int i = 0; i < active.size(); ++i) {
-        const QStringList activeLine = active[i].toStringList();
+    const QStringList aimLine = _localBase.getSingleAim(aimId);
+    for (int i = 0; i < _active.size(); ++i) {
+        const QStringList activeLine = _active[i].toStringList();
         if (activeLine[0] == aimId) {
-            active.removeAt(i);
-            const QDateTime startMoment = activeRuns[i];
-            activeRuns.removeAt(i);
+            _active.removeAt(i);
+            const QDateTime startMoment = _activeRuns[i];
+            _activeRuns.removeAt(i);
             const QDateTime endMoment = QDateTime::currentDateTime();
-            stopped << aimLine; //or active line and don't touch base again
+            _stopped << aimLine; //or active line and don't touch base again
             const int totalSeconds = startMoment.secsTo(endMoment);
             const QString secondsString = QString::number(totalSeconds);
-            localBase.addActivity(aimLine[0], aimLine[1], "stop", secondsString);
+            _localBase.addActivity(aimLine[0], aimLine[1], "stop", secondsString);
             break;
         }
     }
