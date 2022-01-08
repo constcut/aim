@@ -121,16 +121,6 @@ ApplicationWindow {
            onTriggered: prevPages.pageChanged("doneActsChart.qml")
        }
        MenuItem {
-           text: "Notify"
-           font.pixelSize: fontNormalSize
-           onTriggered: androidNotify.setNotification("Hello!")
-       }
-       MenuItem {
-           text: "Chat"
-           font.pixelSize: fontNormalSize
-           onTriggered: drawerDown.open()
-       }
-       MenuItem {
            text: "Console"
            font.pixelSize: fontNormalSize
            onTriggered: prevPages.pageChanged("consoleLog.qml")
