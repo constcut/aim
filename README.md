@@ -78,17 +78,15 @@ Shows activity of day in graphic, can be navigated through calendar.
 
 Single aim view:
 
-![aim screenshot](info/done_chart.png)
+![aim screenshot](info/single_view.png)
 
 Can be opened from any view by double clicking on aim. 
 Lets you to edit aim, switch to it children, add links, mark progress and export aim.
 Importing aim could be done through menu.
 
-![aim screenshot](info/single_view.png)
+![aim screenshot](info/single_view_help.png)
 
 UI is pretty much overloaded, so there is a help button, that shows tool tips, to help a little :)
-
-![aim screenshot](info/single_view_help.png)
 
 ## Modules to use in your Qt\Qml pet projects
 
