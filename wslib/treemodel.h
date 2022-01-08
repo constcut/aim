@@ -9,36 +9,38 @@
 
 class TreeItem
 {
+
 public:
-    explicit TreeItem(const QVector<QVariant> &data, int columnsCount, TreeItem *parentItem = 0);
+    explicit TreeItem(const QVector<QVariant> &data, int columnsCount, TreeItem *parentItem = nullptr);
     ~TreeItem();
 
     void appendChild(TreeItem *child);
 
-    TreeItem *child(int row);
+    TreeItem *child(const int row);
     int childCount() const;
+
     int columnCount() const;
     QVariant data(int column) const;
+
     int childNumber() const;
     TreeItem *parent();
 
-    bool setData(int column, const QVariant &value);
-    bool removeChildren(int position, int count);
+    bool setData(const int column, const QVariant &value);
+    bool removeChildren(const int position, const int count);
 
-    QString exportColumns();
+    QString exportColumns() const;
+    QStringList getColumns() const;
 
-    QStringList getColumns(QString parentCode="");
+    bool setValueOnCondition(const int conditionIndex, const QString conditionText,
+                             const int settingIndex, const QString settingText);
 
-    bool setValueOnCondition(int conditionIndex, QString conditionText,
-                             int settingIndex, QString settingText);
-
-    bool setValueOnConditionIfEmpty(int conditionIndex, QString conditionText,
-                             int settingIndex, QString settingText);
+    bool setValueOnConditionIfEmpty(const int conditionIndex, const QString conditionText,
+                                    const int settingIndex, const QString settingText);
 
 private:
-    QList<TreeItem*> childItems;
-    QVector<QVariant> itemData;
-    TreeItem *parentItem; //TODO no raw ptrs
+    QList<TreeItem*> _childItems;
+    QVector<QVariant> _itemData;
+    TreeItem *_parentItem;
 };
 
 
@@ -48,22 +50,24 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    enum TreeModelRoles
-    {
-        ///please name here roles also
-    };
 
-    explicit TreeModel(QObject *parent = 0, QStringList columnsList = QStringList());
+    explicit TreeModel(QObject *parent = nullptr, QStringList columnsList = QStringList());
     ~TreeModel();
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
     QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QHash<int, QByteArray> roleNames() const override;
 
@@ -92,18 +96,18 @@ public:
     Q_INVOKABLE int columnsAmount();
 
 
-    Q_INVOKABLE QString getModelDataString();
+    Q_INVOKABLE QString getModelDataString() const;
     void setModelDataString(const QString &linesData);
 
 
     Q_INVOKABLE void fillWithAimList(QVariantList allAims);
-     Q_INVOKABLE void fillWithTagList(QVariantList allTags);
+    Q_INVOKABLE void fillWithTagList(QVariantList allTags);
 
 
-    Q_INVOKABLE void saveToFile(QString filename="");
-    Q_INVOKABLE void loadFromFile(QString filename="");
+    Q_INVOKABLE void saveToFile(const QString filename="") const;
+    Q_INVOKABLE void loadFromFile(const QString filename="");
 
-    QVariantList getFullList();
+    QVariantList getFullList() const;
 
 
     bool setValueOnCondition(int conditionIndex, QString conditionText,
@@ -113,34 +117,32 @@ public:
                              int settingIndex, QString settingText);
 
 
-    TreeItem* getFirstItem()
-    {
-        if (rootItem->childCount())
-            return rootItem->child(0);
+    TreeItem* getFirstItem() {
+        if (_rootItem->childCount())
+            return _rootItem->child(0);
         return 0;
     }
 
-   void refillTableColumns(QStringList data);
+   void refillTableColumns(const QStringList data);
+   void setNewEntryTemplate(const QString newTempate) { newEntryTemplate = newTempate; }
 
-   void setNewEntryTemplate(QString newTempate) { newEntryTemplate = newTempate; }
-
-   TreeItem *getRootItem() { return rootItem; }
-   size_t getColumnNamesSize() { return columnNames.size(); }
+   TreeItem *getRootItem() const { return _rootItem; }
+   size_t getColumnNamesSize() const { return columnNames.size(); }
 
 private:
 
    QString newEntryTemplate;
 
-    bool setDataSpecial(const QModelIndex &index, const QVariant &value, int column);//for columns edit special thing
+    bool setDataSpecial(const QModelIndex &index, const QVariant &value, int column);
     TreeItem *getItem(const QModelIndex &index) const;
 
     void setupModelData(const QString &linesData, TreeItem *parent);
-    void addChildrenExport(QStringList &outputList, TreeItem *parent, int level);
+    void addChildrenExport(QStringList &outputList, TreeItem *parent, int level) const;
 
-    void addChildrenList(QVariantList &outputList, TreeItem *parent);
+    void addChildrenList(QVariantList &outputList, TreeItem *parent) const;
 
-    TreeItem *rootItem;
-    QHash<int, QByteArray> roleNameMapping;
+    TreeItem* _rootItem;
+    QHash<int, QByteArray> _roleNameMapping;
 
 protected:
     void fillTableColumns();
