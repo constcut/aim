@@ -27,7 +27,7 @@
 #include <QAndroidService>
 #endif
 
-
+using namespace aim;
 
 int main(int argc, char *argv[])
 {

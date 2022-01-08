@@ -11,6 +11,8 @@
 
 #include "ListOperations.h"
 
+using namespace aim;
+
 
 AbstractSqlBase::AbstractSqlBase(QObject *parent) : QObject(parent)
 {
@@ -127,7 +129,7 @@ bool LocalSqlBase::editTreeAims(TreeModel *aims)
     QVariantList treeAims =  aims->getFullList();
     QVariantList allAims = getAims();
     QVariantList toInsert,toEdit,toDelete;
-    compareLists(allAims, treeAims,toInsert,toEdit,toDelete);
+    aim::compareLists(allAims, treeAims,toInsert,toEdit,toDelete);
 
     for (int i = 0 ; i < toInsert.size(); ++i) {
         const QStringList aimLine = toInsert[i].toStringList();
@@ -255,7 +257,7 @@ QStringList LocalSqlBase::getAimsNames()
     const QVariantList aimsList = getAims();
     QStringList result;
     result << QString();
-    result += createListByField(aimsList, 1);
+    result += aim::createListByField(aimsList, 1);
     return result;
 }
 
@@ -342,12 +344,12 @@ QVariantList LocalSqlBase::getDelayedAims()
 
 
 QStringList LocalSqlBase::getFutureAimsNames() {
-    return createListByField(getFutureAims(),1);
+    return aim::createListByField(getFutureAims(),1);
 }
 
 
 QStringList LocalSqlBase::getDelayedAimsNames() {
-    return createListByField(getDelayedAims(),1);
+    return aim::createListByField(getDelayedAims(),1);
 }
 
 

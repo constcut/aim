@@ -5,6 +5,9 @@
 #include "ListOperations.h"
 
 
+using namespace aim;
+
+
 RunningAims::RunningAims(LocalSqlBase &base, QObject *parent) : QObject(parent), _localBase(base)
 {
 }

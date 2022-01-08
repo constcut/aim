@@ -4,11 +4,15 @@
 #include <QStringList>
 #include <QVariantList>
 
-QStringList createListByField(const QVariantList source, const int fieldIndex);
+namespace aim {
 
-QStringList createListByFieldBackwards(const QVariantList source, const int fieldIndex, const int secondField=-1);
+    QStringList createListByField(const QVariantList source, const int fieldIndex);
 
-void compareLists(const QVariantList &firstList, const QVariantList &secondList,
-                  QVariantList &toInsert, QVariantList &toEdit, QVariantList &toDelete);
+    QStringList createListByFieldBackwards(const QVariantList source, const int fieldIndex, const int secondField=-1);
+
+    void compareLists(const QVariantList &firstList, const QVariantList &secondList,
+                      QVariantList &toInsert, QVariantList &toEdit, QVariantList &toDelete);
+}
+
 
 #endif // LISTOPERATIONS_H

@@ -8,55 +8,59 @@
 #include "apptools/Popup.h"
 
 
-class NotificationClient : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QString notification READ notification WRITE setNotification NOTIFY notificationChanged)
-
-public:
-    explicit NotificationClient(QObject *parent = nullptr);
-
-    Q_INVOKABLE void setNotification(const QString &notification);
-    QString notification() const;
-
-signals:
-    void notificationChanged();
-
-private slots:
-    void updateAndroidNotification();
-
-private:
-    QString _notification;
-};
+namespace aim {
 
 
+    class NotificationClient : public QObject
+    {
+        Q_OBJECT
+        Q_PROPERTY(QString notification READ notification WRITE setNotification NOTIFY notificationChanged)
 
-class AimNotifications : QObject
-{
-    Q_OBJECT
+    public:
+        explicit NotificationClient(QObject *parent = nullptr);
 
-public:
-    AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent = nullptr);
-    ~AimNotifications() = default;
+        Q_INVOKABLE void setNotification(const QString &notification);
+        QString notification() const;
 
-    void startWatchDog(int setInterval = 60);
+    signals:
+        void notificationChanged();
 
-signals:
-    void requestViewNotifications();
+    private slots:
+        void updateAndroidNotification();
 
-public slots:
-    void watchDogWoughf();
-
-protected:
-    QTimer _watchDogTimer;
-    LocalSqlBase& _localBase;
-    PopUp& _popUp;
-
- public:
-    NotificationClient androidNotification;
-};
+    private:
+        QString _notification;
+    };
 
 
+
+    class AimNotifications : QObject
+    {
+        Q_OBJECT
+
+    public:
+        AimNotifications(LocalSqlBase& base, PopUp& popUp, QObject *parent = nullptr);
+        ~AimNotifications() = default;
+
+        void startWatchDog(int setInterval = 60);
+
+    signals:
+        void requestViewNotifications();
+
+    public slots:
+        void watchDogWoughf();
+
+    protected:
+        QTimer _watchDogTimer;
+        LocalSqlBase& _localBase;
+        PopUp& _popUp;
+
+     public:
+        NotificationClient androidNotification;
+    };
+
+
+}
 
 
 #endif // AIMNOTIFICATIONS_H

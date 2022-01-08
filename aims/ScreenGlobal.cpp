@@ -1,6 +1,8 @@
 #include "ScreenGlobal.h"
 #include <QGuiApplication>
 
+using namespace aim;
+
 ScreenGlobal::ScreenGlobal(QObject *parent):
     QObject(parent), screen(*QGuiApplication::primaryScreen())
 {}

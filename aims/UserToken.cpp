@@ -9,6 +9,8 @@
 #endif
 
 
+using namespace aim;
+
 UserToken::UserToken(QObject *parent) : QObject(parent) {
     prepareToken();
 }

@@ -1,5 +1,8 @@
 #include "UserSettings.h"
 
+using namespace aim;
+
+
 UserSettings::UserSettings(QObject *parent): QObject(parent)
 {
     _orderType = 0;

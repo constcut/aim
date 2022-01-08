@@ -1,5 +1,9 @@
 #include "DoneActsChart.h"
 
+
+using namespace aim;
+
+
 void DoneActsChartQML::paint(QPainter* painter){
 
     for (auto i = 0; i < 24; ++i){

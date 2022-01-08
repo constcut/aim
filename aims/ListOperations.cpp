@@ -2,6 +2,8 @@
 #include <QDebug>
 
 
+namespace aim {
+
 QStringList createListByField(const QVariantList source, const int fieldIndex)
 {
     QStringList result;
@@ -90,3 +92,5 @@ void compareLists(const QVariantList &firstList, const QVariantList &secondList,
      }
 }
 
+
+}

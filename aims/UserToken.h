@@ -3,20 +3,23 @@
 
 #include <QObject>
 
+namespace aim {
 
-class UserToken : public QObject
-{
-    Q_OBJECT
+    class UserToken : public QObject
+    {
+        Q_OBJECT
 
-public:
-    explicit UserToken(QObject *parent = nullptr);
+    public:
+        explicit UserToken(QObject *parent = nullptr);
 
-    Q_INVOKABLE QString getToken() const { return _token; }
+        Q_INVOKABLE QString getToken() const { return _token; }
 
-private:
-    void prepareToken();
+    private:
+        void prepareToken();
 
-    QString _token;
-};
+        QString _token;
+    };
+
+}
 
 #endif // USERTOKEN_H

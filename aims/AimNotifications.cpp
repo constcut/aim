@@ -6,6 +6,8 @@
 #include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
+using namespace aim;
+
 
 NotificationClient::NotificationClient(QObject *parent)
     : QObject(parent)
