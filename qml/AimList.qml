@@ -155,7 +155,7 @@ Item {
                         color:userSettings.getColor("Text")
                         text: 'Priority: ' + priority
                         visible: aimListItem.priorityShow && priority.length > 0;
-                        font.pixelSize: fontSizeSmal
+                        font.pixelSize: fontSizeSmall
                     }
                 }
             }
